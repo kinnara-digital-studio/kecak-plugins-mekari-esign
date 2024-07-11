@@ -4,7 +4,7 @@
     <groupId>com.kinnarastudio.kecakplugins.mekariesign</groupId>
     <artifactId>kecak-plugins-mekari-esign</artifactId>
     <packaging>bundle</packaging>
-    <version>3.0.0</version>
+    <version>1.0.0</version>
     <name>kecak-plugins-mekari-esign</name>
     <url>http://www.kecak.org</url>
     <scm>
@@ -131,15 +131,15 @@
             <version>3.0.0</version>
         </dependency>
         <!-- Change plugin specific dependencies here -->
-        <dependency>
+        <!-- <dependency>
             <groupId>com.kinnarastudio</groupId>
             <artifactId>kinnara-mekarisign</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>com.kinnarastudio</groupId>
             <artifactId>kinnara-commons</artifactId>
-            <version>4.2.1</version>
+            <version>4.1.1</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

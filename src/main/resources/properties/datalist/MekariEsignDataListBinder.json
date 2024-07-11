@@ -1,0 +1,117 @@
+[
+    {
+        "title": "Mekari eSign Tool",
+        "properties": [
+            {
+                "name": "clientId",
+                "label": "Client ID",
+                "type": "textfield",
+                "required": "true"
+            },
+            {
+                "name": "clientSecret",
+                "label": "Client Secret",
+                "type": "textfield",
+                "required": "true"
+            },
+            {
+                "name": "secretCode",
+                "label": "Secret Code",
+                "type": "textfield",
+                "required": "true"
+            },
+            {
+                "name": "serverType",
+                "label": "Server Type",
+                "type": "selectbox",
+                "required": "true",
+                "options": [
+                    {
+                        "value": "mock",
+                        "label": "Mock"
+                    },
+                    {
+                        "value": "sandbox",
+                        "label": "Sandbox"
+                    },
+                    {
+                        "value": "staging",
+                        "label": "Staging"
+                    },
+                    {
+                        "value": "production",
+                        "label": "Production"
+                    }
+                ]
+            },
+            {
+                "name": "documentCategory",
+                "label": "Document Category",
+                "type": "selectbox",
+                "required": "true",
+                "options": [
+                    {
+                        "value": "global",
+                        "label": "Global"
+                    },
+                    {
+                        "value": "psre",
+                        "label": "PSRE"
+                    }
+                ]
+            },
+            {
+                "name": "signingStatus",
+                "label": "Signing Status",
+                "type": "selectbox",
+                "required": "true",
+                "options": [
+                    {
+                        "value": "in_progress",
+                        "label": "In Progress"
+                    },
+                    {
+                        "value": "completed",
+                        "label": "Completed"
+                    },
+                    {
+                        "value": "voided",
+                        "label": "Void"
+                    },
+                    {
+                        "value": "declined",
+                        "label": "Decline"
+                    }
+                ]
+            },
+            {
+                "name": "stampingStatus",
+                "label": "Stamping Status",
+                "type": "selectbox",
+                "required": "true",
+                "options": [
+                    {
+                        "value": "none",
+                        "label": "None"
+                    },
+                    {
+                        "value": "in_progress",
+                        "label": "In Progress"
+                    },
+                    {
+                        "value": "pending",
+                        "label": "Pending"
+                    },
+                    {
+                        "value": "failed",
+                        "label": "Failed"
+                    },
+                    {
+                        "value": "success",
+                        "label": "Success"
+                    }
+                ]
+            }
+        ]
+    }
+]
