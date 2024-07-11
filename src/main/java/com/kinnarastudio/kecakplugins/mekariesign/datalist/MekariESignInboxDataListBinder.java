@@ -14,8 +14,11 @@ import org.joget.apps.datalist.model.DataListColumn;
 import org.joget.apps.datalist.model.DataListFilterQueryObject;
 import org.joget.plugin.base.PluginManager;
 
+import com.kinnarastudio.commons.mekarisign.model.DocumentCategory;
 import com.kinnarastudio.commons.mekarisign.model.DocumentListResponse;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
+import com.kinnarastudio.commons.mekarisign.model.SigningStatus;
+import com.kinnarastudio.commons.mekarisign.model.StampingStatus;
 import com.kinnarastudio.commons.mekarisign.service.DocumentListService;
 import com.kinnarastudio.commons.mekarisign.*;
 import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
@@ -40,26 +43,22 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
     @Override
     public DataListCollection getData(DataList dataList, Map map, DataListFilterQueryObject[] filterQueryObject, String sort,
             Boolean desc, Integer start, Integer rows) {
-        // TODO Auto-generated method stub
-        // throw new UnsupportedOperationException("Unimplemented method 'getData'");
-        
         MekariSign mekariSign;
         try {
             mekariSign = MekariSign.getBuilder()
                         .setClientId(getPropertyString("clientId"))
                         .setClientSecret(getPropertyString("clientSecret"))
-                        .setServerType(ServerType.SANDBOX)
+                        .setServerType(ServerType.valueOf(getPropertyString("serverType")))
                         .setSecretCode(getPropertyString("secretCode"))
                         .build();
                     
-            mekariSign.getDoc(1, 10, null, null, null);
+            mekariSign.getDoc(1, 10, DocumentCategory.valueOf(getPropertyString("documentCategory")), SigningStatus.valueOf(getPropertyString("signingStatus")), StampingStatus.valueOf(getPropertyString("stampingStatus")));
         } catch (BuildingException | RequestException | ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         DataListCollection <String> id = new DataListCollection<>();
-        
         return id;
     }
 

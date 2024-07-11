@@ -1,6 +1,6 @@
 [
     {
-        "title": "Mekari eSign Tool",
+        "title": "Mekari eSign DataList Binder",
         "properties": [
             {
                 "name": "clientId",
@@ -27,19 +27,19 @@
                 "required": "true",
                 "options": [
                     {
-                        "value": "mock",
+                        "value": "MOCK",
                         "label": "Mock"
                     },
                     {
-                        "value": "sandbox",
+                        "value": "SANDBOX",
                         "label": "Sandbox"
                     },
                     {
-                        "value": "staging",
+                        "value": "STAGING",
                         "label": "Staging"
                     },
                     {
-                        "value": "production",
+                        "value": "PRODUCTION",
                         "label": "Production"
                     }
                 ]
@@ -51,11 +51,11 @@
                 "required": "true",
                 "options": [
                     {
-                        "value": "global",
+                        "value": "GLOBAL",
                         "label": "Global"
                     },
                     {
-                        "value": "psre",
+                        "value": "PSRE",
                         "label": "PSRE"
                     }
                 ]
@@ -67,19 +67,19 @@
                 "required": "true",
                 "options": [
                     {
-                        "value": "in_progress",
+                        "value": "IN_PROGRESS",
                         "label": "In Progress"
                     },
                     {
-                        "value": "completed",
+                        "value": "COMPLETED",
                         "label": "Completed"
                     },
                     {
-                        "value": "voided",
+                        "value": "VOIDED",
                         "label": "Void"
                     },
                     {
-                        "value": "declined",
+                        "value": "DECLINED",
                         "label": "Decline"
                     }
                 ]
@@ -91,23 +91,23 @@
                 "required": "true",
                 "options": [
                     {
-                        "value": "none",
+                        "value": "NONE",
                         "label": "None"
                     },
                     {
-                        "value": "in_progress",
+                        "value": "IN_PROGRESS",
                         "label": "In Progress"
                     },
                     {
-                        "value": "pending",
+                        "value": "PENDING",
                         "label": "Pending"
                     },
                     {
-                        "value": "failed",
+                        "value": "FAILED",
                         "label": "Failed"
                     },
                     {
-                        "value": "success",
+                        "value": "SUCCESS",
                         "label": "Success"
                     }
                 ]
