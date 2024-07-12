@@ -21,6 +21,18 @@
                 "required": "true"
             },
             {
+                "name": "accessToken",
+                "label": "Access Token",
+                "type": "textfield",
+                "required": "true"
+            },
+            {
+                "name": "refreshToken",
+                "label": "Refresh Token",
+                "type": "textfield",
+                "required": "true"
+            },
+            {
                 "name": "serverType",
                 "label": "Server Type",
                 "type": "selectbox",
