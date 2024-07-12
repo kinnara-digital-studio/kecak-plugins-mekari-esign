@@ -4,7 +4,7 @@ import org.joget.apps.form.model.*;
 
 public class MekariESignFormLoadBinder extends FormBinder implements FormLoadElementBinder {
     @Override
-    public FormRowSet load(Element element, String s, FormData formData) {
+    public FormRowSet load(Element element, String primaryKey, FormData formData) {
         return null;
     }
 
