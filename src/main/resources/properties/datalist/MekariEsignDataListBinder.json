@@ -17,8 +17,7 @@
             {
                 "name": "secretCode",
                 "label": "Secret Code",
-                "type": "textfield",
-                "required": "true"
+                "type": "textfield"
             },
             {
                 "name": "accessToken",
@@ -29,8 +28,7 @@
             {
                 "name": "refreshToken",
                 "label": "Refresh Token",
-                "type": "textfield",
-                "required": "true"
+                "type": "textfield"
             },
             {
                 "name": "serverType",

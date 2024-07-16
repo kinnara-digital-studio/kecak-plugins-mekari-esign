@@ -1,0 +1,62 @@
+[
+    {
+        "title": "Mekari eSign Userview Menu",
+        "properties": [
+            {
+                "name": "id",
+                "label": "Id",
+                "type": "hidden"
+            },
+            {
+                "name": "customId",
+                "label": "Custom ID",
+                "type": "textfield",
+                "regex_validation": "^[a-zA-Z0-9_]+$",
+                "validation_message": "Invalid"
+            },
+            {
+                "name": "label",
+                "label": "Label",
+                "type": "textfield",
+                "required": "true",
+                "value": "My Menu"
+            },
+            {
+                "name": "clientId",
+                "label": "Client ID",
+                "type": "textfield",
+                "required": "true"
+            },
+            {
+                "name": "clientSecret",
+                "label": "Client Secret",
+                "type": "textfield",
+                "required": "true"
+            },
+            {
+                "name": "serverType",
+                "label": "Server Type",
+                "type": "selectbox",
+                "required": "true",
+                "options": [
+                    {
+                        "value": "MOCK",
+                        "label": "Mock"
+                    },
+                    {
+                        "value": "SANDBOX",
+                        "label": "Sandbox"
+                    },
+                    {
+                        "value": "STAGING",
+                        "label": "Staging"
+                    },
+                    {
+                        "value": "PRODUCTION",
+                        "label": "Production"
+                    }
+                ]
+            }
+        ]
+    }
+]

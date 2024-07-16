@@ -29,7 +29,7 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
                         .setAuthenticationToken(authToken)
                         .authenticateAndBuild();
             
-            ResponseData document = mekariSign.getDocDetail(primaryKey);;
+            ResponseData document = mekariSign.getDocDetail(primaryKey);
             
             FormRow formRow = new FormRow();
             formRow.setProperty("id", document.getId());
@@ -76,6 +76,6 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
 
     @Override
     public String getPropertyOptions() {
-        return AppUtil.readPluginResource(getClassName(), "/properties/datalist/MekariEsignDataListBinder.json");
+        return AppUtil.readPluginResource(getClassName(), "/properties/form/MekariEsignFormLoadBinder.json");
     }
 }
