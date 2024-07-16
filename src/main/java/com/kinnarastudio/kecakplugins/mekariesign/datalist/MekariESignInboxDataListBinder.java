@@ -59,11 +59,6 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
             mekariSign = MekariSign.getBuilder()
                         .setAuthenticationToken(authToken)
                         .authenticateAndBuild();
-                    
-            LogUtil.info(getClassName(), "Client ID: " + getPropertyString("clientId"));
-            LogUtil.info(getClassName(), "Client Secret: " + getPropertyString("clientSecret"));
-            LogUtil.info(getClassName(), "Server Type: " + ServerType.valueOf(getPropertyString("serverType")));
-            LogUtil.info(getClassName(), "Secret Code:" + getPropertyString("secretCode"));
             
             int page = (start / 10) + 1;
             

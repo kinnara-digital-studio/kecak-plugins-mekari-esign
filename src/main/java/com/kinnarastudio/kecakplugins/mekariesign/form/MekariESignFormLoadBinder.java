@@ -1,40 +1,88 @@
 package com.kinnarastudio.kecakplugins.mekariesign.form;
 
+import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.model.*;
+import org.joget.plugin.base.PluginManager;
+
+import com.kinnarastudio.commons.mekarisign.MekariSign;
+import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
+import com.kinnarastudio.commons.mekarisign.exception.RequestException;
+import com.kinnarastudio.commons.mekarisign.model.AuthenticationToken;
+import com.kinnarastudio.commons.mekarisign.model.DocumentCategory;
+import com.kinnarastudio.commons.mekarisign.model.GetDocumentListBody;
+import com.kinnarastudio.commons.mekarisign.model.ResponseData;
+import com.kinnarastudio.commons.mekarisign.model.ServerType;
+import com.kinnarastudio.commons.mekarisign.model.SigningStatus;
+import com.kinnarastudio.commons.mekarisign.model.StampingStatus;
+import com.kinnarastudio.commons.mekarisign.model.TokenType;
+
+import java.text.ParseException;
+import java.util.ResourceBundle;
 
 public class MekariESignFormLoadBinder extends FormBinder implements FormLoadElementBinder {
+    public final static String LABEL = "Mekari eSign Form Load Binder";
+
     @Override
     public FormRowSet load(Element element, String primaryKey, FormData formData) {
-        return null;
+        MekariSign mekariSign;
+        FormRowSet formRowSet = new FormRowSet();
+        try {
+            AuthenticationToken authToken = new AuthenticationToken(getPropertyString("accessToken"), TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(getPropertyString("serverType")));
+    
+            mekariSign = MekariSign.getBuilder()
+                        .setAuthenticationToken(authToken)
+                        .authenticateAndBuild();
+            
+            GetDocumentListBody documentList = mekariSign.getDoc(1, 100, DocumentCategory.valueOf(getPropertyString("documentCategory")), SigningStatus.valueOf(getPropertyString("signingStatus")), StampingStatus.valueOf(getPropertyString("stampingStatus")));
+    
+            ResponseData[] documents = documentList.getRespData();
+            
+            for (ResponseData document : documents) {
+                FormRow formRow = new FormRow();
+                formRow.setProperty("id", document.getId());
+                formRow.setProperty("type", document.getType());
+                formRow.setProperty("filename", document.getAttributes().getFilename());
+                formRow.setProperty("category", document.getAttributes().getCategory().toString());
+                formRow.setProperty("docUrl", document.getAttributes().getDocUrl());
+                formRowSet.add(formRow);
+            }
+        } catch (BuildingException | RequestException | ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return formRowSet;
     }
 
     @Override
     public String getName() {
-        return "";
+        return LABEL;
     }
 
     @Override
     public String getVersion() {
-        return "";
+        PluginManager pluginManager = (PluginManager) AppUtil.getApplicationContext().getBean("pluginManager");
+        ResourceBundle resourceBundle = pluginManager.getPluginMessageBundle(getClassName(), "/messages/BuildNumber");
+        String buildNumber = resourceBundle.getString("buildNumber");
+        return buildNumber;
     }
 
     @Override
     public String getDescription() {
-        return "";
+        return "kecak-plugins-mekari-esign";
     }
 
     @Override
     public String getLabel() {
-        return "";
+        return LABEL;
     }
 
     @Override
     public String getClassName() {
-        return "";
+        return getClass().getName();
     }
 
     @Override
     public String getPropertyOptions() {
-        return "";
+        return AppUtil.readPluginResource(getClassName(), "/properties/datalist/MekariEsignDataListBinder.json");
     }
 }
