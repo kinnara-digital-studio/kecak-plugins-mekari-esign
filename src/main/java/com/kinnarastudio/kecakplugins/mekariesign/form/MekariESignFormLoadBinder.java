@@ -8,12 +8,8 @@ import com.kinnarastudio.commons.mekarisign.MekariSign;
 import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
 import com.kinnarastudio.commons.mekarisign.exception.RequestException;
 import com.kinnarastudio.commons.mekarisign.model.AuthenticationToken;
-import com.kinnarastudio.commons.mekarisign.model.DocumentCategory;
-import com.kinnarastudio.commons.mekarisign.model.GetDocumentListBody;
 import com.kinnarastudio.commons.mekarisign.model.ResponseData;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
-import com.kinnarastudio.commons.mekarisign.model.SigningStatus;
-import com.kinnarastudio.commons.mekarisign.model.StampingStatus;
 import com.kinnarastudio.commons.mekarisign.model.TokenType;
 
 import java.text.ParseException;
@@ -33,19 +29,16 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
                         .setAuthenticationToken(authToken)
                         .authenticateAndBuild();
             
-            GetDocumentListBody documentList = mekariSign.getDoc(1, 100, DocumentCategory.valueOf(getPropertyString("documentCategory")), SigningStatus.valueOf(getPropertyString("signingStatus")), StampingStatus.valueOf(getPropertyString("stampingStatus")));
-    
-            ResponseData[] documents = documentList.getRespData();
+            ResponseData document = mekariSign.getDocDetail(primaryKey);;
             
-            for (ResponseData document : documents) {
-                FormRow formRow = new FormRow();
-                formRow.setProperty("id", document.getId());
-                formRow.setProperty("type", document.getType());
-                formRow.setProperty("filename", document.getAttributes().getFilename());
-                formRow.setProperty("category", document.getAttributes().getCategory().toString());
-                formRow.setProperty("docUrl", document.getAttributes().getDocUrl());
-                formRowSet.add(formRow);
-            }
+            FormRow formRow = new FormRow();
+            formRow.setProperty("id", document.getId());
+            formRow.setProperty("type", document.getType());
+            formRow.setProperty("filename", document.getAttributes().getFilename());
+            formRow.setProperty("category", document.getAttributes().getCategory().toString());
+            formRow.setProperty("docUrl", document.getAttributes().getDocUrl());
+            formRowSet.add(formRow);
+            
         } catch (BuildingException | RequestException | ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
