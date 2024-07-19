@@ -4,9 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.servlet.http.Cookie;
+
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.userview.model.UserviewMenu;
+import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.PluginManager;
+import org.joget.workflow.util.WorkflowUtil;
 import org.springframework.context.ApplicationContext;
 
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
@@ -69,12 +73,36 @@ public class MekariESignUserviewMenu extends UserviewMenu{
         final Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("clientId", getPropertyString("clientId"));
         dataModel.put("serverUrl", ServerType.valueOf(getPropertyString("serverType")).getSsoBaseUrl());
+
+        Cookie [] cookies = WorkflowUtil.getHttpServletRequest().getCookies();
+
+        for (Cookie cookie : cookies)
+        {
+            LogUtil.info(getClassName(), "Cookies: " + cookie.getName());
+            LogUtil.info(getClassName(), "Value: " + cookie.getValue());
+        }
+        
         return pluginManager.getPluginFreeMarkerTemplate(dataModel, getClass().getName(), "/templates/mekari.ftl", null);
     }
 
     @Override
     public boolean isHomePageSupported() {
         return true;
+    }
+
+    public String getToken()
+    {
+        String token = "";
+        Cookie [] cookies = WorkflowUtil.getHttpServletRequest().getCookies();
+
+        for (Cookie cookie : cookies)
+        {
+            if(cookie.getName().equals("MekariToken"))
+            {
+                token += cookie.getValue();
+            }
+        }
+        return token;
     }
     
 }

@@ -6,7 +6,14 @@ import org.joget.plugin.base.PluginWebSupport;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.kinnarastudio.commons.mekarisign.MekariSign;
+import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
+import com.kinnarastudio.commons.mekarisign.exception.RequestException;
+import com.kinnarastudio.commons.mekarisign.model.AuthenticationToken;
+import com.kinnarastudio.commons.mekarisign.model.ServerType;
+
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -24,10 +31,29 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
                 put("code", code);
             }};
 
-            servletResponse.getWriter().write(responseBody.toString());
+            String content = "<h1>Content</h1>";
+
+            AuthenticationToken authToken = MekariSign.getBuilder()
+            .setClientId("UlfiHMoyfAcD0yZ4")
+            .setClientSecret("8LFQ5UOuPpxUQygA1e2kqY60t9ihZWYX")
+            .setServerType(ServerType.SANDBOX)
+            .setSecretCode(code)
+            .authenticate();
+
+            servletResponse.setStatus(301);
+            servletResponse.setContentType("text/html");
+            servletResponse.getWriter().write(content.toString());
+            servletResponse.addCookie(new Cookie("MekariToken", authToken.getAccessToken()));
+            servletResponse.setHeader("Location", "/web/userview/mekarisign/mekari/_/mekari");
         } catch (JSONException e) {
             LogUtil.error(getClass().getName(), e, e.toString());
             servletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, e.toString());
+        } catch (RequestException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (BuildingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
