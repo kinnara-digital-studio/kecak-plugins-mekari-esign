@@ -11,6 +11,7 @@ import com.kinnarastudio.commons.mekarisign.model.AuthenticationToken;
 import com.kinnarastudio.commons.mekarisign.model.ResponseData;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 import com.kinnarastudio.commons.mekarisign.model.TokenType;
+import com.kinnarastudio.kecakplugins.mekariesign.userview.MekariESignUserviewMenu;
 
 import java.text.ParseException;
 import java.util.ResourceBundle;
@@ -23,7 +24,9 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
         MekariSign mekariSign;
         FormRowSet formRowSet = new FormRowSet();
         try {
-            AuthenticationToken authToken = new AuthenticationToken(getPropertyString("accessToken"), TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(getPropertyString("serverType")));
+            String token = new MekariESignUserviewMenu().getToken();
+            String serverType = new MekariESignUserviewMenu().getServerType();
+            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(serverType));
     
             mekariSign = MekariSign.getBuilder()
                         .setAuthenticationToken(authToken)

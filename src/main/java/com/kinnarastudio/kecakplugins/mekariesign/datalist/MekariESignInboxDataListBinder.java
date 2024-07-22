@@ -56,8 +56,9 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
         DataListCollection <Map<String,String>> dataListCollection = new DataListCollection<>();
         try {
             String token = new MekariESignUserviewMenu().getToken();
-            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(getPropertyString("serverType")));
-            
+            String serverType = new MekariESignUserviewMenu().getServerType();
+            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(serverType));
+
             mekariSign = MekariSign.getBuilder()
                         .setAuthenticationToken(authToken)
                         .authenticateAndBuild();

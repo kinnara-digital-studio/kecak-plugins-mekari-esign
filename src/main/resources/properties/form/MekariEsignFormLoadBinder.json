@@ -3,51 +3,11 @@
         "title": "Mekari eSign Form Load Binder",
         "properties": [
             {
-                "name": "clientId",
-                "label": "Client ID",
+                "name": "label",
+                "label": "Label",
                 "type": "textfield",
-                "required": "true"
-            },
-            {
-                "name": "clientSecret",
-                "label": "Client Secret",
-                "type": "textfield",
-                "required": "true"
-            },
-            {
-                "name": "accessToken",
-                "label": "Access Token",
-                "type": "textfield",
-                "required": "true"
-            },
-            {
-                "name": "refreshToken",
-                "label": "Refresh Token",
-                "type": "textfield"
-            },
-            {
-                "name": "serverType",
-                "label": "Server Type",
-                "type": "selectbox",
                 "required": "true",
-                "options": [
-                    {
-                        "value": "MOCK",
-                        "label": "Mock"
-                    },
-                    {
-                        "value": "SANDBOX",
-                        "label": "Sandbox"
-                    },
-                    {
-                        "value": "STAGING",
-                        "label": "Staging"
-                    },
-                    {
-                        "value": "PRODUCTION",
-                        "label": "Production"
-                    }
-                ]
+                "value": "My Properties"
             }
         ]
     }
