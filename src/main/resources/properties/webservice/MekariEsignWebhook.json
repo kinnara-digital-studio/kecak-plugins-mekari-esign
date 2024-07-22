@@ -3,18 +3,6 @@
         "title": "Mekari eSign Webhook",
         "properties": [
             {
-                "name": "id",
-                "label": "Id",
-                "type": "hidden"
-            },
-            {
-                "name": "customId",
-                "label": "Custom ID",
-                "type": "textfield",
-                "regex_validation": "^[a-zA-Z0-9_]+$",
-                "validation_message": "Invalid"
-            },
-            {
                 "name": "label",
                 "label": "Label",
                 "type": "textfield",

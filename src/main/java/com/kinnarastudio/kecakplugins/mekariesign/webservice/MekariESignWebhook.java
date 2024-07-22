@@ -41,11 +41,11 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
             String content = "<h1>Content</h1>";
 
             AuthenticationToken authToken = MekariSign.getBuilder()
-                .setClientId("UlfiHMoyfAcD0yZ4")
-                .setClientSecret("8LFQ5UOuPpxUQygA1e2kqY60t9ihZWYX")
-                .setServerType(ServerType.SANDBOX)
-                .setSecretCode(code)
-                .authenticate();
+                    .setClientId("UlfiHMoyfAcD0yZ4")
+                    .setClientSecret("8LFQ5UOuPpxUQygA1e2kqY60t9ihZWYX")
+                    .setServerType(ServerType.SANDBOX)
+                    .setSecretCode(code)
+                    .authenticate();
 
             LogUtil.info(getClassName(), "Client ID: " + getPropertyString("clientId"));
             LogUtil.info(getClassName(), "Client Secret: " + getPropertyString("clientSecret"));
@@ -102,16 +102,47 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
     }
 
     @Override
-    public void setProperties(Map<String, Object> properties) {
+    public Object getProperty(String property) {
         PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
         AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
 
-        super.setProperties(Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
+        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .findFirst()
                 .map(PluginDefaultProperties::getPluginProperties)
                 .map(PropertyUtil::getPropertiesValueFromJson)
-                .orElse(properties));
+                .map(m -> m.get(property))
+                .orElse(super.getProperty(property));
+    }
+
+    @Override
+    public String getPropertyString(String property) {
+        PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
+        AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
+
+        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .findFirst()
+                .map(PluginDefaultProperties::getPluginProperties)
+                .map(PropertyUtil::getPropertiesValueFromJson)
+                .map(m -> m.get(property))
+                .map(String::valueOf)
+                .orElse(super.getPropertyString(property));
+    }
+
+    @Override
+    public Map<String, Object> getProperties() {
+        PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
+        AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
+
+        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .findFirst()
+                .map(PluginDefaultProperties::getPluginProperties)
+                .map(PropertyUtil::getPropertiesValueFromJson)
+                .orElseGet(super::getProperties);
     }
 }
