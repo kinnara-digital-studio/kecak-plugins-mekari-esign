@@ -1,10 +1,13 @@
 package com.kinnarastudio.kecakplugins.mekariesign.webservice;
 
+import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
+import org.joget.apps.app.model.AppDefinition;
+import org.joget.apps.app.model.PluginDefaultProperties;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.DefaultApplicationPlugin;
 import org.joget.plugin.base.PluginWebSupport;
-import org.joget.workflow.util.WorkflowUtil;
+import org.joget.plugin.property.service.PropertyUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,11 +18,13 @@ import com.kinnarastudio.commons.mekarisign.model.AuthenticationToken;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class MekariESignWebhook extends DefaultApplicationPlugin implements PluginWebSupport {
     @Override
@@ -94,5 +99,19 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
     @Override
     public String getPropertyOptions() {
         return AppUtil.readPluginResource(getClassName(), "/properties/webservice/MekariEsignWebhook.json");
+    }
+
+    @Override
+    public void setProperties(Map<String, Object> properties) {
+        PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
+        AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
+
+        super.setProperties(Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .findFirst()
+                .map(PluginDefaultProperties::getPluginProperties)
+                .map(PropertyUtil::getPropertiesValueFromJson)
+                .orElse(properties));
     }
 }
