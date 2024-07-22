@@ -1,8 +1,10 @@
 package com.kinnarastudio.kecakplugins.mekariesign.webservice;
 
+import org.joget.apps.app.service.AppUtil;
 import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.DefaultApplicationPlugin;
 import org.joget.plugin.base.PluginWebSupport;
+import org.joget.workflow.util.WorkflowUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,16 +36,18 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
             String content = "<h1>Content</h1>";
 
             AuthenticationToken authToken = MekariSign.getBuilder()
-            .setClientId("UlfiHMoyfAcD0yZ4")
-            .setClientSecret("8LFQ5UOuPpxUQygA1e2kqY60t9ihZWYX")
-            .setServerType(ServerType.SANDBOX)
-            .setSecretCode(code)
-            .authenticate();
+                .setClientId("UlfiHMoyfAcD0yZ4")
+                .setClientSecret("8LFQ5UOuPpxUQygA1e2kqY60t9ihZWYX")
+                .setServerType(ServerType.SANDBOX)
+                .setSecretCode(code)
+                .authenticate();
+
+            LogUtil.info(getClassName(), "Client ID: " + getPropertyString("clientId"));
+            LogUtil.info(getClassName(), "Client Secret: " + getPropertyString("clientSecret"));
+
+            servletRequest.getSession().setAttribute("MekariToken", authToken.getAccessToken());
 
             servletResponse.setStatus(301);
-            servletResponse.setContentType("text/html");
-            servletResponse.getWriter().write(content.toString());
-            servletResponse.addCookie(new Cookie("MekariToken", authToken.getAccessToken()));
             servletResponse.setHeader("Location", "/web/userview/mekarisign/mekari/_/mekari");
         } catch (JSONException e) {
             LogUtil.error(getClass().getName(), e, e.toString());
@@ -89,6 +93,6 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
 
     @Override
     public String getPropertyOptions() {
-        return "";
+        return AppUtil.readPluginResource(getClassName(), "/properties/webservice/MekariEsignWebhook.json");
     }
 }

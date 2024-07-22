@@ -28,6 +28,7 @@ import com.kinnarastudio.commons.mekarisign.model.SigningStatus;
 import com.kinnarastudio.commons.mekarisign.model.StampingStatus;
 import com.kinnarastudio.commons.mekarisign.model.TokenType;
 import com.kinnarastudio.commons.mekarisign.service.DocumentListService;
+import com.kinnarastudio.kecakplugins.mekariesign.userview.MekariESignUserviewMenu;
 import com.kinnarastudio.commons.mekarisign.*;
 import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
 import com.kinnarastudio.commons.mekarisign.exception.RequestException;
@@ -54,8 +55,9 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
         MekariSign mekariSign;
         DataListCollection <Map<String,String>> dataListCollection = new DataListCollection<>();
         try {
-            AuthenticationToken authToken = new AuthenticationToken(getPropertyString("accessToken"), TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(getPropertyString("serverType")));
-
+            String token = new MekariESignUserviewMenu().getToken();
+            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(getPropertyString("serverType")));
+            LogUtil.info(getClassName(), "DL Token: " + token);
             mekariSign = MekariSign.getBuilder()
                         .setAuthenticationToken(authToken)
                         .authenticateAndBuild();
@@ -68,7 +70,7 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
         
             // Add each document to the DataListCollection
             for (ResponseData document : documents) {
-                Map<String, String> maps = new HashMap<String,String>();
+                Map<String, String> maps = new HashMap<>();
                 maps.put("id", document.getId());
                 maps.put("type", document.getType());
                 maps.put("filename", document.getAttributes().getFilename());
@@ -76,9 +78,7 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
                 maps.put("docURL", document.getAttributes().getDocUrl());
                 dataListCollection.add(maps);
             }
-            LogUtil.info(getClassName(), "List of DataListCollection: " + dataListCollection);
         } catch (BuildingException | RequestException | ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return dataListCollection;
