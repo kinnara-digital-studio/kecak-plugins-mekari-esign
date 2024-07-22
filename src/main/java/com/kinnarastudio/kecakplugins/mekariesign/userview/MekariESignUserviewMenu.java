@@ -78,9 +78,10 @@ public class MekariESignUserviewMenu extends UserviewMenu{
 
         HttpServletRequest request = WorkflowUtil.getHttpServletRequest();
         String token = (String) request.getSession().getAttribute("MekariToken");
+        String serverType = (String) request.getSession().getAttribute("MekariServerType");
         dataModel.put("token", token);
+        dataModel.put("serverType", serverType);
 
-        // Lanjutkan dengan implementasi lainnya...
         return pluginManager.getPluginFreeMarkerTemplate(dataModel, getClass().getName(), "/templates/mekari.ftl", null);
     }
 
@@ -91,5 +92,10 @@ public class MekariESignUserviewMenu extends UserviewMenu{
 
     public String getToken() {
         return (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariToken");
+    }
+
+    public String getServerType()
+    {
+        return (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariServerType");
     }
 }
