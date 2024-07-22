@@ -48,8 +48,8 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
                     .authenticate();
 
             servletRequest.getSession().setAttribute("MekariToken", authToken.getAccessToken());
-            servletRequest.getSession().setAttribute("MekariServerType", ServerType.valueOf(getPropertyString("serverType")));
-
+            servletRequest.getSession().setAttribute("MekariServerType", getPropertyString("serverType"));
+            LogUtil.info(getClassName(), "Server Type: " + getPropertyString("serverType"));
             servletResponse.setStatus(301);
             servletResponse.setHeader("Location", "/web/userview/mekarisign/mekari/_/mekari");
         } catch (JSONException e) {
