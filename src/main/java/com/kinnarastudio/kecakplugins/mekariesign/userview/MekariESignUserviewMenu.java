@@ -1,10 +1,12 @@
 package com.kinnarastudio.kecakplugins.mekariesign.userview;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.userview.model.UserviewMenu;
@@ -74,14 +76,11 @@ public class MekariESignUserviewMenu extends UserviewMenu{
         dataModel.put("clientId", getPropertyString("clientId"));
         dataModel.put("serverUrl", ServerType.valueOf(getPropertyString("serverType")).getSsoBaseUrl());
 
-        Cookie [] cookies = WorkflowUtil.getHttpServletRequest().getCookies();
+        HttpServletRequest request = WorkflowUtil.getHttpServletRequest();
+        String token = (String) request.getSession().getAttribute("MekariToken");
+        dataModel.put("token", token);
 
-        for (Cookie cookie : cookies)
-        {
-            LogUtil.info(getClassName(), "Cookies: " + cookie.getName());
-            LogUtil.info(getClassName(), "Value: " + cookie.getValue());
-        }
-        
+        // Lanjutkan dengan implementasi lainnya...
         return pluginManager.getPluginFreeMarkerTemplate(dataModel, getClass().getName(), "/templates/mekari.ftl", null);
     }
 
@@ -90,19 +89,7 @@ public class MekariESignUserviewMenu extends UserviewMenu{
         return true;
     }
 
-    public String getToken()
-    {
-        String token = "";
-        Cookie [] cookies = WorkflowUtil.getHttpServletRequest().getCookies();
-
-        for (Cookie cookie : cookies)
-        {
-            if(cookie.getName().equals("MekariToken"))
-            {
-                token += cookie.getValue();
-            }
-        }
-        return token;
+    public String getToken() {
+        return (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariToken");
     }
-    
 }
