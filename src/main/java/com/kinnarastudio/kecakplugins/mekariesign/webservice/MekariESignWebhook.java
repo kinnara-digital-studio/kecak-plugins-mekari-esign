@@ -41,14 +41,11 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
             String content = "<h1>Content</h1>";
 
             AuthenticationToken authToken = MekariSign.getBuilder()
-                    .setClientId("UlfiHMoyfAcD0yZ4")
-                    .setClientSecret("8LFQ5UOuPpxUQygA1e2kqY60t9ihZWYX")
-                    .setServerType(ServerType.SANDBOX)
+                    .setClientId(getPropertyString("clientId"))
+                    .setClientSecret(getPropertyString("clientSecret"))
+                    .setServerType(ServerType.valueOf(getPropertyString("serverType")))
                     .setSecretCode(code)
                     .authenticate();
-
-            LogUtil.info(getClassName(), "Client ID: " + getPropertyString("clientId"));
-            LogUtil.info(getClassName(), "Client Secret: " + getPropertyString("clientSecret"));
 
             servletRequest.getSession().setAttribute("MekariToken", authToken.getAccessToken());
 
