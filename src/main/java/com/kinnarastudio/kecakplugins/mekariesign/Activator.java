@@ -7,6 +7,7 @@ import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataL
 import com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFileUpload;
 import com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFormLoadBinder;
 import com.kinnarastudio.kecakplugins.mekariesign.userview.MekariESignUserviewMenu;
+import com.kinnarastudio.kecakplugins.mekariesign.userview.SignatureType;
 import com.kinnarastudio.kecakplugins.mekariesign.webservice.MekariESignWebhook;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -25,6 +26,7 @@ public class Activator implements BundleActivator {
         registrationList.add(context.registerService(MekariESignInboxDataListBinder.class.getName(), new MekariESignInboxDataListBinder(), null));
         registrationList.add(context.registerService(MekariESignFormLoadBinder.class.getName(), new MekariESignFormLoadBinder(), null));
         registrationList.add(context.registerService(MekariESignUserviewMenu.class.getName(), new MekariESignUserviewMenu(), null));
+        registrationList.add(context.registerService(SignatureType.class.getName(), new SignatureType(), null));
     }
 
     public void stop(BundleContext context) {
