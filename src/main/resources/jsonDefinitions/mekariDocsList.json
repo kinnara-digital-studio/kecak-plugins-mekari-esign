@@ -1,6 +1,6 @@
 {
-  "id": "mekariDataListBinder",
-  "name": "Mekari Data List Binder",
+  "id": "mekariDocsList",
+  "name": "Mekari Documents List",
   "pageSize": "0",
   "order": "",
   "orderBy": "",

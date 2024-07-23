@@ -3,30 +3,15 @@ package com.kinnarastudio.kecakplugins.mekariesign.userview;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
-import java.util.stream.Stream;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.joget.apps.app.dao.DatalistDefinitionDao;
-import org.joget.apps.app.model.AppDefinition;
-import org.joget.apps.app.model.DatalistDefinition;
-import org.joget.apps.app.service.AppService;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.datalist.model.*;
 import org.joget.apps.datalist.service.DataListService;
 import org.joget.apps.userview.model.Userview;
 import org.joget.apps.userview.model.UserviewMenu;
-import org.joget.commons.util.LogUtil;
-import org.joget.commons.util.ResourceBundleUtil;
-import org.joget.commons.util.TimeZoneUtil;
-import org.joget.directory.model.User;
-import org.joget.directory.model.service.DirectoryManager;
 import org.joget.plugin.base.PluginManager;
-import org.joget.workflow.model.WorkflowActivity;
-import org.joget.workflow.model.WorkflowAssignment;
-import org.joget.workflow.model.service.WorkflowManager;
-import org.joget.workflow.model.service.WorkflowUserManager;
 import org.joget.workflow.util.WorkflowUtil;
 import org.springframework.context.ApplicationContext;
 
@@ -94,9 +79,8 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         dataModel.put("clientId", getPropertyString("clientId"));
         dataModel.put("serverUrl", ServerType.valueOf(getPropertyString("serverType")).getSsoBaseUrl());
 
-        HttpServletRequest request = WorkflowUtil.getHttpServletRequest();
-        String token = (String) request.getSession().getAttribute("MekariToken");
-        String serverType = (String) request.getSession().getAttribute("MekariServerType");
+        String token = getSessionAttribute("MekariToken");
+        String serverType = getSessionAttribute("MekariServerType");
         dataModel.put("token", token);
         dataModel.put("serverType", serverType);
 
@@ -109,9 +93,9 @@ public class MekariESignUserviewMenu extends UserviewMenu {
     }
 
     protected String getJspPage(String jspFormFile, String jspListFile, String jspUnauthorizedFile) {
-        String mode = getRequestParameterString("_mode");
+        String mode = Optional.ofNullable(getRequestParameterString("_mode")).orElse("");
         switch (mode) {
-            case "new":
+            case "newRequest":
                 return jspUnauthorizedFile;
             default:
                 getJspDataList();
@@ -164,7 +148,7 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         ApplicationContext ac = AppUtil.getApplicationContext();
         DataListService dataListService = (DataListService) ac.getBean("dataListService");
         if (cachedDataList == null) {
-            String dataListJson = AppUtil.readPluginResource(getClassName(), "/jsonDefinitions/mekariDataListBinder.json", null, true);
+            String dataListJson = AppUtil.readPluginResource(getClassName(), "/jsonDefinitions/mekariDocsList.json", null, true);
             cachedDataList = dataListService.fromJson(dataListJson);
             if (getPropertyString(Userview.USERVIEW_KEY_NAME) != null && getPropertyString(Userview.USERVIEW_KEY_NAME).trim().length() > 0) {
                 cachedDataList.addBinderProperty(Userview.USERVIEW_KEY_NAME, getPropertyString(Userview.USERVIEW_KEY_NAME));
@@ -181,11 +165,11 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         return true;
     }
 
-    public String getToken() {
-        return (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariToken");
-    }
-
-    public String getServerType() {
-        return (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariServerType");
+    protected String getSessionAttribute(String name) {
+        return Optional.ofNullable(WorkflowUtil.getHttpServletRequest())
+                .map(HttpServletRequest::getSession)
+                .map(s -> s.getAttribute(name))
+                .map(String::valueOf)
+                .orElse("");
     }
 }
