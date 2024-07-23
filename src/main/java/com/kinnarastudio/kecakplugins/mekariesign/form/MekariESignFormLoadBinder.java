@@ -6,6 +6,7 @@ import org.joget.apps.app.model.PluginDefaultProperties;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.model.*;
 import org.joget.plugin.base.PluginManager;
+import org.joget.workflow.util.WorkflowUtil;
 
 import com.kinnarastudio.commons.mekarisign.MekariSign;
 import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
@@ -25,6 +26,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import javax.servlet.http.HttpSession;
+
 public class MekariESignFormLoadBinder extends FormBinder implements FormLoadElementBinder {
     public final static String LABEL = "Mekari eSign Form Load Binder";
 
@@ -33,8 +36,9 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
         MekariSign mekariSign;
         FormRowSet formRowSet = new FormRowSet();
         try {
-            String token = new MekariESignUserviewMenu().getToken();
-            String serverType = new MekariESignUserviewMenu().getServerType();
+            HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
+            String token = (String) session.getAttribute("MekariToken");
+            String serverType = (String) session.getAttribute("MekariServerType");
             AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(serverType));
     
             mekariSign = MekariSign.getBuilder()
