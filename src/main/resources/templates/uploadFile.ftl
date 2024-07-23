@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang = "en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -77,8 +77,8 @@ font-size: 14px;
 </head>
 <body>
 
-    <h2>Upload and Add Digital Signature on PDF</h2>
-    <input type="file" id="fileInput" accept="application/pdf" />
+<h2>Upload and Add Digital Signature on PDF</h2>
+<input type = "file" id="fileInput" accept="application/pdf" />
     <div id="pdfContainer"></div>
 
     <div class="navigation">
@@ -189,8 +189,8 @@ console.error('Error rendering page', err);
 
                             div.addEventListener('click', function (e) {
 const rect = div.getBoundingClientRect();
-const x = e.clientX - rect.left;
-const y = e.clientY - rect.top;
+const x = e.clientX -rect.left;
+const y = e.clientY -rect.top;
 
 if (signatureContainer) {
 signatureContainer.remove();
@@ -217,16 +217,16 @@ div.textContent = `${signatureType}`;
 
                 div.addEventListener('mousedown', function (e) {
 e.preventDefault();
-offsetX = e.clientX - div.getBoundingClientRect().left;
-offsetY = e.clientY - div.getBoundingClientRect().top;
+offsetX = e.clientX -div.getBoundingClientRect().left;
+offsetY = e.clientY -div.getBoundingClientRect().top;
 
 function onMouseMove(e) {
 e.preventDefault();
 const activePage = document.querySelector('.pdfPage.active');
 const activePageRect = activePage.getBoundingClientRect();
 
-const newLeft = e.clientX - offsetX - activePageRect.left;
-const newTop = e.clientY - offsetY - activePageRect.top;
+const newLeft = e.clientX -offsetX -activePageRect.left;
+const newTop = e.clientY - offsetY -activePageRect.top;
 
 if (newLeft >= 0 && newLeft + div.offsetWidth <= activePageRect.width) {
 div.style.left = newLeft + 'px';
@@ -252,13 +252,13 @@ document.removeEventListener('mouseup', onMouseUp);
             function navigatePage(direction) {
 const pages = document.querySelectorAll('.pdfPage');
 if (direction === 'next' && currentPage < numPages) {
-pages[currentPage - 1].classList.remove('active');
+pages[currentPage -1].classList.remove('active');
 currentPage++;
-pages[currentPage - 1].classList.add('active');
+pages[currentPage -1].classList.add('active');
 } else if (direction === 'prev' && currentPage > 1) {
-pages[currentPage - 1].classList.remove('active');
+pages[currentPage -1].classList.remove('active');
 currentPage--;
-pages[currentPage - 1].classList.add('active');
+pages[currentPage -1].classList.add('active');
 }
                 updatePageInput();
             }
@@ -268,12 +268,12 @@ let inputPageNum = document.getElementById('pageNumInput').value;
 inputPageNum = parseInt(inputPageNum);
 if (inputPageNum && inputPageNum > 0 && inputPageNum <= numPages) {
 const pages = document.querySelectorAll('.pdfPage');
-pages[currentPage - 1].classList.remove('active');
+pages[currentPage -1].classList.remove('active');
 currentPage = inputPageNum;
-pages[currentPage - 1].classList.add('active');
+pages[currentPage -1].classList.add('active');
 updatePageInput();
 } else {
-alert('Invalid page number. Please enter a valid page number.');
+alert('Invalid page number.Please enter a valid page number.');
 }
             }
 

@@ -1,4 +1,4 @@
-package com.kinnarastudio.kecakplugins.mekariesign.userview;
+package com.kinnarastudio.kecakplugins.mekariesign.form;
 
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 import org.joget.apps.app.dao.DatalistDefinitionDao;
@@ -10,6 +10,10 @@ import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.datalist.model.DataList;
 import org.joget.apps.datalist.model.DataListCollection;
 import org.joget.apps.datalist.service.DataListService;
+import org.joget.apps.form.model.Element;
+import org.joget.apps.form.model.FormBinder;
+import org.joget.apps.form.model.FormData;
+import org.joget.apps.form.model.FormRowSet;
 import org.joget.apps.userview.model.Userview;
 import org.joget.apps.userview.model.UserviewMenu;
 import org.joget.apps.userview.service.UserviewService;
@@ -28,38 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class SignatureType extends UserviewMenu implements PluginWebSupport {
+public class SignatureType extends FormBinder implements PluginWebSupport {
     public final static String LABEL = "Mekari Upload File";
-    @Override
-    public String getCategory() {
-        return "Mekari";
-    }
-
-    @Override
-    public String getIcon() {
-        return null;  // Provide icon if available
-    }
-
-    @Override
-    public String getRenderPage() {
-        ApplicationContext appContext = AppUtil.getApplicationContext();
-        PluginManager pluginManager = (PluginManager) appContext.getBean("pluginManager");
-        final Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("signatureType", getPropertyString("signatureType"));
-
-        HttpServletRequest request = WorkflowUtil.getHttpServletRequest();
-        return pluginManager.getPluginFreeMarkerTemplate(dataModel, getClass().getName(), "/templates/uploadFile.ftl", null);
-    }
-
-    @Override
-    public boolean isHomePageSupported() {
-        return true;
-    }
-
-    @Override
-    public String getDecoratedMenu() {
-        return null;  // Implement if menu decoration is required
-    }
 
     @Override
     public String getName() {
@@ -76,7 +50,7 @@ public class SignatureType extends UserviewMenu implements PluginWebSupport {
 
     @Override
     public String getDescription() {
-        return "Handles signature elements in the userview.";
+        return "Handles signature elements in the form.";
     }
 
     @Override
@@ -102,9 +76,6 @@ public class SignatureType extends UserviewMenu implements PluginWebSupport {
         httpServletResponse.getWriter().write("<option value='signature'" + ("signature".equals(signatureType) ? " selected" : "") + ">Signature</option>");
         httpServletResponse.getWriter().write("<option value='stamp'" + ("stamp".equals(signatureType) ? " selected" : "") + ">Stamp</option>");
         httpServletResponse.getWriter().write("</select>");
-
-        // Additional logic for handling the selected signature type can be added here
-        // For example, based on signatureType, you could query specific data or render different UI elements
     }
 
     private Userview getUserview(String userviewId) {
@@ -151,7 +122,7 @@ public class SignatureType extends UserviewMenu implements PluginWebSupport {
 
     @Override
     public String getLabel() {
-        return LABEL;
+        return null;
     }
 
     @Override
@@ -161,6 +132,17 @@ public class SignatureType extends UserviewMenu implements PluginWebSupport {
 
     @Override
     public String getPropertyOptions() {
-        return AppUtil.readPluginResource(getClass().getName(), "/properties/userview/signature.json");
+        return AppUtil.readPluginResource(getClass().getName(), "/properties/form/signature.json");
     }
+
+    public FormRowSet load(Element element, String primaryKey, FormData formData) {
+        // Implement the logic to load form data
+        return null;
+    }
+
+    public String store(Element element, FormRowSet rowSet, FormData formData) {
+        // Implement the logic to store form data
+        return null;
+    }
+
 }
