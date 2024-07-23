@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.servlet.http.HttpSession;
+
 import org.displaytag.properties.SortOrderEnum;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.datalist.model.DataList;
@@ -17,6 +19,7 @@ import org.joget.apps.datalist.model.DataListColumn;
 import org.joget.apps.datalist.model.DataListFilterQueryObject;
 import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.PluginManager;
+import org.joget.workflow.util.WorkflowUtil;
 
 import com.kinnarastudio.commons.mekarisign.model.AuthenticationToken;
 import com.kinnarastudio.commons.mekarisign.model.DocumentCategory;
@@ -55,8 +58,9 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
         MekariSign mekariSign;
         DataListCollection <Map<String,String>> dataListCollection = new DataListCollection<>();
         try {
-            String token = new MekariESignUserviewMenu().getToken();
-            String serverType = new MekariESignUserviewMenu().getServerType();
+            HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
+            String token = (String) session.getAttribute("MekariToken");
+            String serverType = (String) session.getAttribute("MekariServerType");
             AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(serverType));
 
             mekariSign = MekariSign.getBuilder()

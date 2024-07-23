@@ -89,13 +89,4 @@ public class MekariESignUserviewMenu extends UserviewMenu{
     public boolean isHomePageSupported() {
         return true;
     }
-
-    public String getToken() {
-        return (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariToken");
-    }
-
-    public String getServerType()
-    {
-        return (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariServerType");
-    }
 }
