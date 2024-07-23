@@ -1,0 +1,93 @@
+{
+  "id": "mekariDocsList",
+  "name": "Mekari Documents List",
+  "pageSize": "0",
+  "order": "",
+  "orderBy": "",
+  "showPageSizeSelector": "true",
+  "pageSizeSelectorOptions": "10,20,30,40,50,100",
+  "buttonPosition": "bottomLeft",
+  "checkboxPosition": "left",
+  "useSession": "",
+  "considerFilterWhenGetTotal": "",
+  "description": "",
+  "actions": [],
+  "rowActions": [],
+  "filters": [],
+  "hidePageSize": "",
+  "showDataWhenFilterSet": "",
+  "disableResponsive": "",
+  "searchPopup": "",
+  "responsiveView": [
+    {
+      "view": "Mobile",
+      "breakpoint": "",
+      "columns": ""
+    },
+    {
+      "view": "Tablet",
+      "breakpoint": "",
+      "columns": ""
+    }
+  ],
+  "permission": {
+    "className": "",
+    "properties": {}
+  },
+  "binder": {
+    "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder",
+    "properties": {
+      "clientId": "UlfiHMoyfAcD0yZ4",
+      "clientSecret": "8LFQ5UOuPpxUQygA1e2kqY60t9ihZWYX",
+      "secretCode": "",
+      "accessToken": "aabbcc",
+      "refreshToken": "",
+      "serverType": "SANDBOX",
+      "documentCategory": "PSRE",
+      "signingStatus": "IN_PROGRESS",
+      "stampingStatus": "NONE"
+    }
+  },
+  "columns": [
+    {
+      "id": "column_0",
+      "label": "ID",
+      "name": "id",
+      "filterable": true,
+      "hidden": "false",
+      "sortable": "false"
+    },
+    {
+      "id": "column_1",
+      "label": "Type",
+      "name": "type",
+      "filterable": true,
+      "hidden": "false",
+      "sortable": "false"
+    },
+    {
+      "id": "column_2",
+      "label": "Filename",
+      "name": "filename",
+      "filterable": true,
+      "hidden": "false",
+      "sortable": "false"
+    },
+    {
+      "id": "column_3",
+      "label": "Category",
+      "name": "category",
+      "filterable": true,
+      "hidden": "false",
+      "sortable": "false"
+    },
+    {
+      "id": "column_4",
+      "label": "Document URL",
+      "name": "docURL",
+      "filterable": true,
+      "hidden": "false",
+      "sortable": "false"
+    }
+  ]
+}
