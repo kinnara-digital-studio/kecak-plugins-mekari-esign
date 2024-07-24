@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder;
+import com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignDocumentFormLoadBinder;
 import com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFileUpload;
-import com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFormLoadBinder;
 import com.kinnarastudio.kecakplugins.mekariesign.form.SignatureType;
 import com.kinnarastudio.kecakplugins.mekariesign.form.SignerForm;
 import com.kinnarastudio.kecakplugins.mekariesign.userview.MekariESignUserviewMenu;
@@ -25,7 +25,7 @@ public class Activator implements BundleActivator {
         registrationList.add(context.registerService(MekariESignWebhook.class.getName(), new MekariESignWebhook(), null));
         registrationList.add(context.registerService(MekariESignFileUpload.class.getName(), new MekariESignFileUpload(), null));
         registrationList.add(context.registerService(MekariESignInboxDataListBinder.class.getName(), new MekariESignInboxDataListBinder(), null));
-        registrationList.add(context.registerService(MekariESignFormLoadBinder.class.getName(), new MekariESignFormLoadBinder(), null));
+        registrationList.add(context.registerService(MekariESignDocumentFormLoadBinder.class.getName(), new MekariESignDocumentFormLoadBinder(), null));
         registrationList.add(context.registerService(MekariESignUserviewMenu.class.getName(), new MekariESignUserviewMenu(), null));
         registrationList.add(context.registerService(SignerForm.class.getName(), new SignerForm(), null));
         registrationList.add(context.registerService(SignatureType.class.getName(), new SignatureType(), null));

@@ -98,12 +98,6 @@ public class MekariESignUserviewMenu extends UserviewMenu {
     public String getRenderPage() {
         ApplicationContext appContext = AppUtil.getApplicationContext();
         PluginManager pluginManager = (PluginManager) appContext.getBean("pluginManager");
-
-        // HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
-        // String clientId = (String) session.getAttribute("MekariClientId");
-        // String serverType = (String) session.getAttribute("MekariServerType");
-
-        // String serverUrl = ServerType.valueOf(getSessionAttribute("MekariServerType")).getSsoBaseUrl().toString();
         final Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("clientId", getSessionAttribute("MekariClientId"));
         dataModel.put("serverUrl", ServerType.valueOf(getPropertyString("serverType")).getSsoBaseUrl());
@@ -114,12 +108,9 @@ public class MekariESignUserviewMenu extends UserviewMenu {
     @Override
     public String getJspPage() {
         String mekariToken = (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariToken");
-        if (mekariToken == null || mekariToken.isEmpty() || mekariToken.equals("")) 
-        {
+        if (mekariToken == null || mekariToken.isEmpty() || mekariToken.equals("")) {
             return null;
-        }
-        else
-        {
+        } else {
             return getJspPage("userview/plugin/form.jsp", "userview/plugin/datalist.jsp", "userview/plugin/unauthorized.jsp");
         }
     }
@@ -128,13 +119,12 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         String mode = Optional.ofNullable(getRequestParameterString("_mode")).orElse("");
         switch (mode) {
             case "newRequest":
-                return jspUnauthorizedFile;
+                return getJspForm(jspFormFile, jspUnauthorizedFile);
             default:
                 getJspDataList();
                 return jspListFile;
         }
     }
-
 
     protected String getJspForm(String jspFormFile, String jspUnauthorizedFile) {
         return jspUnauthorizedFile;
