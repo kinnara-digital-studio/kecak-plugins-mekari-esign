@@ -1,5 +1,5 @@
 {
-  "title": "SignersElement",
+  "title": "File Upload",
   "properties": [
     {
       "name": "id",
@@ -18,18 +18,10 @@
       "value": "My Plugin"
     },
     {
-      "name": "email",
-      "label": "Email",
-      "type": "textfield",
+      "name": "filename",
+      "label": "Filename",
       "required": "True",
-      "options_callback": "FormBuilder.getSigners"
-    },
-    {
-      "name": "validator",
-      "label": "@@form.textfield.validator@@",
-      "type": "elementselect",
-      "options_ajax": "[CONTEXT_PATH]/web/property/json/getElements?classname=org.joget.apps.form.model.FormValidator",
-      "url": "[CONTEXT_PATH]/web/property/json[APP_PATH]/getPropertyOptions"
+      "type": "textfield"
     }
   ]
 }

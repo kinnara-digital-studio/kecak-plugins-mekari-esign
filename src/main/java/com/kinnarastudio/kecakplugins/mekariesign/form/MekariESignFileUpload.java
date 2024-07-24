@@ -1,5 +1,6 @@
 package com.kinnarastudio.kecakplugins.mekariesign.form;
 
+import com.kinnarastudio.commons.mekarisign.MekariSign;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.lib.FileUpload;
@@ -46,8 +47,9 @@ public class MekariESignFileUpload extends FileUpload {
         return getClass().getName();
     }
 
-    protected String getAuthorizedCode() {
+    protected String getAuthorizedCode(String primaryKey) {
         // TODO
+        MekariSign mekariSign;
         return "";
     }
 

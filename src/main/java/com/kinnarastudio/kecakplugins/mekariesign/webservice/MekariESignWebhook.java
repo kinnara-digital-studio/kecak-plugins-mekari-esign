@@ -20,6 +20,7 @@ import com.kinnarastudio.commons.mekarisign.model.ServerType;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.Collection;
 import java.util.Map;
@@ -47,8 +48,13 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
                     .setSecretCode(code)
                     .authenticate();
 
+            servletRequest.getSession().setAttribute("MekariClientId", getPropertyString("clientId"));
             servletRequest.getSession().setAttribute("MekariToken", authToken.getAccessToken());
             servletRequest.getSession().setAttribute("MekariServerType", getPropertyString("serverType"));
+
+            HttpSession session = servletRequest.getSession();
+            session.setMaxInactiveInterval(3600);
+
             LogUtil.info(getClassName(), "Server Type: " + getPropertyString("serverType"));
             servletResponse.setStatus(301);
             servletResponse.setHeader("Location", "/web/userview/mekarisign/mekari/_/mekari");

@@ -5,8 +5,8 @@ import java.io.StringWriter;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.datalist.model.*;
 import org.joget.apps.datalist.service.DataListService;
@@ -77,26 +77,30 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         ApplicationContext appContext = AppUtil.getApplicationContext();
         PluginManager pluginManager = (PluginManager) appContext.getBean("pluginManager");
         final Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("clientId", getPropertyString("clientId"));
+        dataModel.put("clientId", getSessionAttribute("MekariClientId"));
         dataModel.put("serverUrl", ServerType.valueOf(getPropertyString("serverType")).getSsoBaseUrl());
 
-        String token = getSessionAttribute("MekariToken");
-        String serverType = getSessionAttribute("MekariServerType");
-        dataModel.put("token", token);
-        dataModel.put("serverType", serverType);
-
-        return pluginManager.getPluginFreeMarkerTemplate(dataModel, getClass().getName(), "/templates/mekari.ftl", null);
+        return pluginManager.getPluginFreeMarkerTemplate(dataModel, getClass().getName(), "/templates/mekariUserview.ftl", null);
     }
 
     @Override
     public String getJspPage() {
+        String mekariToken = (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariToken");
+        if (mekariToken == null || mekariToken.isEmpty() || mekariToken.equals("")) {
+            return null;
+        } else {
+            return getJspPage("userview/plugin/form.jsp", "userview/plugin/datalist.jsp", "userview/plugin/unauthorized.jsp");
+        }
+    }
+
+    protected String getJspPage(String jspFormFile, String jspListFile, String jspUnauthorizedFile) {
         String mode = Optional.ofNullable(getRequestParameterString("_mode")).orElse("");
         switch (mode) {
             case "newRequest":
-                return getJspForm("userview/plugin/form.jsp", "userview/plugin/unauthorized.jsp");
+                return getJspForm(jspFormFile, jspUnauthorizedFile);
             default:
                 getJspDataList();
-                return "userview/plugin/datalist.jsp";
+                return jspListFile;
         }
     }
 
@@ -144,12 +148,7 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         ApplicationContext ac = AppUtil.getApplicationContext();
         DataListService dataListService = (DataListService) ac.getBean("dataListService");
         if (cachedDataList == null) {
-            Object[] args = new Object[] {
-                    MekariESignInboxDataListBinder.class.getName()
-            };
-
-            String dataListJson = AppUtil.readPluginResource(getClass().getName(), "/jsonDefinitions/mekariDocsList.json", args, true);
-
+            String dataListJson = AppUtil.readPluginResource(getClassName(), "/jsonDefinitions/mekariDocsList.json", null, true);
             cachedDataList = dataListService.fromJson(dataListJson);
             if (getPropertyString(Userview.USERVIEW_KEY_NAME) != null && getPropertyString(Userview.USERVIEW_KEY_NAME).trim().length() > 0) {
                 cachedDataList.addBinderProperty(Userview.USERVIEW_KEY_NAME, getPropertyString(Userview.USERVIEW_KEY_NAME));
