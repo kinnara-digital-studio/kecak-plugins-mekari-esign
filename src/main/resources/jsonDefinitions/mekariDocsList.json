@@ -35,7 +35,7 @@
     "properties": {}
   },
   "binder": {
-    "className": "%s",
+    "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder",
     "properties": {
       "clientId": "UlfiHMoyfAcD0yZ4",
       "clientSecret": "8LFQ5UOuPpxUQygA1e2kqY60t9ihZWYX",

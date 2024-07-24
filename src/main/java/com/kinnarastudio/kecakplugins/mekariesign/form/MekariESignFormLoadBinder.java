@@ -5,7 +5,6 @@ import org.joget.apps.app.model.AppDefinition;
 import org.joget.apps.app.model.PluginDefaultProperties;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.model.*;
-import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.workflow.util.WorkflowUtil;
 
@@ -17,6 +16,7 @@ import com.kinnarastudio.commons.mekarisign.model.ResponseData;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 import com.kinnarastudio.commons.mekarisign.model.TokenType;
 import org.joget.plugin.property.service.PropertyUtil;
+import org.joget.workflow.util.WorkflowUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
@@ -28,38 +28,38 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpSession;
 
-public class MekariESignDocumentFormLoadBinder extends FormBinder implements FormLoadElementBinder {
-    public final static String LABEL = "Mekari eSign Document Form Load Binder";
+public class MekariESignFormLoadBinder extends FormBinder implements FormLoadElementBinder {
+    public final static String LABEL = "Mekari eSign Form Load Binder";
 
     @Override
     public FormRowSet load(Element element, String primaryKey, FormData formData) {
-
+        MekariSign mekariSign;
+        FormRowSet formRowSet = new FormRowSet();
         try {
-            String token = getSessionAttribute("MekariToken");
-            String serverType = getSessionAttribute("MekariServerType");
+            HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
+            String token = (String) session.getAttribute("MekariToken");
+            String serverType = (String) session.getAttribute("MekariServerType");
             AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(serverType));
-
-            MekariSign mekariSign = MekariSign.getBuilder()
-                    .setAuthenticationToken(authToken)
-                    .authenticateAndBuild();
-
+    
+            mekariSign = MekariSign.getBuilder()
+                        .setAuthenticationToken(authToken)
+                        .authenticateAndBuild();
+            
             ResponseData document = mekariSign.getDocDetail(primaryKey);
-
+            
             FormRow formRow = new FormRow();
             formRow.setProperty("id", document.getId());
             formRow.setProperty("type", document.getType());
             formRow.setProperty("filename", document.getAttributes().getFilename());
             formRow.setProperty("category", document.getAttributes().getCategory().toString());
             formRow.setProperty("docUrl", document.getAttributes().getDocUrl());
-
-            FormRowSet formRowSet = new FormRowSet();
             formRowSet.add(formRow);
-            return formRowSet;
-
+            
         } catch (BuildingException | RequestException | ParseException e) {
-            LogUtil.error(getClass().getName(), e, e.getMessage());
-            return null;
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+        return formRowSet;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class MekariESignDocumentFormLoadBinder extends FormBinder implements For
 
     @Override
     public String getDescription() {
-        return getClass().getPackage().getImplementationTitle();
+        return "kecak-plugins-mekari-esign";
     }
 
     @Override
