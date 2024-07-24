@@ -22,6 +22,18 @@
                 "value": "My Menu"
             },
             {
+                "name": "clientId",
+                "label": "Client ID",
+                "type": "textfield",
+                "required": "true"
+            },
+            {
+                "name": "clientSecret",
+                "label": "Client Secret",
+                "type": "textfield",
+                "required": "true"
+            },
+            {
                 "name": "serverType",
                 "label": "Server Type",
                 "type": "selectbox",
