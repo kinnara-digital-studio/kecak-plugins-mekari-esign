@@ -4,7 +4,8 @@ import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
 import org.joget.apps.app.model.AppDefinition;
 import org.joget.apps.app.model.PluginDefaultProperties;
 import org.joget.apps.app.service.AppUtil;
-import org.joget.apps.form.model.*;
+import org.joget.apps.form.model.FormBinder;
+import org.joget.apps.form.model.FormBuilderPaletteElement;
 import org.joget.plugin.base.PluginManager;
 import org.joget.plugin.property.service.PropertyUtil;
 import org.joget.workflow.util.WorkflowUtil;
@@ -16,8 +17,32 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
-public class SignerForm extends FormBinder implements FormBuilderPaletteElement {
-    public final static String LABEL = "Mekari Signers Form Element";
+public class MekariFilePreview extends FormBinder implements FormBuilderPaletteElement {
+    public final static String LABEL = "Mekari File Preview Form";
+    @Override
+    public String getFormBuilderCategory() {
+        return "file preview form";
+    }
+
+    @Override
+    public int getFormBuilderPosition() {
+        return 100;
+    }
+
+    @Override
+    public String getFormBuilderIcon() {
+        return null;
+    }
+
+    @Override
+    public String getDefaultPropertyValues() {
+        return "file preview form";
+    }
+
+    @Override
+    public String getFormBuilderTemplate() {
+        return "<h1>File Preview Form</h1>";
+    }
 
     @Override
     public String getName() {
@@ -49,10 +74,9 @@ public class SignerForm extends FormBinder implements FormBuilderPaletteElement 
 
     @Override
     public String getPropertyOptions() {
-        return AppUtil.readPluginResource(getName(), "/properties/form/signers.json");
+        return AppUtil.readPluginResource(getName(),"/properties/form/FileUpload.json");
     }
 
-    @Override
     public Object getProperty(String property) {
         PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
         AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
@@ -67,7 +91,6 @@ public class SignerForm extends FormBinder implements FormBuilderPaletteElement 
                 .orElse(super.getProperty(property));
     }
 
-    @Override
     public String getPropertyString(String property) {
         PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext();
         AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
@@ -83,7 +106,6 @@ public class SignerForm extends FormBinder implements FormBuilderPaletteElement 
                 .orElse(super.getPropertyString(property));
     }
 
-    @Override
     public Map<String, Object> getProperties() {
         PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
         AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
@@ -103,30 +125,5 @@ public class SignerForm extends FormBinder implements FormBuilderPaletteElement 
                 .map(s -> s.getAttribute(name))
                 .map(String::valueOf)
                 .orElse("");
-    }
-
-    @Override
-    public String getFormBuilderCategory() {
-        return "signer form";
-    }
-
-    @Override
-    public int getFormBuilderPosition() {
-        return 100;
-    }
-
-    @Override
-    public String getFormBuilderIcon() {
-        return null;
-    }
-
-    @Override
-    public String getDefaultPropertyValues() {
-        return "signer form";
-    }
-
-    @Override
-    public String getFormBuilderTemplate() {
-        return "<h1>Signer Form</h1>";
     }
 }

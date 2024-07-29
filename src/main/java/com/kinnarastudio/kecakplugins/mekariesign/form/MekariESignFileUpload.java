@@ -7,7 +7,9 @@ import org.joget.apps.form.lib.FileUpload;
 import org.joget.apps.form.model.FormData;
 import org.joget.apps.form.model.FormRowSet;
 import org.joget.plugin.base.PluginManager;
+import org.joget.commons.util.FileManager;
 
+import java.io.File;
 import java.util.ResourceBundle;
 
 public class MekariESignFileUpload extends FileUpload {
@@ -33,8 +35,27 @@ public class MekariESignFileUpload extends FileUpload {
 
     @Override
     public FormRowSet formatData(FormData formData) {
+        // Get the uploaded file
+        FormRowSet rowSet = super.formatData(formData);
+        if (rowSet != null && !rowSet.isEmpty()) {
+            String filePath = rowSet.iterator().next().getProperty("filePath");
+            File file = FileManager.getFileByPath(filePath);
 
-        return super.formatData(formData);
+            // Check if the file is a PDF
+            if (!isPDF(file)) {
+                formData.addFormError("file", "Only PDF files are allowed.");
+                return null;
+            }
+        }
+        return rowSet;
+    }
+
+    private boolean isPDF(File file) {
+        if (file != null) {
+            String fileName = file.getName().toLowerCase();
+            return fileName.endsWith(".pdf");
+        }
+        return false;
     }
 
     @Override
@@ -58,7 +79,7 @@ public class MekariESignFileUpload extends FileUpload {
         return AppUtil.readPluginResource(getClass().getName(), "/properties/MekariESignTool.json", null, true, "/messages/HierarchicalCrudMenu");
     }
 
-    protected String getClientId () {
+    protected String getClientId() {
         return getPropertyString("clientId");
     }
 
@@ -67,7 +88,7 @@ public class MekariESignFileUpload extends FileUpload {
     }
 
     protected ServerType getServerType() {
-        switch(getPropertyString("serverType")) {
+        switch (getPropertyString("serverType")) {
             case "sandbox":
                 return ServerType.SANDBOX;
             case "staging":

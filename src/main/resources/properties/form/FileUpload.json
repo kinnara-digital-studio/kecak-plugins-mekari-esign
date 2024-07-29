@@ -22,6 +22,14 @@
       "label": "Filename",
       "required": "True",
       "type": "textfield"
+    },
+    {
+      "name": "file",
+      "label": "Upload PDF",
+      "type": "file",
+      "required": "True",
+      "accept": ".pdf",
+      "validation_message": "Please upload a PDF file."
     }
   ]
 }

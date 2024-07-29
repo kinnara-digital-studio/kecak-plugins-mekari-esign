@@ -79,61 +79,24 @@ font-size: 14px;
 
 <h2>Upload and Add Digital Signature on PDF</h2>
 <input type = "file" id="fileInput" accept="application/pdf" />
-    <div id="pdfContainer"></div>
+<div id="pdfContainer"></div>
 
-    <div class="navigation">
-        <button onclick="navigatePage('prev')">Previous</button>
-        <input type="text" id="pageNumInput" placeholder="Page" />
-        <button onclick="goToPage()">Go</button>
-        <button onclick="navigatePage('next')">Next</button>
-    </div>
+<div class="navigation">
+    <button onclick="navigatePage('prev')">Previous</button>
+    <input type="text" id="pageNumInput" placeholder="Page" />
+    <button onclick="goToPage()">Go</button>
+    <button onclick="navigatePage('next')">Next</button>
+</div>
 
-    <!-- Dropdown for Signer -->
-    <div class="form-group">
-        <label for="signerDropdown">Signer</label>
-        <select id="signerDropdown" class="form-control" required></select>
-    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+let currentPage = 1;
+let numPages = 0;
+let signatureContainer = null;
+let offsetX, offsetY;
 
-    <!-- Dropdown for Signature Type -->
-    <div class="form-group">
-        <label for="signatureTypeDropdown">Signature Type</label>
-        <select id="signatureTypeDropdown" class="form-control" required>
-            <option value="initial">Initial</option>
-            <option value="signature">Signature</option>
-            <option value="stamp">Stamp</option>
-        </select>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-function getSigners() {
-return [
-{ "value": "signer1", "label": "Signer 1" },
-                    { "value": "signer2", "label": "Signer 2" }
-                ];
-            }
-
-            function populateSignerDropdown() {
-const signers = getSigners();
-const signerDropdown = document.getElementById("signerDropdown");
-
-signers.forEach(signer => {
-const option = document.createElement("option");
-option.value = signer.value;
-option.textContent = signer.label;
-signerDropdown.appendChild(option);
-});
-            }
-
-            populateSignerDropdown();
-
-            let currentPage = 1;
-            let numPages = 0;
-            let signatureContainer = null;
-            let offsetX, offsetY;
-
-            document.getElementById('fileInput').addEventListener('change', function (event) {
+document.getElementById('fileInput').addEventListener('change', function (event) {
 const file = event.target.files[0];
 if (file && file.type === 'application/pdf') {
 const fileReader = new FileReader();
@@ -141,13 +104,13 @@ fileReader.onload = function () {
 const arrayBuffer = this.result;
 renderPDF(arrayBuffer);
 };
-                    fileReader.readAsArrayBuffer(file);
-                } else {
+                fileReader.readAsArrayBuffer(file);
+            } else {
 alert('Please upload a valid PDF file.');
 }
-            });
+        });
 
-            function renderPDF(data) {
+        function renderPDF(data) {
 pdfjsLib.getDocument({ data: data }).promise.then(function (pdf) {
 numPages = pdf.numPages;
 const pdfContainer = document.getElementById('pdfContainer');
@@ -158,36 +121,36 @@ pdf.getPage(pageNum).then(function (page) {
 const scale = 1.5;
 const viewport = page.getViewport({ scale: scale });
 
-                            const div = document.createElement('div');
-                            div.classList.add('pdfPage');
-                            if (pageNum === currentPage) {
+                        const div = document.createElement('div');
+                        div.classList.add('pdfPage');
+                        if (pageNum === currentPage) {
 div.classList.add('active');
 }
 
-                            const canvas = document.createElement('canvas');
-                            const context = canvas.getContext('2d');
-                            canvas.height = viewport.height;
-                            canvas.width = viewport.width;
-                            div.appendChild(canvas);
-                            pdfContainer.appendChild(div);
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        div.appendChild(canvas);
+                        pdfContainer.appendChild(div);
 
-                            const pageNumberDiv = document.createElement('div');
-                            pageNumberDiv.classList.add('pageNumber');
-                            pageNumberDiv.textContent = pageNum;
-                            div.appendChild(pageNumberDiv);
+                        const pageNumberDiv = document.createElement('div');
+                        pageNumberDiv.classList.add('pageNumber');
+                        pageNumberDiv.textContent = pageNum;
+                        div.appendChild(pageNumberDiv);
 
-                            const renderContext = {
+                        const renderContext = {
 canvasContext: context,
 viewport: viewport
 };
 
-                            page.render(renderContext).promise.then(function () {
+                        page.render(renderContext).promise.then(function () {
 console.log('Page rendered successfully');
 }).catch(function (err) {
 console.error('Error rendering page', err);
 });
 
-                            div.addEventListener('click', function (e) {
+                        div.addEventListener('click', function (e) {
 const rect = div.getBoundingClientRect();
 const x = e.clientX -rect.left;
 const y = e.clientY -rect.top;
@@ -195,29 +158,26 @@ const y = e.clientY -rect.top;
 if (signatureContainer) {
 signatureContainer.remove();
 }
-                                signatureContainer = createSignatureBox(x, y);
-                                div.appendChild(signatureContainer);
-                            });
+                            signatureContainer = createSignatureBox(x, y);
+                            div.appendChild(signatureContainer);
                         });
-                    }
-                }).catch(function (err) {
+                    });
+                }
+            }).catch(function (err) {
 console.error('Error loading PDF document', err);
 });
-            }
+        }
 
-            function createSignatureBox(x, y) {
-const signatureType = document.getElementById('signatureTypeDropdown').value;
-const signerName = document.getElementById('signerDropdown').selectedOptions[0].text;
-
+        function createSignatureBox(x, y) {
 const div = document.createElement('div');
 div.classList.add('signature');
 div.style.left = x + 'px';
 div.style.top = y + 'px';
-div.textContent = `${signatureType}`;
+div.textContent = "Signature";
 
-                div.addEventListener('mousedown', function (e) {
+div.addEventListener('mousedown', function (e) {
 e.preventDefault();
-offsetX = e.clientX -div.getBoundingClientRect().left;
+offsetX = e.clientX - div.getBoundingClientRect().left;
 offsetY = e.clientY -div.getBoundingClientRect().top;
 
 function onMouseMove(e) {
@@ -226,30 +186,30 @@ const activePage = document.querySelector('.pdfPage.active');
 const activePageRect = activePage.getBoundingClientRect();
 
 const newLeft = e.clientX -offsetX -activePageRect.left;
-const newTop = e.clientY - offsetY -activePageRect.top;
+const newTop = e.clientY -offsetY - activePageRect.top;
 
 if (newLeft >= 0 && newLeft + div.offsetWidth <= activePageRect.width) {
 div.style.left = newLeft + 'px';
 }
 
-                        if (newTop >= 0 && newTop + div.offsetHeight <= activePageRect.height) {
+                    if (newTop >= 0 && newTop + div.offsetHeight <= activePageRect.height) {
 div.style.top = newTop + 'px';
 }
-                    }
+                }
 
-                    function onMouseUp() {
+                function onMouseUp() {
 document.removeEventListener('mousemove', onMouseMove);
 document.removeEventListener('mouseup', onMouseUp);
 }
 
-                    document.addEventListener('mousemove', onMouseMove);
-                    document.addEventListener('mouseup', onMouseUp);
-                });
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
 
-                return div;
-            }
+            return div;
+        }
 
-            function navigatePage(direction) {
+        function navigatePage(direction) {
 const pages = document.querySelectorAll('.pdfPage');
 if (direction === 'next' && currentPage < numPages) {
 pages[currentPage -1].classList.remove('active');
@@ -260,10 +220,10 @@ pages[currentPage -1].classList.remove('active');
 currentPage--;
 pages[currentPage -1].classList.add('active');
 }
-                updatePageInput();
-            }
+            updatePageInput();
+        }
 
-            function goToPage() {
+        function goToPage() {
 let inputPageNum = document.getElementById('pageNumInput').value;
 inputPageNum = parseInt(inputPageNum);
 if (inputPageNum && inputPageNum > 0 && inputPageNum <= numPages) {
@@ -275,20 +235,20 @@ updatePageInput();
 } else {
 alert('Invalid page number.Please enter a valid page number.');
 }
-            }
+        }
 
-            function updatePageInput() {
+        function updatePageInput() {
 document.getElementById('pageNumInput').value = currentPage;
 }
 
-            document.addEventListener('keydown', function (event) {
+        document.addEventListener('keydown', function (event) {
 if (event.key === 'ArrowRight') {
 navigatePage('next');
 } else if (event.key === 'ArrowLeft') {
 navigatePage('prev');
 }
-            });
         });
-    </script>
+    });
+</script>
 </body>
 </html>
