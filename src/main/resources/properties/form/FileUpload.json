@@ -1,35 +1,15 @@
 {
-  "title": "File Upload",
-  "properties": [
-    {
-      "name": "id",
-      "label": "ID",
-      "type": "autocomplete",
-      "required": "True",
-      "regex_validation": "^[a-zA-Z0-9_]+$",
-      "validation_message": "Only alpha-numeric and underscore characters allowed",
-      "options_callback": "FormBuilder.getAllFieldOptions"
-    },
-    {
-      "name": "label",
-      "label": "Label",
-      "type": "textfield",
-      "required": "True",
-      "value": "My Plugin"
-    },
-    {
-      "name": "filename",
-      "label": "Filename",
-      "required": "True",
-      "type": "textfield"
-    },
-    {
-      "name": "file",
-      "label": "Upload PDF",
-      "type": "file",
-      "required": "True",
-      "accept": ".pdf",
-      "validation_message": "Please upload a PDF file."
+  "element": {
+    "name": "FileUpload",
+    "label": "PDF File Upload",
+    "description": "A custom element for uploading PDF files",
+    "properties": {
+      "acceptedFileTypes": "application/pdf",
+      "uploadPath": "/path/to/upload/dir/"
     }
-  ]
+  },
+  "response": {
+    "status": "success",
+    "message": "File uploaded successfully"
+  }
 }

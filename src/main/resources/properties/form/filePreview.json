@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "label",
+      "label": "Label",
+      "type": "textfield",
+      "value": "File Preview"
+    }
+  ]
+}
