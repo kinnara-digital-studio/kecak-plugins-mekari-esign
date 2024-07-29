@@ -11,31 +11,13 @@
   "useSession": "false",
   "considerFilterWhenGetTotal": "",
   "description": "",
-  "actions": [
-    {
-      "name": "Mekari eSign Datalist Action",
-      "icon": "",
-      "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction",
-      "label": "Mekari eSign Datalist Action",
-      "type": "text",
-      "id": "action_0",
-      "properties": {
-        "customId": "mekariDataListAction",
-        "label": "Mekari eSign Datalist Action",
-        "datalist_type": "action"
-      }
-    }
-  ],
+  "actions": [],
   "rowActions": [],
   "filters": [],
   "binder": {
     "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder",
     "properties": {
-      "clientId": "UlfiHMoyfAcD0yZ4",
-      "clientSecret": "8LFQ5UOuPpxUQygA1e2kqY60t9ihZWYX",
-      "secretCode": "",
-      "accessToken": "aabbcc",
-      "refreshToken": "",
+      "accessToken": "ScCcQduDCjcwIVG7tZ9kEnxWRudcGWmm",
       "serverType": "SANDBOX",
       "documentCategory": "PSRE",
       "signingStatus": "IN_PROGRESS",
