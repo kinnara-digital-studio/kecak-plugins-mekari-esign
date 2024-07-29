@@ -1,3 +1,4 @@
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js'></script>
 <#if includeMetaData!>
 <div class="form-cell" ${elementMetaData!}>
 	    <label class="label" style="position:absolute;top:10px;left:10px;">
