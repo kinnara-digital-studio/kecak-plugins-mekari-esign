@@ -77,7 +77,7 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
 
     @Override
     public String getDescription() {
-        return "kecak-plugins-mekari-esign";
+        return getClass().getPackage().getImplementationTitle();
     }
 
     @Override

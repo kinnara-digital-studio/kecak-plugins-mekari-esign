@@ -133,7 +133,7 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
 
     @Override
     public String getDescription() {
-        return "kecak-plugins-mekari-esign";
+        return getClass().getPackage().getImplementationTitle();
     }
 
     @Override
