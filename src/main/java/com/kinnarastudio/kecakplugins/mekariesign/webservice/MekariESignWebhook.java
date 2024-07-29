@@ -61,11 +61,7 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
         } catch (JSONException e) {
             LogUtil.error(getClass().getName(), e, e.toString());
             servletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, e.toString());
-        } catch (RequestException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (BuildingException e) {
-            // TODO Auto-generated catch block
+        } catch (RequestException | BuildingException e) {
             e.printStackTrace();
         }
     }

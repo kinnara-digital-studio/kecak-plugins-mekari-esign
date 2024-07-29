@@ -11,59 +11,73 @@
   "useSession": "false",
   "considerFilterWhenGetTotal": "",
   "description": "",
-  "actions": [],
+  "actions": [
+      {
+          "name": "Mekari eSign Datalist Action",
+          "icon": "",
+          "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction",
+          "label": "Mekari eSign Datalist Action",
+          "type": "text",
+          "id": "action_0",
+          "properties": {
+              "customId": "addForm",
+              "label": "Add Form",
+              "datalist_type": "action"
+          }
+      }
+  ],
   "rowActions": [],
   "filters": [],
   "binder": {
-    "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder",
-    "properties": {
-      "accessToken": "ScCcQduDCjcwIVG7tZ9kEnxWRudcGWmm",
-      "serverType": "SANDBOX",
-      "documentCategory": "PSRE",
-      "signingStatus": "IN_PROGRESS",
-      "stampingStatus": "NONE"
-    }
+      "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder",
+      "properties": {
+          "accessToken": "ScCcQduDCjcwIVG7tZ9kEnxWRudcGWmm",
+          "serverType": "SANDBOX",
+          "documentCategory": "PSRE",
+          "signingStatus": "IN_PROGRESS",
+          "stampingStatus": "NONE"
+      }
   },
   "columns": [
-    {
-      "id": "column_0",
-      "label": "ID",
-      "name": "id",
-      "filterable": true,
-      "hidden": "false",
-      "sortable": "false"
-    },
-    {
-      "id": "column_1",
-      "label": "Type",
-      "name": "type",
-      "filterable": true,
-      "hidden": "false",
-      "sortable": "false"
-    },
-    {
-      "id": "column_2",
-      "label": "Filename",
-      "name": "filename",
-      "filterable": true,
-      "hidden": "false",
-      "sortable": "false"
-    },
-    {
-      "id": "column_3",
-      "label": "Category",
-      "name": "category",
-      "filterable": true,
-      "hidden": "false",
-      "sortable": "false"
-    },
-    {
-      "id": "column_4",
-      "label": "Document URL",
-      "name": "docURL",
-      "filterable": true,
-      "hidden": "false",
-      "sortable": "false"
-    }
+      {
+          "id": "column_0",
+          "label": "ID",
+          "name": "id",
+          "filterable": true,
+          "hidden": "false",
+          "sortable": "false"
+      },
+      {
+          "id": "column_1",
+          "label": "Type",
+          "name": "type",
+          "filterable": true,
+          "hidden": "false",
+          "sortable": "false"
+      },
+      {
+          "id": "column_2",
+          "label": "Filename",
+          "name": "filename",
+          "filterable": true,
+          "hidden": "false",
+          "sortable": "false"
+      },
+      {
+          "id": "column_3",
+          "label": "Category",
+          "name": "category",
+          "filterable": true,
+          "hidden": "false",
+          "sortable": "false"
+      },
+      {
+          "id": "column_4",
+          "label": "Document URL",
+          "name": "docURL",
+          "filterable": true,
+          "hidden": "false",
+          "sortable": "false"
+      }
   ]
 }

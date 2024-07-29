@@ -13,6 +13,7 @@ import org.joget.apps.datalist.model.DataListBinderDefault;
 import org.joget.apps.datalist.model.DataListCollection;
 import org.joget.apps.datalist.model.DataListColumn;
 import org.joget.apps.datalist.model.DataListFilterQueryObject;
+import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.workflow.util.WorkflowUtil;
 
@@ -26,6 +27,7 @@ import com.kinnarastudio.commons.mekarisign.model.StampingStatus;
 import com.kinnarastudio.commons.mekarisign.model.TokenType;
 import com.kinnarastudio.commons.mekarisign.*;
 import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
+import com.kinnarastudio.commons.mekarisign.exception.InvalidTokenException;
 import com.kinnarastudio.commons.mekarisign.exception.RequestException;
 
 public class MekariESignInboxDataListBinder extends DataListBinderDefault {
@@ -76,8 +78,11 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
                 maps.put("docURL", document.getAttributes().getDocUrl());
                 dataListCollection.add(maps);
             }
-        } catch (BuildingException | RequestException | ParseException e) {
-            e.printStackTrace();
+        } catch (BuildingException | ParseException e) {
+            LogUtil.error(getClassName(), e, e.getMessage());
+        } catch (RequestException e) {
+            if(e.getCause() instanceof InvalidTokenException)
+            WorkflowUtil.getHttpServletRequest().getSession().setAttribute("MekariToken", "");
         }
         return dataListCollection;
     }

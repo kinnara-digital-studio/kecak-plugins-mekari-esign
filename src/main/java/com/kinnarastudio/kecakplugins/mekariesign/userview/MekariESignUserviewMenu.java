@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
@@ -21,6 +22,7 @@ import org.joget.plugin.property.service.PropertyUtil;
 import org.joget.workflow.util.WorkflowUtil;
 import org.springframework.context.ApplicationContext;
 
+import com.kinnarastudio.commons.mekarisign.exception.RequestException;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 
 public class MekariESignUserviewMenu extends UserviewMenu {
