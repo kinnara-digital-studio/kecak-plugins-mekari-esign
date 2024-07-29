@@ -1,0 +1,21 @@
+[
+    {
+        "title": "Mekari eSign DataList Action",
+        "properties": [
+            {
+                "name": "customId",
+                "label": "Custom ID",
+                "type": "textfield",
+                "regex_validation": "^[a-zA-Z0-9_]+$",
+                "validation_message": "Invalid"
+            },
+            {
+                "name": "label",
+                "label": "Label",
+                "type": "textfield",
+                "required": "true",
+                "value": "Mekari DataList Action"
+            }
+        ]
+    }
+]

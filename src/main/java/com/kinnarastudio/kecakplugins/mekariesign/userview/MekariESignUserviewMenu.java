@@ -63,7 +63,7 @@ public class MekariESignUserviewMenu extends UserviewMenu {
 
     @Override
     public String getDescription() {
-        return "kecak-plugins-mekari-esign";
+        return getClass().getPackage().getImplementationTitle();
     }
 
     @Override
