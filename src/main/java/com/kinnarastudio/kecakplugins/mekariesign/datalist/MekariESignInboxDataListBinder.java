@@ -80,7 +80,7 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
             String token = (String) session.getAttribute("MekariToken");
             LogUtil.info(getClassName(), "Token: " + token);
             LogUtil.info(getClassName(), "Server Type: " + getPropertyString("serverType"));
-            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(getPropertyString("serverType")));
+            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, ServerType.valueOf(getPropertyString("serverType")));
             
             mekariSign = MekariSign.getBuilder()
                         .setAuthenticationToken(authToken)
@@ -115,7 +115,8 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
     public int getDataTotalRowCount(DataList dataList, Map properties, DataListFilterQueryObject[] filterQueryObjects) {
         try {
             MekariSign mekariSign;
-            AuthenticationToken authToken = new AuthenticationToken(getPropertyString("accessToken"), TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(getPropertyString("serverType")));
+            String token = (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariToken");
+            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, ServerType.valueOf(getPropertyString("serverType")));
 
             mekariSign = MekariSign.getBuilder()
                         .setAuthenticationToken(authToken)
