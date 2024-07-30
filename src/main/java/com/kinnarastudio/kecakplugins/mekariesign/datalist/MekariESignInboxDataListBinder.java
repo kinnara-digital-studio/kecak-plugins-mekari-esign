@@ -125,6 +125,7 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
 
             return documentList.getDocListPagination().getDocumentCount();
         } catch (BuildingException | RequestException | ParseException e) {
+            LogUtil.error(getClassName(), e, e.getMessage());
             return 0;
         }
     }

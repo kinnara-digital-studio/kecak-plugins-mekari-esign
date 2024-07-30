@@ -32,6 +32,7 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
     private static final String PREVIEW_DIR = "/path/to/upload/dir/";
     private FormStoreBinder secondaryBinder = null;
 
+
     @Override
     public String renderTemplate(FormData formData, Map dataModel) {
         String template = "filePreview.ftl";
@@ -59,6 +60,8 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
         final String stampFile;
         if (isSignature()) {
             stampFile = "/web/json/plugin/" + MekariSign.class.getName() + "/service";
+        } else if (isMeterai()){
+            stampFile = "/web/json/plugin/" + MekariSign.class.getName() + "/service";
         } else {
             stampFile = "";
         }
@@ -72,8 +75,12 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
         return "signature".equalsIgnoreCase(getPropertyString("stampType"));
     }
 
-    protected boolean isQrCode() {
-        return "qrCode".equalsIgnoreCase(getPropertyString("stampType"));
+    protected boolean isInitial() {
+        return "initial".equalsIgnoreCase(getPropertyString("stampType"));
+    }
+
+    protected boolean isMeterai() {
+        return "meterai".equalsIgnoreCase(getPropertyString("stampType"));
     }
 
     protected String getPdfFileName(FormData formData) {

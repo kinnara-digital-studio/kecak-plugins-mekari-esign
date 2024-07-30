@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction;
+import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder;
 import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
 import org.joget.apps.app.model.AppDefinition;
 import org.joget.apps.app.model.PluginDefaultProperties;
@@ -111,12 +113,9 @@ public class MekariESignUserviewMenu extends UserviewMenu {
     @Override
     public String getJspPage() {
         String mekariToken = (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("MekariToken");
-        if (mekariToken == null || mekariToken.isEmpty() || mekariToken.equals("")) 
-        {
+        if (mekariToken == null || mekariToken.isEmpty() || mekariToken.equals("")) {
             return null;
-        }
-        else
-        {
+        } else {
             return getJspPage("userview/plugin/form.jsp", "userview/plugin/datalist.jsp", "userview/plugin/unauthorized.jsp");
         }
     }
@@ -177,7 +176,12 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         ApplicationContext ac = AppUtil.getApplicationContext();
         DataListService dataListService = (DataListService) ac.getBean("dataListService");
         if (cachedDataList == null) {
-            String dataListJson = AppUtil.readPluginResource(getClassName(), "/jsonDefinitions/mekariDocsList.json", null, true);
+            final Object[] args = new Object[]{
+                    MekariESignDatalistAction.class.getName(),
+                    MekariESignInboxDataListBinder.class.getName()
+            };
+
+            String dataListJson = AppUtil.readPluginResource(getClassName(), "/jsonDefinitions/mekariDocsList.json", args, true);
             cachedDataList = dataListService.fromJson(dataListJson);
             if (getPropertyString(Userview.USERVIEW_KEY_NAME) != null && getPropertyString(Userview.USERVIEW_KEY_NAME).trim().length() > 0) {
                 cachedDataList.addBinderProperty(Userview.USERVIEW_KEY_NAME, getPropertyString(Userview.USERVIEW_KEY_NAME));

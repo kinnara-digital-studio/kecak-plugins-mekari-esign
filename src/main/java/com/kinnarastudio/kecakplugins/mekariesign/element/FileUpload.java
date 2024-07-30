@@ -1,8 +1,8 @@
 package com.kinnarastudio.kecakplugins.mekariesign.element;
 
+import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.model.*;
-import org.joget.apps.form.service.FormUtil;
-import org.joget.commons.util.ResourceBundleUtil;
+import org.joget.commons.util.LogUtil;
 import org.joget.commons.util.UuidGenerator;
 import org.joget.plugin.base.PluginWebSupport;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,12 +21,13 @@ import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 
 public class FileUpload extends Element implements FormBuilderPaletteElement, FormStoreBinder, PluginWebSupport {
 
-    private static final String UPLOAD_DIR = "/path/to/upload/dir/";
+    private static final String UPLOAD_DIR_PROPERTY = "uploadPath";
+    private static final String ACCEPTED_FILE_TYPES = "acceptedFileTypes";
+    private static final String DEFAULT_UPLOAD_DIR = "/path/to/upload/dir/";
 
     @Override
     public String renderTemplate(FormData formData, Map dataModel) {
-        String template = "<input type='file' name='pdfFile' accept='application/pdf' />";
-        return template;
+        return "<input type='file' name='pdfFile' accept='" + getPropertyString(ACCEPTED_FILE_TYPES) + "' />";
     }
 
     @Override
@@ -46,7 +47,7 @@ public class FileUpload extends Element implements FormBuilderPaletteElement, Fo
 
     @Override
     public String getFormBuilderTemplate() {
-        return "<input type='file' name='pdfFile' accept='application/pdf' />";
+        return "<input type='file' name='pdfFile' accept='" + getPropertyString(ACCEPTED_FILE_TYPES) + "' />";
     }
 
     @Override
@@ -59,8 +60,13 @@ public class FileUpload extends Element implements FormBuilderPaletteElement, Fo
 
             if (file != null && !file.isEmpty()) {
                 try {
+                    String uploadDir = getPropertyString(UPLOAD_DIR_PROPERTY);
+                    if (uploadDir == null || uploadDir.isEmpty()) {
+                        uploadDir = DEFAULT_UPLOAD_DIR;
+                    }
+
                     String filename = UuidGenerator.getInstance().getUuid() + "_" + file.getOriginalFilename();
-                    Files.copy(file.getInputStream(), Paths.get(UPLOAD_DIR + filename));
+                    Files.copy(file.getInputStream(), Paths.get(uploadDir + filename));
 
                     // Optionally, save the filename in the form data
                     FormRow row = new FormRow();
@@ -68,7 +74,7 @@ public class FileUpload extends Element implements FormBuilderPaletteElement, Fo
                     formRowSet.add(row);
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LogUtil.error(getClassName(), e, e.getMessage());
                 }
             }
         }
@@ -103,16 +109,20 @@ public class FileUpload extends Element implements FormBuilderPaletteElement, Fo
 
     @Override
     public String getPropertyOptions() {
-        return "{}";
+        return "{\"acceptedFileTypes\":\"application/pdf\",\"uploadPath\":\"/path/to/upload/dir/\"}";
     }
 
     public FormRowSet load(Element element, String primaryKey, FormData formData) {
-        // Implement loading logic if needed
         return null;
     }
 
     public File getFile(String fileName) {
-        File file = new File(UPLOAD_DIR + fileName);
+        String uploadDir = getPropertyString(UPLOAD_DIR_PROPERTY);
+        if (uploadDir == null || uploadDir.isEmpty()) {
+            uploadDir = DEFAULT_UPLOAD_DIR;
+        }
+
+        File file = new File(uploadDir + fileName);
         if (file.exists()) {
             return file;
         } else {
@@ -121,7 +131,35 @@ public class FileUpload extends Element implements FormBuilderPaletteElement, Fo
     }
 
     @Override
-    public void webService(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+    public void webService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if ("POST".equalsIgnoreCase(request.getMethod()) && request instanceof MultipartHttpServletRequest) {
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+            MultipartFile file = multipartRequest.getFile("pdfFile");
 
+            if (file != null && !file.isEmpty()) {
+                try {
+                    String uploadDir = getPropertyString(UPLOAD_DIR_PROPERTY);
+                    if (uploadDir == null || uploadDir.isEmpty()) {
+                        uploadDir = DEFAULT_UPLOAD_DIR;
+                    }
+
+                    String filename = UuidGenerator.getInstance().getUuid() + "_" + file.getOriginalFilename();
+                    Files.copy(file.getInputStream(), Paths.get(uploadDir + filename));
+
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getWriter().write("{\"status\":\"success\",\"message\":\"File uploaded successfully\",\"fileName\":\"" + filename + "\"}");
+                } catch (IOException e) {
+                    LogUtil.error(getClassName(), e, e.getMessage());
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    response.getWriter().write("{\"status\":\"error\",\"message\":\"" + e.getMessage() + "\"}");
+                }
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"status\":\"error\",\"message\":\"File is empty or not provided\"}");
+            }
+        } else {
+            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            response.getWriter().write("{\"status\":\"error\",\"message\":\"Only POST method is allowed\"}");
+        }
     }
 }
