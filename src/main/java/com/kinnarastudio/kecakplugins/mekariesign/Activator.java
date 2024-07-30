@@ -28,9 +28,9 @@ public class Activator implements BundleActivator {
         registrationList.add(context.registerService(MekariESignInboxDataListBinder.class.getName(), new MekariESignInboxDataListBinder(), null));
         registrationList.add(context.registerService(MekariESignFormLoadBinder.class.getName(), new MekariESignFormLoadBinder(), null));
         registrationList.add(context.registerService(MekariESignUserviewMenu.class.getName(), new MekariESignUserviewMenu(), null));
+        registrationList.add(context.registerService(MekariESignDatalistAction.class.getName(), new MekariESignDatalistAction(), null));
         registrationList.add(context.registerService(SignerForm.class.getName(), new SignerForm(), null));
         registrationList.add(context.registerService(SignatureType.class.getName(), new SignatureType(), null));
-        registrationList.add(context.registerService(MekariESignDatalistAction.class.getName(), new MekariESignDatalistAction(), null));
     }
 
     public void stop(BundleContext context) {
