@@ -1,15 +1,14 @@
-{
-  "element": {
-    "name": "FileUpload",
-    "label": "PDF File Upload",
-    "description": "A custom element for uploading PDF files",
-    "properties": {
-      "acceptedFileTypes": "application/pdf",
-      "uploadPath": "/path/to/upload/dir/"
-    }
-  },
-  "response": {
-    "status": "success",
-    "message": "File uploaded successfully"
+[
+  {
+    "title": "File Upload",
+    "properties": [
+      {
+        "name": "label",
+        "label": "Label",
+        "type": "textfield",
+        "required": "true",
+        "value": "My Properties"
+      }
+    ]
   }
-}
+]

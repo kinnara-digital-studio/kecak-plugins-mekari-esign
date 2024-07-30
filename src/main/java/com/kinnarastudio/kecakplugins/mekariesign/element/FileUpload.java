@@ -19,7 +19,7 @@ import java.util.Map;
 
 import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 
-public class FileUpload extends Element implements FormBuilderPaletteElement, FormStoreBinder, PluginWebSupport {
+public class FileUpload extends org.joget.apps.form.lib.FileUpload implements FormBuilderPaletteElement, FormStoreBinder, PluginWebSupport {
 
     private static final String UPLOAD_DIR_PROPERTY = "uploadPath";
     private static final String ACCEPTED_FILE_TYPES = "acceptedFileTypes";
@@ -109,7 +109,7 @@ public class FileUpload extends Element implements FormBuilderPaletteElement, Fo
 
     @Override
     public String getPropertyOptions() {
-        return "{\"acceptedFileTypes\":\"application/pdf\",\"uploadPath\":\"/path/to/upload/dir/\"}";
+        return AppUtil.readPluginResource(getClassName(), "/properties/form/FileUpload.json");
     }
 
     public FormRowSet load(Element element, String primaryKey, FormData formData) {
