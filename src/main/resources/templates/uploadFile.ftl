@@ -14,8 +14,8 @@
         <#if tempFilePaths?? || filePaths??>
             <style>
                 ul.form-fileupload-value li {
-display: block;
-}
+                    display: block;
+                }
             </style>
             <ul class="form-fileupload-value">
                 <#if tempFilePaths??>

@@ -77,21 +77,6 @@ left: 0;
                 </div>
             </div>
 
-            <!--
-            <div style="text-align:center;background-color: #5480fb;color: #e5e5ef;">
-                <span class="md-btn md-btn-secondary prev" style="cursor:pointer;">
-                    <i class="fa fa-angle-left"></i>
-                    Previous
-                </span>
-                ||
-                <span class="md-btn md-btn-secondary next" style="cursor:pointer;">
-                    <i class="fa fa-angle-right"></i>
-                    Next
-                </span>
-                &nbsp; &nbsp;
-                <span>Page: <span class="page_num"></span> / <span class="page_count"></span></span>
-            </div>
-            -->
         </div>
         <input id="${elementParamName!}_${uniqueKey!}" name="${elementParamName!}" type="hidden" value="1;0;0;1;1">
 	</div>

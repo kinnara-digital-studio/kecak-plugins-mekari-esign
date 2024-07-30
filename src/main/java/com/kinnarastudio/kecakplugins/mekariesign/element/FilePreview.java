@@ -173,7 +173,8 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
     public String getVersion() {
         PluginManager pluginManager = (PluginManager) AppUtil.getApplicationContext().getBean("pluginManager");
         ResourceBundle resourceBundle = pluginManager.getPluginMessageBundle(getClassName(), "/message/BuildNumber");
-        return resourceBundle.getString("buildNumber");
+//        String buildNumber = resourceBundle.getString("buildNumber");
+        return "Form Element";
     }
 
     @Override
