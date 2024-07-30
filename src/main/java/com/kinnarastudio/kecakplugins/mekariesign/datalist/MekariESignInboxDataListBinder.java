@@ -1,12 +1,18 @@
 package com.kinnarastudio.kecakplugins.mekariesign.datalist;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpSession;
 
+import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
+import org.joget.apps.app.model.AppDefinition;
+import org.joget.apps.app.model.PluginDefaultProperties;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.datalist.model.DataList;
 import org.joget.apps.datalist.model.DataListBinderDefault;
@@ -15,6 +21,7 @@ import org.joget.apps.datalist.model.DataListColumn;
 import org.joget.apps.datalist.model.DataListFilterQueryObject;
 import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.PluginManager;
+import org.joget.plugin.property.service.PropertyUtil;
 import org.joget.workflow.util.WorkflowUtil;
 
 import com.kinnarastudio.commons.mekarisign.model.AuthenticationToken;
@@ -47,6 +54,22 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
     }
 
     @Override
+    public String getPropertyString(String property) {
+        PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
+        AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
+
+        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .findFirst()
+                .map(PluginDefaultProperties::getPluginProperties)
+                .map(PropertyUtil::getPropertiesValueFromJson)
+                .map(m -> m.get(property))
+                .map(String::valueOf)
+                .orElse(super.getPropertyString(property));
+    }
+
+    @Override
     public DataListCollection getData(DataList dataList, Map map, DataListFilterQueryObject[] filterQueryObject, String sort,
             Boolean desc, Integer start, Integer rows) {
         DataListCollection <Map<String,String>> dataListCollection = new DataListCollection<>();
@@ -55,9 +78,10 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
 
             HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
             String token = (String) session.getAttribute("MekariToken");
-            String serverType = (String) session.getAttribute("MekariServerType");
-            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(serverType));
-
+            LogUtil.info(getClassName(), "Token: " + token);
+            LogUtil.info(getClassName(), "Server Type: " + getPropertyString("serverType"));
+            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(getPropertyString("serverType")));
+            
             mekariSign = MekariSign.getBuilder()
                         .setAuthenticationToken(authToken)
                         .authenticateAndBuild();
