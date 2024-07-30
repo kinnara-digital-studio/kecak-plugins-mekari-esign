@@ -78,8 +78,6 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
 
             HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
             String token = (String) session.getAttribute("MekariToken");
-            LogUtil.info(getClassName(), "Token: " + token);
-            LogUtil.info(getClassName(), "Server Type: " + getPropertyString("serverType"));
             AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, ServerType.valueOf(getPropertyString("serverType")));
             
             mekariSign = MekariSign.getBuilder()
