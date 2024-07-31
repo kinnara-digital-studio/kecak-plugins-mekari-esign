@@ -5,10 +5,8 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Stream;
 
+import javax.resource.spi.work.Work;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder;
 import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
@@ -19,12 +17,12 @@ import org.joget.apps.datalist.model.*;
 import org.joget.apps.datalist.service.DataListService;
 import org.joget.apps.userview.model.Userview;
 import org.joget.apps.userview.model.UserviewMenu;
+import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.plugin.property.service.PropertyUtil;
 import org.joget.workflow.util.WorkflowUtil;
 import org.springframework.context.ApplicationContext;
 
-import com.kinnarastudio.commons.mekarisign.exception.RequestException;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 
 public class MekariESignUserviewMenu extends UserviewMenu {
@@ -107,6 +105,9 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         dataModel.put("clientId", getPropertyString("clientId"));
         dataModel.put("serverUrl", ServerType.valueOf(getPropertyString("serverType")).getSsoBaseUrl());
 
+        HttpServletRequest servletRequest = WorkflowUtil.getHttpServletRequest();
+        servletRequest.getSession().setAttribute("HomeURL", getUrl());
+
         return pluginManager.getPluginFreeMarkerTemplate(dataModel, getClass().getName(), "/templates/mekariUserview.ftl", null);
     }
 
@@ -130,7 +131,6 @@ public class MekariESignUserviewMenu extends UserviewMenu {
                 return jspListFile;
         }
     }
-
 
     protected String getJspForm(String jspFormFile, String jspUnauthorizedFile) {
         return jspUnauthorizedFile;
@@ -160,6 +160,7 @@ public class MekariESignUserviewMenu extends UserviewMenu {
                     }
                 }
                 setProperty("dataList", dataList);
+                LogUtil.info(getClassName(), "DataList actions: " + dataList.getActions()[0].getClassName());
             } else {
                 setProperty("error", ("Data List \"" + getPropertyString("datalistId") + "\" not exist."));
             }
