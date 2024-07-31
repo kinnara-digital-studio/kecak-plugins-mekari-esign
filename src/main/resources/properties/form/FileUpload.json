@@ -3,11 +3,23 @@
     "title": "File Upload",
     "properties": [
       {
+        "name": "id",
+        "label": "Id",
+        "type": "hidden"
+      },
+      {
+        "name": "customId",
+        "label": "Custom ID",
+        "type": "textfield",
+        "regex_validation": "^[a-zA-Z0-9_]+$",
+        "validation_message": "Invalid"
+      },
+      {
         "name": "label",
         "label": "Label",
         "type": "textfield",
         "required": "true",
-        "value": "My Properties"
+        "value": "My Menu"
       }
     ]
   }
