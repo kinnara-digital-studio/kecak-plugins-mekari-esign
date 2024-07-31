@@ -32,7 +32,6 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
     private static final String PREVIEW_DIR = "/path/to/upload/dir/";
     private FormStoreBinder secondaryBinder = null;
 
-
     @Override
     public String renderTemplate(FormData formData, Map dataModel) {
         String template = "filePreview.ftl";

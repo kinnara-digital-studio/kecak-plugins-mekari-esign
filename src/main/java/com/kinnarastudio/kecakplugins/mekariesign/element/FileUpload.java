@@ -26,11 +26,6 @@ public class FileUpload extends org.joget.apps.form.lib.FileUpload implements Fo
     private static final String DEFAULT_UPLOAD_DIR = "/path/to/upload/dir/";
 
     @Override
-    public String renderTemplate(FormData formData, Map dataModel) {
-        return "<input type='file' name='pdfFile' accept='" + getPropertyString(ACCEPTED_FILE_TYPES) + "' />";
-    }
-
-    @Override
     public String getFormBuilderCategory() {
         return "Custom Elements";
     }
