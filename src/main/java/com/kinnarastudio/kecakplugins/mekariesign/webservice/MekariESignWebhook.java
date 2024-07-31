@@ -8,6 +8,7 @@ import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.DefaultApplicationPlugin;
 import org.joget.plugin.base.PluginWebSupport;
 import org.joget.plugin.property.service.PropertyUtil;
+import org.joget.workflow.util.WorkflowUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,11 +58,9 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
 
             LogUtil.info(getClassName(), "Server Type: " + getPropertyString("serverType"));
             servletResponse.setStatus(301);
-            servletResponse.setHeader("Location", "/web/userview/mekarisign/mekari/_/mekari");
-
-            String currentUrl = servletRequest.getRequestURL().toString();
-            LogUtil.info(getClassName(), "Current URL: " + currentUrl);
-            // servletResponse.sendRedirect(currentUrl);
+            
+            String homeUrl = (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("HomeURL");
+            servletResponse.setHeader("Location", homeUrl);
         } catch (JSONException e) {
             LogUtil.error(getClass().getName(), e, e.toString());
             servletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, e.toString());

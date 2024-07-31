@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Stream;
 
+import javax.resource.spi.work.Work;
 import javax.servlet.http.HttpServletRequest;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder;
@@ -103,6 +104,9 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         final Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("clientId", getPropertyString("clientId"));
         dataModel.put("serverUrl", ServerType.valueOf(getPropertyString("serverType")).getSsoBaseUrl());
+
+        HttpServletRequest servletRequest = WorkflowUtil.getHttpServletRequest();
+        servletRequest.getSession().setAttribute("HomeURL", getUrl());
 
         return pluginManager.getPluginFreeMarkerTemplate(dataModel, getClass().getName(), "/templates/mekariUserview.ftl", null);
     }

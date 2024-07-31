@@ -31,8 +31,8 @@ public class MekariESignDatalistAction extends DataListActionDefault{
         if (request != null && !"POST".equalsIgnoreCase(request.getMethod())) {
             return null;
         }
-		
-		result.setUrl("/web/userview/mekarisign/mekari/_/mekari?mode=newRequestForm");
+		String homeUrl = (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("HomeURL");
+		result.setUrl(homeUrl + "?mode=newRequestForm");
 
         return result;
     }
