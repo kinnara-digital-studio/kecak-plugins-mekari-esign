@@ -4,7 +4,7 @@ import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.model.*;
 import org.joget.commons.util.LogUtil;
 import org.joget.commons.util.UuidGenerator;
-import org.joget.plugin.base.PluginWebSupport;
+import org.joget.plugin.base.PluginManager;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -16,14 +16,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 
-public class FileUpload extends org.joget.apps.form.lib.FileUpload implements FormBuilderPaletteElement, FormStoreBinder, PluginWebSupport {
+public class FileUpload extends org.joget.apps.form.lib.FileUpload{
 
     private static final String UPLOAD_DIR_PROPERTY = "uploadPath";
     private static final String ACCEPTED_FILE_TYPES = "acceptedFileTypes";
     private static final String DEFAULT_UPLOAD_DIR = "/path/to/upload/dir/";
+
+    @Override
+    public String renderTemplate(FormData formData, Map dataModel) {
+        return "<input type='file' name='pdfFile' accept='" + getPropertyString(ACCEPTED_FILE_TYPES) + "' />";
+    }
 
     @Override
     public String getFormBuilderCategory() {
@@ -45,7 +51,6 @@ public class FileUpload extends org.joget.apps.form.lib.FileUpload implements Fo
         return "<input type='file' name='pdfFile' accept='" + getPropertyString(ACCEPTED_FILE_TYPES) + "' />";
     }
 
-    @Override
     public FormRowSet store(Element element, FormRowSet formRowSet, FormData formData) {
         HttpServletRequest request = getHttpServletRequest();
 
@@ -84,7 +89,10 @@ public class FileUpload extends org.joget.apps.form.lib.FileUpload implements Fo
 
     @Override
     public String getVersion() {
-        return "1.0.0";
+        PluginManager pluginManager = (PluginManager) AppUtil.getApplicationContext().getBean("pluginManager");
+        ResourceBundle resourceBundle = pluginManager.getPluginMessageBundle(getClassName(), "/message/BuildNumber");
+//        String buildNumber = resourceBundle.getString("buildNumber");
+        return "Form Element";
     }
 
     @Override

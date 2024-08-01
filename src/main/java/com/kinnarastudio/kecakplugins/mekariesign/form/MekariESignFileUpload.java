@@ -1,14 +1,19 @@
 package com.kinnarastudio.kecakplugins.mekariesign.form;
 
 import com.kinnarastudio.commons.mekarisign.MekariSign;
+import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
+import com.kinnarastudio.commons.mekarisign.model.AuthenticationToken;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
+import com.kinnarastudio.commons.mekarisign.model.TokenType;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.lib.FileUpload;
 import org.joget.apps.form.model.FormData;
 import org.joget.apps.form.model.FormRowSet;
 import org.joget.plugin.base.PluginManager;
 import org.joget.commons.util.FileManager;
+import org.joget.workflow.util.WorkflowUtil;
 
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.ResourceBundle;
 
@@ -69,9 +74,27 @@ public class MekariESignFileUpload extends FileUpload {
     }
 
     protected String getAuthorizedCode(String primaryKey) {
-        // TODO
+        // Implementasi untuk mendapatkan kode otorisasi
         MekariSign mekariSign;
-        return "";
+        HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
+        String token = (String) session.getAttribute("MekariToken");
+        AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, getServerType());
+
+        try {
+            mekariSign = MekariSign.getBuilder()
+                    .setAuthenticationToken(authToken)
+                    .authenticateAndBuild();
+        } catch (BuildingException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            String authorizedCode = getAuthorizedCode(primaryKey);
+            return authorizedCode;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
