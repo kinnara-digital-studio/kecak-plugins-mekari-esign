@@ -99,7 +99,7 @@ public class MekariESignFileUpload extends FileUpload {
 
     @Override
     public String getPropertyOptions() {
-        return AppUtil.readPluginResource(getClass().getName(), "/properties/MekariESignTool.json", null, true, "/messages/HierarchicalCrudMenu");
+        return AppUtil.readPluginResource(getClass().getName(), "/properties/FileUpload.json", null, true, "/messages/HierarchicalCrudMenu");
     }
 
     protected String getClientId() {
