@@ -32,21 +32,11 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
     @Override
     public void webService(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
         try {
-            final String method = servletRequest.getMethod();
-            final String code = servletRequest.getParameter("code");
-
-            final JSONObject responseBody = new JSONObject() {{
-                put("method", method);
-                put("code", code);
-            }};
-
-            String content = "<h1>Content</h1>";
-
             AuthenticationToken authToken = MekariSign.getBuilder()
                     .setClientId(getPropertyString("clientId"))
                     .setClientSecret(getPropertyString("clientSecret"))
                     .setServerType(ServerType.valueOf(getPropertyString("serverType")))
-                    .setSecretCode(code)
+                    .setSecretCode(servletRequest.getParameter("code"))
                     .authenticate();
 
             servletRequest.getSession().setAttribute("MekariClientId", getPropertyString("clientId"));
@@ -61,9 +51,6 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
             
             String homeUrl = (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("HomeURL");
             servletResponse.setHeader("Location", homeUrl);
-        } catch (JSONException e) {
-            LogUtil.error(getClass().getName(), e, e.toString());
-            servletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, e.toString());
         } catch (RequestException | BuildingException e) {
             e.printStackTrace();
         }

@@ -38,8 +38,7 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
         try {
             HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
             String token = (String) session.getAttribute("MekariToken");
-            String serverType = (String) session.getAttribute("MekariServerType");
-            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, getPropertyString("refreshToken"), ServerType.valueOf(serverType));
+            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, ServerType.valueOf(getPropertyString("serverType")));
     
             mekariSign = MekariSign.getBuilder()
                         .setAuthenticationToken(authToken)
@@ -56,7 +55,6 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
             formRowSet.add(formRow);
             
         } catch (BuildingException | RequestException | ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return formRowSet;

@@ -1,5 +1,6 @@
 package com.kinnarastudio.kecakplugins.mekariesign.datalist;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -105,6 +106,12 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
         } catch (RequestException e) {
             if(e.getCause() instanceof InvalidTokenException)
             WorkflowUtil.getHttpServletRequest().getSession().setAttribute("MekariToken", "");
+            String homeUrl = (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("HomeURL");
+            try {
+                WorkflowUtil.getHttpServletResponse().sendRedirect(homeUrl);
+            } catch (IOException e1) {
+                LogUtil.error(getClassName(), e1, e1.getMessage());
+            }
         }
         return dataListCollection;
     }
