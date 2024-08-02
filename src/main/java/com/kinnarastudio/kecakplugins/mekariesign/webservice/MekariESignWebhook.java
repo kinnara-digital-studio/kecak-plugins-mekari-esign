@@ -42,11 +42,9 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
             servletRequest.getSession().setAttribute("MekariClientId", getPropertyString("clientId"));
             servletRequest.getSession().setAttribute("MekariToken", authToken.getAccessToken());
             servletRequest.getSession().setAttribute("MekariServerType", getPropertyString("serverType"));
+            servletRequest.getSession().setMaxInactiveInterval(3600);
 
-            HttpSession session = servletRequest.getSession();
-            session.setMaxInactiveInterval(3600);
-
-            LogUtil.info(getClassName(), "Server Type: " + getPropertyString("serverType"));
+            // LogUtil.info(getClassName(), "Server Type: " + getPropertyString("serverType"));
             servletResponse.setStatus(301);
             
             String homeUrl = (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("HomeURL");

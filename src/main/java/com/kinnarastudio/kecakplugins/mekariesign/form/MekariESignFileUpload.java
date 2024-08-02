@@ -8,6 +8,7 @@ import org.joget.apps.form.model.FormData;
 import org.joget.apps.form.model.FormRowSet;
 import org.joget.plugin.base.PluginManager;
 import org.joget.commons.util.FileManager;
+import org.joget.commons.util.LogUtil;
 
 import java.io.File;
 import java.util.ResourceBundle;
@@ -40,7 +41,7 @@ public class MekariESignFileUpload extends FileUpload {
         if (rowSet != null && !rowSet.isEmpty()) {
             String filePath = rowSet.iterator().next().getProperty("filePath");
             File file = FileManager.getFileByPath(filePath);
-
+            LogUtil.info(getClassName(), "File: " + file.getName().toString());
             // Check if the file is a PDF
             if (!isPDF(file)) {
                 formData.addFormError("file", "Only PDF files are allowed.");
