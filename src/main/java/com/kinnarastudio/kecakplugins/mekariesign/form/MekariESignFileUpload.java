@@ -1,10 +1,10 @@
 package com.kinnarastudio.kecakplugins.mekariesign.form;
 
 import com.kinnarastudio.commons.mekarisign.MekariSign;
-import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
 import com.kinnarastudio.commons.mekarisign.model.AuthenticationToken;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 import com.kinnarastudio.commons.mekarisign.model.TokenType;
+import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.lib.FileUpload;
 import org.joget.apps.form.model.FormData;
@@ -15,6 +15,8 @@ import org.joget.workflow.util.WorkflowUtil;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 public class MekariESignFileUpload extends FileUpload {
@@ -51,14 +53,32 @@ public class MekariESignFileUpload extends FileUpload {
                 formData.addFormError("file", "Only PDF files are allowed.");
                 return null;
             }
+
+            // Get authorized code for the file
+            String primaryKey = "your-primary-key"; // Replace with the actual primary key logic if needed
+            String authorizedCode = getAuthorizedCode(primaryKey);
+            if (authorizedCode != null) {
+                formData.addFormResult("authorizedCode", authorizedCode);
+            } else {
+                formData.addFormError("file", "Failed to get authorization code.");
+            }
         }
         return rowSet;
     }
 
     private boolean isPDF(File file) {
         if (file != null) {
-            String fileName = file.getName().toLowerCase();
-            return fileName.endsWith(".pdf");
+            try (FileInputStream fis = new FileInputStream(file)) {
+                byte[] buffer = new byte[4096];
+                if (fis.read(buffer) != 4096) {
+                    return false;
+                }
+                String header = new String(buffer);
+                return header.equals("%PDF");
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
         return false;
     }
@@ -71,30 +91,6 @@ public class MekariESignFileUpload extends FileUpload {
     @Override
     public String getClassName() {
         return getClass().getName();
-    }
-
-    protected String getAuthorizedCode(String primaryKey) {
-        // Implementasi untuk mendapatkan kode otorisasi
-        MekariSign mekariSign;
-        HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
-        String token = (String) session.getAttribute("MekariToken");
-        AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, getServerType());
-
-        try {
-            mekariSign = MekariSign.getBuilder()
-                    .setAuthenticationToken(authToken)
-                    .authenticateAndBuild();
-        } catch (BuildingException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            String authorizedCode = getAuthorizedCode(primaryKey);
-            return authorizedCode;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     @Override
@@ -120,6 +116,26 @@ public class MekariESignFileUpload extends FileUpload {
                 return ServerType.PRODUCTION;
             default:
                 return ServerType.MOCK;
+        }
+    }
+
+    protected String getAuthorizedCode(String primaryKey) {
+        // Implementasi untuk mendapatkan kode otorisasi
+        HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
+        String token = (String) session.getAttribute("MekariToken");
+        AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, getServerType());
+
+        MekariSign mekariSign;
+        try {
+            mekariSign = MekariSign.getBuilder()
+                    .setAuthenticationToken(authToken)
+                    .authenticateAndBuild();
+            // Replace the following with the actual logic to get the authorization code from MekariSign API
+            String authorizedCode = "dummy-authorization-code"; // Placeholder for actual authorization code logic
+            return authorizedCode;
+        } catch (BuildingException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
