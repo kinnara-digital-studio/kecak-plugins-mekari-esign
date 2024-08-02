@@ -13,6 +13,8 @@ import org.joget.plugin.base.PluginManager;
 import org.joget.commons.util.FileManager;
 import org.joget.workflow.util.WorkflowUtil;
 
+import org.joget.commons.util.LogUtil;
+
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,7 +49,7 @@ public class MekariESignFileUpload extends FileUpload {
         if (rowSet != null && !rowSet.isEmpty()) {
             String filePath = rowSet.iterator().next().getProperty("filePath");
             File file = FileManager.getFileByPath(filePath);
-
+            LogUtil.info(getClassName(), "File: " + file.getName().toString());
             // Check if the file is a PDF
             if (!isPDF(file)) {
                 formData.addFormError("file", "Only PDF files are allowed.");
