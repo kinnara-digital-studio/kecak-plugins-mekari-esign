@@ -100,5 +100,9 @@ public class MekariESignDatalistAction extends DataListActionDefault{
         String buildNumber = resourceBundle.getString("buildNumber");
         return buildNumber;
     }
-    
+
+    @Override
+    public Boolean getVisibleOnNoRecord() {
+        return true;
+    }
 }

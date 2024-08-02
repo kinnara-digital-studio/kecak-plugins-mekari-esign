@@ -27,6 +27,7 @@ import org.springframework.context.ApplicationContext;
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 
 import static org.joget.apps.datalist.model.DataList.CHECKBOX_POSITION_LEFT;
+import static org.joget.apps.datalist.model.DataList.CHECKBOX_POSITION_NO;
 
 public class MekariESignUserviewMenu extends UserviewMenu {
     public final static String LABEL = "Mekari eSign";
@@ -143,6 +144,7 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         try {
             DataList dataList = getDataList();
             if (dataList != null) {
+                dataList.setCheckboxPosition(CHECKBOX_POSITION_NO);
                 DataListActionResult ac = dataList.getActionResult();
                 if (ac != null) {
                     if (ac.getMessage() != null && !ac.getMessage().isEmpty()) {
