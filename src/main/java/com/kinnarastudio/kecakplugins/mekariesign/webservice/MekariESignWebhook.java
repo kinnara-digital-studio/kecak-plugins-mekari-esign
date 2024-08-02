@@ -39,19 +39,26 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
                     .setSecretCode(servletRequest.getParameter("code"))
                     .authenticate();
 
-            servletRequest.getSession().setAttribute("MekariClientId", getPropertyString("clientId"));
-            servletRequest.getSession().setAttribute("MekariToken", authToken.getAccessToken());
-            servletRequest.getSession().setAttribute("MekariServerType", getPropertyString("serverType"));
-            servletRequest.getSession().setMaxInactiveInterval(3600);
+            HttpSession session = servletRequest.getSession();
+            session.setAttribute("MekariClientId", getClientId());
+            session.setAttribute("MekariToken", authToken.getAccessToken());
+            session.setAttribute("MekariServerType", getServerType());
+            session.setMaxInactiveInterval(3600);
 
             // LogUtil.info(getClassName(), "Server Type: " + getPropertyString("serverType"));
             servletResponse.setStatus(301);
-            
-            String homeUrl = (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("HomeURL");
-            servletResponse.setHeader("Location", homeUrl);
+
+            String webhookRedirectUrl = Optional.ofNullable(getWebhookRedirectUrl())
+                    .filter(s -> !s.isEmpty())
+                    .orElseGet(() -> (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("HomeURL"));
+            servletResponse.setHeader("Location", webhookRedirectUrl);
         } catch (RequestException | BuildingException e) {
             e.printStackTrace();
         }
+    }
+
+    protected String getServerType() {
+        return getPropertyString("serverType");
     }
 
     @Override
@@ -132,5 +139,13 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
                 .map(PluginDefaultProperties::getPluginProperties)
                 .map(PropertyUtil::getPropertiesValueFromJson)
                 .orElseGet(super::getProperties);
+    }
+
+    protected String getWebhookRedirectUrl() {
+        return getPropertyString("webhookRedirectUrl");
+    }
+
+    protected String getClientId() {
+        return getPropertyString("clientId");
     }
 }

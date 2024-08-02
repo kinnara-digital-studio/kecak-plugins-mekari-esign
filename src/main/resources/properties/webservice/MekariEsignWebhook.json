@@ -39,5 +39,15 @@
                 ]
             }
         ]
+    },
+    {
+        "title": "Advance",
+        "properties": [
+            {
+                "name": "webhookRedirectUrl",
+                "label": "Webhook Redirect URL",
+                "type": "textfield"
+            }
+        ]
     }
 ]

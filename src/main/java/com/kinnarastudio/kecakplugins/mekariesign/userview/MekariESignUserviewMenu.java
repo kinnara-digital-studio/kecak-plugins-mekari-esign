@@ -26,6 +26,8 @@ import org.springframework.context.ApplicationContext;
 
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 
+import static org.joget.apps.datalist.model.DataList.CHECKBOX_POSITION_LEFT;
+
 public class MekariESignUserviewMenu extends UserviewMenu {
     public final static String LABEL = "Mekari eSign";
 
@@ -141,7 +143,6 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         try {
             DataList dataList = getDataList();
             if (dataList != null) {
-                dataList.setCheckboxPosition("no");
                 DataListActionResult ac = dataList.getActionResult();
                 if (ac != null) {
                     if (ac.getMessage() != null && !ac.getMessage().isEmpty()) {
@@ -161,7 +162,12 @@ public class MekariESignUserviewMenu extends UserviewMenu {
                     }
                 }
                 setProperty("dataList", dataList);
-                LogUtil.info(getClassName(), "DataList actions: " + dataList.getActions()[0].getClassName());
+                LogUtil.info(getClassName(), "DataList rows: [" + dataList.getRows().size() + "] checkboxPosition [" + dataList.getCheckboxPosition() + "]");
+
+                for (DataListAction action : dataList.getActions()) {
+                    LogUtil.info(getClassName(), "DataList action: " + action.getClassName());
+                }
+
             } else {
                 setProperty("error", ("Data List \"" + getPropertyString("datalistId") + "\" not exist."));
             }
