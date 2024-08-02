@@ -94,7 +94,7 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
         PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
         AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
 
-        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
+        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(MekariESignWebhook.class.getName(), appDefinition, null, null, null, 1))
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .findFirst()
@@ -109,7 +109,7 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
         PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
         AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
 
-        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
+        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(MekariESignWebhook.class.getName(), appDefinition, null, null, null, 1))
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .findFirst()
@@ -125,7 +125,7 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
         PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
         AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
 
-        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
+        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(MekariESignWebhook.class.getName(), appDefinition, null, null, null, 1))
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .findFirst()

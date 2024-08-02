@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpSession;
 
+import com.kinnarastudio.kecakplugins.mekariesign.webservice.MekariESignWebhook;
 import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
 import org.joget.apps.app.model.AppDefinition;
 import org.joget.apps.app.model.PluginDefaultProperties;
@@ -59,7 +60,7 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
         PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
         AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
 
-        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
+        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(MekariESignWebhook.class.getName(), appDefinition, null, null, null, 1))
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .findFirst()

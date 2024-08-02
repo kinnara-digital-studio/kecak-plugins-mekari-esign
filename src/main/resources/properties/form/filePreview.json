@@ -1,67 +1,69 @@
-{
-  "name": "FilePreview",
-  "description": "A custom element for previewing files in a form.",
-  "properties": {
-    "stampType": {
-      "type": "string",
-      "description": "The type of stamp to be applied, e.g., 'signature' or 'meterai' or 'initial'.",
-      "default": "signature"
+[
+  {
+    "name": "FilePreview",
+    "description": "A custom element for previewing files in a form.",
+    "properties": {
+      "stampType": {
+        "type": "string",
+        "description": "The type of stamp to be applied, e.g., 'signature' or 'meterai' or 'initial'.",
+        "default": "signature"
+      },
+      "reason": {
+        "type": "string",
+        "description": "Reason for the digital signature or any other reason.",
+        "default": ""
+      },
+      "stateOrProvince": {
+        "type": "string",
+        "description": "State or province for the digital certificate.",
+        "default": ""
+      },
+      "country": {
+        "type": "string",
+        "description": "Country for the digital certificate.",
+        "default": ""
+      },
+      "locality": {
+        "type": "string",
+        "description": "Locality for the digital certificate.",
+        "default": ""
+      },
+      "organizationalUnit": {
+        "type": "string",
+        "description": "Organizational unit for the digital certificate.",
+        "default": ""
+      },
+      "organization": {
+        "type": "string",
+        "description": "Organization name for the digital certificate.",
+        "default": ""
+      },
+      "useTimeStamp": {
+        "type": "boolean",
+        "description": "Whether to use a timestamp in the digital signature.",
+        "default": false
+      },
+      "tsaUrl": {
+        "type": "string",
+        "description": "Timestamp authority URL.",
+        "default": ""
+      },
+      "tsaUsername": {
+        "type": "string",
+        "description": "Timestamp authority username.",
+        "default": ""
+      },
+      "tsaPassword": {
+        "type": "string",
+        "description": "Timestamp authority password.",
+        "default": ""
+      }
     },
-    "reason": {
-      "type": "string",
-      "description": "Reason for the digital signature or any other reason.",
-      "default": ""
-    },
-    "stateOrProvince": {
-      "type": "string",
-      "description": "State or province for the digital certificate.",
-      "default": ""
-    },
-    "country": {
-      "type": "string",
-      "description": "Country for the digital certificate.",
-      "default": ""
-    },
-    "locality": {
-      "type": "string",
-      "description": "Locality for the digital certificate.",
-      "default": ""
-    },
-    "organizationalUnit": {
-      "type": "string",
-      "description": "Organizational unit for the digital certificate.",
-      "default": ""
-    },
-    "organization": {
-      "type": "string",
-      "description": "Organization name for the digital certificate.",
-      "default": ""
-    },
-    "useTimeStamp": {
-      "type": "boolean",
-      "description": "Whether to use a timestamp in the digital signature.",
-      "default": false
-    },
-    "tsaUrl": {
-      "type": "string",
-      "description": "Timestamp authority URL.",
-      "default": ""
-    },
-    "tsaUsername": {
-      "type": "string",
-      "description": "Timestamp authority username.",
-      "default": ""
-    },
-    "tsaPassword": {
-      "type": "string",
-      "description": "Timestamp authority password.",
-      "default": ""
+    "formBuilder": {
+      "category": "Custom Elements",
+      "position": 200,
+      "icon": "<i class='fas fa-file'></i>",
+      "template": "<label class='label' style='position:absolute;top:10px;left:10px;'>FilePreview</label><div style='border: 5px solid grey;height:100px;background-color:#EFF1F2;color:#C4C7CB;align:center;'><span style='position:absolute;top:10px;left:270px;font-weight:bold;font-size:70px;align:center;'>PDF</span><div>"
     }
-  },
-  "formBuilder": {
-    "category": "Custom Elements",
-    "position": 200,
-    "icon": "<i class='fas fa-file'></i>",
-    "template": "<label class='label' style='position:absolute;top:10px;left:10px;'>FilePreview</label><div style='border: 5px solid grey;height:100px;background-color:#EFF1F2;color:#C4C7CB;align:center;'><span style='position:absolute;top:10px;left:270px;font-weight:bold;font-size:70px;align:center;'>PDF</span><div>"
   }
-}
+]

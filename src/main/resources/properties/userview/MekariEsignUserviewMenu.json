@@ -19,31 +19,7 @@
                 "label": "Label",
                 "type": "textfield",
                 "required": "true",
-                "value": "My Menu"
-            },
-            {
-                "name": "serverType",
-                "label": "Server Type",
-                "type": "selectbox",
-                "required": "true",
-                "options": [
-                    {
-                        "value": "MOCK",
-                        "label": "Mock"
-                    },
-                    {
-                        "value": "SANDBOX",
-                        "label": "Sandbox"
-                    },
-                    {
-                        "value": "STAGING",
-                        "label": "Staging"
-                    },
-                    {
-                        "value": "PRODUCTION",
-                        "label": "Production"
-                    }
-                ]
+                "value": "Mekari eSign"
             }
         ]
     }
