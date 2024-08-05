@@ -51,6 +51,7 @@ public class MekariESignWebhook extends DefaultApplicationPlugin implements Plug
             String webhookRedirectUrl = Optional.ofNullable(getWebhookRedirectUrl())
                     .filter(s -> !s.isEmpty())
                     .orElseGet(() -> (String) WorkflowUtil.getHttpServletRequest().getSession().getAttribute("HomeURL"));
+            LogUtil.info(getClassName(), "Token: " + authToken.getAccessToken());
             servletResponse.setHeader("Location", webhookRedirectUrl);
         } catch (RequestException | BuildingException e) {
             e.printStackTrace();
