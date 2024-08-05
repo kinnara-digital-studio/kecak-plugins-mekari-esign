@@ -3,13 +3,6 @@
         "title": "Mekari eSign Webhook",
         "properties": [
             {
-                "name": "label",
-                "label": "Label",
-                "type": "textfield",
-                "required": "true",
-                "value": "My Properties"
-            },
-            {
                 "name": "clientId",
                 "label": "Client ID",
                 "type": "textfield",
@@ -44,6 +37,16 @@
                         "label": "Production"
                     }
                 ]
+            }
+        ]
+    },
+    {
+        "title": "Advance",
+        "properties": [
+            {
+                "name": "webhookRedirectUrl",
+                "label": "Webhook Redirect URL",
+                "type": "textfield"
             }
         ]
     }

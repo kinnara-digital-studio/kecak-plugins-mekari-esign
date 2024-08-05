@@ -5,10 +5,11 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Stream;
 
-import javax.resource.spi.work.Work;
 import javax.servlet.http.HttpServletRequest;
+
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder;
+import com.kinnarastudio.kecakplugins.mekariesign.webservice.MekariESignWebhook;
 import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
 import org.joget.apps.app.model.AppDefinition;
 import org.joget.apps.app.model.PluginDefaultProperties;
@@ -25,8 +26,11 @@ import org.springframework.context.ApplicationContext;
 
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 
+import static org.joget.apps.datalist.model.DataList.CHECKBOX_POSITION_LEFT;
+import static org.joget.apps.datalist.model.DataList.CHECKBOX_POSITION_NO;
+
 public class MekariESignUserviewMenu extends UserviewMenu {
-    public final static String LABEL = "Mekari eSign Userview Menu";
+    public final static String LABEL = "Mekari eSign";
 
     private DataList cachedDataList = null;
 
@@ -43,8 +47,7 @@ public class MekariESignUserviewMenu extends UserviewMenu {
 
     @Override
     public String getPropertyOptions() {
-        return "";
-        // return AppUtil.readPluginResource(getClassName(), "/properties/userview/MekariEsignUserviewMenu.json");
+        return AppUtil.readPluginResource(getClassName(), "/properties/userview/MekariEsignUserviewMenu.json");
     }
 
     @Override
@@ -52,7 +55,7 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
         AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
 
-        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(getClassName(), appDefinition, null, null, null, 1))
+        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(MekariESignWebhook.class.getName(), appDefinition, null, null, null, 1))
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .findFirst()
@@ -106,7 +109,8 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         dataModel.put("serverUrl", ServerType.valueOf(getPropertyString("serverType")).getSsoBaseUrl());
 
         HttpServletRequest servletRequest = WorkflowUtil.getHttpServletRequest();
-        servletRequest.getSession().setAttribute("HomeURL", getUrl());
+        String url = getUrl();
+        servletRequest.getSession().setAttribute("HomeURL", url);
 
         return pluginManager.getPluginFreeMarkerTemplate(dataModel, getClass().getName(), "/templates/mekariUserview.ftl", null);
     }
@@ -140,7 +144,7 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         try {
             DataList dataList = getDataList();
             if (dataList != null) {
-                dataList.setCheckboxPosition("no");
+                dataList.setCheckboxPosition(CHECKBOX_POSITION_NO);
                 DataListActionResult ac = dataList.getActionResult();
                 if (ac != null) {
                     if (ac.getMessage() != null && !ac.getMessage().isEmpty()) {
@@ -160,7 +164,12 @@ public class MekariESignUserviewMenu extends UserviewMenu {
                     }
                 }
                 setProperty("dataList", dataList);
-                LogUtil.info(getClassName(), "DataList actions: " + dataList.getActions()[0].getClassName());
+                LogUtil.info(getClassName(), "DataList rows: [" + dataList.getRows().size() + "] checkboxPosition [" + dataList.getCheckboxPosition() + "]");
+
+                for (DataListAction action : dataList.getActions()) {
+                    LogUtil.info(getClassName(), "DataList action: " + action.getClassName());
+                }
+
             } else {
                 setProperty("error", ("Data List \"" + getPropertyString("datalistId") + "\" not exist."));
             }
