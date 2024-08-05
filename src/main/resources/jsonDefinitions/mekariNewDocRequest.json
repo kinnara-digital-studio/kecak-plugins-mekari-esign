@@ -1,0 +1,60 @@
+{
+  "className": "org.joget.apps.form.model.Form",
+  "properties": {
+    "loadBinder": {
+      "className": "org.joget.apps.form.lib.WorkflowFormBinder"
+    },
+    "name": "Mekari New Doc. Request",
+    "description": "",
+    "id": "mekariNewDocRequest",
+    "storeBinder": {
+      "className": "org.joget.apps.form.lib.WorkflowFormBinder"
+    },
+    "tableName": "mekari_doc_request"
+  },
+  "elements": [
+    {
+      "elements": [
+        {
+          "elements": [
+            {
+              "className": "org.joget.apps.form.lib.FileUpload",
+              "properties": {
+                "resizeMethod": "",
+                "permissionType": "",
+                "padding": "",
+                "maxSizeMsg": "File size limit exceeded",
+                "resizeWidth": "",
+                "validator": {
+                  "className": "",
+                  "properties": {}
+                },
+                "multiple": "",
+                "maxSize": "",
+                "label": "File Upload",
+                "resizeQuality": "0.8",
+                "removeFile": "",
+                "size": "",
+                "readonly": "",
+                "attachment": "",
+                "fileTypeMsg": "Invalid file type",
+                "id": "uploadFile",
+                "resizeHeight": "",
+                "fileType": ""
+              }
+            }
+          ],
+          "className": "org.joget.apps.form.model.Column",
+          "properties": {
+            "width": "100%"
+          }
+        }
+      ],
+      "className": "org.joget.apps.form.model.Section",
+      "properties": {
+        "label": "Section",
+        "id": "section1"
+      }
+    }
+  ]
+}

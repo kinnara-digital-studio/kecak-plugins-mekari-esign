@@ -7,15 +7,21 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import EnhydraShark.App;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder;
 import com.kinnarastudio.kecakplugins.mekariesign.webservice.MekariESignWebhook;
 import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
 import org.joget.apps.app.model.AppDefinition;
 import org.joget.apps.app.model.PluginDefaultProperties;
+import org.joget.apps.app.service.AppService;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.datalist.model.*;
 import org.joget.apps.datalist.service.DataListService;
+import org.joget.apps.form.lib.SubmitButton;
+import org.joget.apps.form.model.Form;
+import org.joget.apps.form.model.FormData;
+import org.joget.apps.form.service.FormService;
 import org.joget.apps.userview.model.Userview;
 import org.joget.apps.userview.model.UserviewMenu;
 import org.joget.commons.util.LogUtil;
@@ -126,10 +132,17 @@ public class MekariESignUserviewMenu extends UserviewMenu {
     }
 
     protected String getJspPage(String jspFormFile, String jspListFile, String jspUnauthorizedFile) {
-        String mode = Optional.ofNullable(getRequestParameterString("_mode")).orElse("");
+        HttpServletRequest request = WorkflowUtil.getHttpServletRequest();
+        String method = Optional.ofNullable(request).map(HttpServletRequest::getMethod)
+                .orElse("GET");
+        String mode = Optional.ofNullable(getRequestParameterString("mode")).orElse("");
         switch (mode) {
-            case "newRequest":
-                return jspUnauthorizedFile;
+            case "newRequestForm":
+                return getJspForm(jspFormFile, jspUnauthorizedFile);
+            case "submit":
+                if("POST".equalsIgnoreCase(method)) {
+                    return jspUnauthorizedFile;
+                }
             default:
                 getJspDataList();
                 return jspListFile;
@@ -137,7 +150,20 @@ public class MekariESignUserviewMenu extends UserviewMenu {
     }
 
     protected String getJspForm(String jspFormFile, String jspUnauthorizedFile) {
-        return jspUnauthorizedFile;
+        AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
+        ApplicationContext ac = AppUtil.getApplicationContext();
+        AppService appService = (AppService) ac.getBean("appService");
+        FormService formService = (FormService) ac.getBean("formService");
+        String formJsonDef = AppUtil.readPluginResource(getClassName(), "/jsonDefinitions/mekariNewDocRequest.json");
+        Form form = (Form) formService.createElementFromJson(formJsonDef);
+        FormData formData = new FormData();
+        form = appService.viewDataForm(form, null, "Submit", "Cancel", "window", formData, null, null);
+        String formHtml = formService.retrieveFormHtml(form, formData);
+        String formJson = formService.generateElementJson(form);
+        this.setProperty("view", "formView");
+        this.setProperty("formHtml", formHtml);
+        this.setProperty("formJson", formJson);
+        return jspFormFile;
     }
 
     protected void getJspDataList() {
