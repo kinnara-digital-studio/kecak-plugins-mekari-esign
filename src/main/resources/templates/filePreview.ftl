@@ -1,22 +1,19 @@
-<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js'></script>
 <#if includeMetaData!>
 <div class="form-cell" ${elementMetaData!}>
-	    <label class="label" style="position:absolute;top:10px;left:10px;">
-			${element.properties.label!}
-			<span class="form-cell-validator">${decoration!}</span>
-			<#if error??> <span class="form-error-message">${error!}</span></#if>
-		</label>
-		<div style='border: 5px solid grey;height:100px;background-color:#EFF1F2;color:#C4C7CB;align:center;'>
-			<span style='position:absolute;top:10px;left:270px;font-weight:bold;font-size:70px;align:center;'>PDF</span>
-		<div>
-	</div>
+    <label class="label" style="position:absolute;top:10px;left:10px;">
+        ${element.properties.label!}
+        <span class="form-cell-validator">${decoration!}</span>
+        <#if error??> <span class="form-error-message">${error!}</span></#if>
+    </label>
+    <div style='border: 5px solid grey;height:100px;background-color:#EFF1F2;color:#C4C7CB;align:center;'>
+        <span style='position:absolute;top:10px;left:270px;font-weight:bold;font-size:70px;align:center;'>PDF</span>
+    <div>
+</div>
 <#else>
-    <#assign uniqueKey = element.properties.elementUniqueKey >
+    <#assign uniqueKey = element.properties.elementUniqueKey />
 
-	<script type="text/javascript" src="${request.contextPath}/plugin/${className}/node_modules/pdfjs-dist/build/pdf.js"/></script>
-	<script type="text/javascript" src="${request.contextPath}/plugin/${className}/node_modules/fabric/dist/fabric.min.js"/></script>
-	<style>
-.md-btn {
+    <style>
+.btn {
 background: #2916c3;
 border: none;
 border-radius: 4px;
@@ -24,16 +21,10 @@ min-height: 31px;
 min-width: 70px;
 padding: 4px 16px;
 text-align: center;
-text-shadow: none;
 text-transform: uppercase;
--webkit-transition: all 280ms cubic-bezier(.4, 0, .2, 1);
-transition: all 280ms cubic-bezier(.4, 0, .2, 1);
-color: #fffff;
-box-sizing: border-box;
+color: white;
 cursor: pointer;
--webkit-appearance: none;
 display: inline-block;
-vertical-align: middle;
 font: 500 14px/31px Roboto, sans-serif!important;
 }
 .wrapper {
@@ -49,17 +40,17 @@ left: 0;
 </style>
 <div class="form-cell">
         <div style="text-align:center;background-color: #5480fb;color: #e5e5ef;">
-            <span class="md-btn md-btn-secondary" onclick="downloadPDF()" style="cursor:pointer;">
+            <span class="btn" onclick="downloadPDF()" style="cursor:pointer;">
                 <i class="fa fa-download"></i>
                 Download
-           </span>
+            </span>
 
-            <span class="md-btn md-btn-secondary prev" style="cursor:pointer;">
+            <span class="btn prev" style="cursor:pointer;">
                 <i class="fa fa-angle-left"></i>
                 Prev
             </span>
             ||
-            <span class="md-btn md-btn-secondary next" style="cursor:pointer;">
+            <span class="btn next" style="cursor:pointer;">
                 Next
                 <i class="fa fa-angle-right"></i>
             </span>
@@ -76,15 +67,12 @@ left: 0;
                     <img src="" alt="Signature" data-tipe="1" >
                 </div>
             </div>
-
         </div>
         <input id="${elementParamName!}_${uniqueKey!}" name="${elementParamName!}" type="hidden" value="1;0;0;1;1">
-	</div>
-	<script>
-		$(document).ready(function(){
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
 var url = "${request.contextPath}${pdfFile!?html}";
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = "${request.contextPath}/plugin/${className}/node_modules/pdfjs-dist/build/pdf.worker.js";
 
 var pdfDoc = null,
 pageNum = 1,
@@ -92,132 +80,73 @@ pageRendering = false,
 pageNumPending = null,
 scale = 1,
 pdfCanvas = document.getElementById('pdf-canvas-${uniqueKey}'),
-			    stampCanvas = document.getElementById('stamp-canvas-${uniqueKey}'),
-			    fobject = null,
-		        gesture = null,
-		        ctx = pdfCanvas.getContext('2d');
-	        var dataObjects = []
-		  	var Pages = 0;
-    		var outside = 0;
-  			var x;
-  			var y;
- 	 		var add = false;
-  			var pageSignature = 1;
+                stampCanvas = document.getElementById('stamp-canvas-${uniqueKey}'),
+                ctx = pdfCanvas.getContext('2d');
 
-			function renderPage(num) {
+            var dataObjects = [],
+                fobject = null;
+
+            function renderPage(num) {
 pageRendering = true;
-// Using promise to fetch the page
 pdfDoc.getPage(num).then(function(page) {
 var viewport = page.getViewport({scale: scale});
-					pdfCanvas.height = viewport.height;
-					pdfCanvas.width = viewport.width;
+                    pdfCanvas.height = viewport.height;
+                    pdfCanvas.width = viewport.width;
 
-					// Render PDF page into canvas context
-					var renderContext = {
+                    var renderContext = {
 canvasContext: ctx,
 viewport: viewport
 };
-					var renderTask = page.render(renderContext);
 
-					// Wait for rendering to finish
-					renderTask.promise.then(function() {
+                    var renderTask = page.render(renderContext);
+
+                    renderTask.promise.then(function() {
 pageRendering = false;
-if ('${stampFile!}' && !fobject) {
-stampCanvas.width  = pdfCanvas.width;
-stampCanvas.height = pdfCanvas.height;
-
-fobject = new fabric.Canvas(stampCanvas, {
-width    : stampCanvas.offsetWidth,
-height   : stampCanvas.offsetHeight,
-selection: false
-});
-
-							fabric.Image.fromURL('${request.contextPath}${stampFile!?html}', function(img){
-fobject.add(img);
-fobject.on('object:moving', onStampChange, false);
-fobject.on('object:scaling', onStampChange, false);
-img.controls.mtr = new fabric.Control({ visible: false });
-							});
-						}
-
-						if (pageNumPending !== null) {
-// New page rendering is pending
+if (pageNumPending !== null) {
 renderPage(pageNumPending);
 pageNumPending = null;
 }
-					});
-				});
+                    });
+                });
 
-				 // Update page counters
-				 $('.page_num').html(num);
+                document.querySelector('.page_num').textContent = num;
+            }
 
-				 onPageChange(num);
-			}
-
-			function onStampChange(event) {
-let top = event.transform.target.top;
-let left = event.transform.target.left;
-let scaleY = event.transform.target.scaleY;
-let scaleX = event.transform.target.scaleX;
-let height = scaleY * event.transform.target.height;
-let width = scaleX * event.transform.target.width;
-
-let value = [pageNum, top, left, scaleY, scaleX].join(';');
-$('#${elementParamName!}_${uniqueKey!}').val(value);
-}
-
-            function onPageChange(page) {
-let oldValue = $('#${elementParamName!}_${uniqueKey!}').val();
-
-let split = oldValue.split(';');
-let top = split[1]
-let left = split[2];
-let scaleY = split[3];
-let scaleX = split[4];
-
-let newValue = [page, top, left, scaleY, scaleX].join(';');
-$('#${elementParamName!}_${uniqueKey!}').val(newValue);
-}
-
-			function queueRenderPage(num) {
+            function queueRenderPage(num) {
 if (pageRendering) {
 pageNumPending = num;
 } else {
 renderPage(num);
 }
-			}
+            }
 
-			function onPrevPage() {
+            function onPrevPage() {
 if (pageNum <= 1) {
 return;
 }
-				pageNum--;
-				queueRenderPage(pageNum);
-			}
-			$('.prev').on('click', onPrevPage);
-			function onNextPage() {
+                pageNum--;
+                queueRenderPage(pageNum);
+            }
+            document.querySelector('.prev').addEventListener('click', onPrevPage);
+
+            function onNextPage() {
 if (pageNum >= pdfDoc.numPages) {
 return;
 }
-				pageNum++;
-				queueRenderPage(pageNum);
-			}
-			$('.next').on('click', onNextPage);
+                pageNum++;
+                queueRenderPage(pageNum);
+            }
+            document.querySelector('.next').addEventListener('click', onNextPage);
 
-			pdfjsLib.getDocument(url)
-.promise
-.then(pdfDoc_ => {
+            pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
 pdfDoc = pdfDoc_;
-$('.page_count').html(pdfDoc.numPages);
-
-// Initial/first page rendering
+document.querySelector('.page_count').textContent = pdfDoc.numPages;
 renderPage(pageNum);
 }).catch(console.error);
 
-            function downloadPDF(){
-window.open('${request.contextPath}${pdfFile!?html}?attachment=true'); // it will open download of filepath
+            function downloadPDF() {
+window.open('${request.contextPath}${pdfFile!?html}?attachment=true');
             }
-		});
-
-	</script>
+        });
+    </script>
 </#if>

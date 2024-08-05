@@ -19,8 +19,13 @@ import org.joget.workflow.model.service.WorkflowManager;
 import org.joget.workflow.util.WorkflowUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -29,7 +34,7 @@ import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 
 public class FilePreview extends Element implements FormBuilderPaletteElement, FileDownloadSecurity, FormStoreBinder, PropertyEditable {
 
-    private static final String PREVIEW_DIR = "/path/to/upload/dir/";
+    private static final String UPLOAD_DIR = "/path/to/upload/dir/";
     private FormStoreBinder secondaryBinder = null;
 
     @Override
@@ -163,6 +168,31 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
         return formRowSet;
     }
 
+    // New method to handle file upload
+    public void handleFileUpload(HttpServletRequest request) throws IOException {
+        String fileName = getSubmittedFileName(request);
+        Path path = Paths.get(UPLOAD_DIR + fileName);
+
+        // Create directories if they do not exist
+        if (Files.notExists(path.getParent())) {
+            Files.createDirectories(path.getParent());
+        }
+
+        // Save the file
+        Files.copy(request.getInputStream(), path);
+    }
+
+    // Utility method to get the submitted file name from request
+    private String getSubmittedFileName(HttpServletRequest request) {
+        String partHeader = request.getHeader("content-disposition");
+        for (String content : partHeader.split(";")) {
+            if (content.trim().startsWith("filename")) {
+                return content.substring(content.indexOf('=') + 1).trim().replace("\"", "");
+            }
+        }
+        return null;
+    }
+
     @Override
     public String getName() {
         return "FilePreview";
@@ -172,7 +202,6 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
     public String getVersion() {
         PluginManager pluginManager = (PluginManager) AppUtil.getApplicationContext().getBean("pluginManager");
         ResourceBundle resourceBundle = pluginManager.getPluginMessageBundle(getClassName(), "/message/BuildNumber");
-//        String buildNumber = resourceBundle.getString("buildNumber");
         return "Form Element";
     }
 
@@ -211,7 +240,6 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
     }
 
     protected boolean overrideSignature() {
-        // return "true".equalsIgnoreCase(getPropertyString("override"));
         return false;
     }
 
