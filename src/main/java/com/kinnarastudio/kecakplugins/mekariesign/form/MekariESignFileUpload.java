@@ -22,7 +22,7 @@ import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 public class MekariESignFileUpload extends FileUpload implements FormBuilderPaletteElement, FileDownloadSecurity, FormStoreBinder, PropertyEditable {
 
     private static final String PREVIEW_DIR = "/path/to/upload/dir/";
-    private static final String LABEL = "FilePreview";
+    private static final String LABEL = "Mekari E-Sign File Upload";
 
     @Override
     public String renderTemplate(FormData formData, Map dataModel) {
@@ -79,7 +79,7 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
             String filePath = FileManager.getBaseDirectory() + "/" + row.getTempFilePath("field4");
             LogUtil.info(getClassName() , row.getTempFilePath("field4"));
 //            String filePath = rowSet.iterator().next().getProperty("filePath");
-            File file = FileManager.getFileByPath(filePath);
+            File file = new File(filePath);
 //            LogUtil.info(getClassName(), "File: " + file.getName());
 
             // Check if the file is a PDF
@@ -210,7 +210,7 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
 
     @Override
     public String getPropertyOptions() {
-        return AppUtil.readPluginResource(getClass().getName(), "properties/filePreview.json", null, true, "/message/DigitalSignature");
+        return AppUtil.readPluginResource(getClass().getName(), "properties/form/MekariESignFileUpload.json", null, true, "/messages/MekariESignTool");
     }
 
     // Other methods as needed

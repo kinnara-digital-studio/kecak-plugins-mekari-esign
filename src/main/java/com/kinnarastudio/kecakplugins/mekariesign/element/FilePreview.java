@@ -194,7 +194,7 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
     @Override
     public String getPropertyOptions() {
         final String[] args = new String[]{ MekariESignFormLoadBinder.class.getName() };
-        return AppUtil.readPluginResource(getClass().getName(), "properties/form/filePreview.json", args, true, "/message/DigitalSignature");
+        return AppUtil.readPluginResource(getClass().getName(), "properties/form/MekariESignFileUpload.json", args, true, "/messages/MekariESignTool");
     }
 
     protected String getPdfFileName(Element element, FormData formData) {
