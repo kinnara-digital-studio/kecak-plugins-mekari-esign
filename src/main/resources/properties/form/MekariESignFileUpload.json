@@ -28,7 +28,7 @@
           {"label": "Meterai", "value": "meterai"}
         ],
         "defaultValue": "signature",
-        "required": true
+        "required": "True"
       }
     ]
   }
