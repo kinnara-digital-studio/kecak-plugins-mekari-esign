@@ -32,6 +32,7 @@
                         <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
                     </div>
                     <input type="hidden" name="${elementParamName!}_path" value="" disabled/>
+                    <h1>Hello</h1>
                 </li>
             </#if>
             <#if tempFilePaths??>
