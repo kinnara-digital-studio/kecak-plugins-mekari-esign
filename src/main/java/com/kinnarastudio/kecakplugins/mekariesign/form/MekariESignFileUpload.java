@@ -26,7 +26,7 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
 
     @Override
     public String renderTemplate(FormData formData, Map dataModel) {
-        String template = "fileUpload.ftl";
+        String template = "MekariESignFileUpload.ftl";
         final String primaryKeyValue = getPrimaryKeyValue(formData);
         final String value = FormUtil.getElementPropertyValue(this, formData);
         String encodedFileName = value;
