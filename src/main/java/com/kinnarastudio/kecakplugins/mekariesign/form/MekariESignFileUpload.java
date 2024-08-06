@@ -8,7 +8,7 @@ import org.joget.apps.form.model.*;
 import org.joget.apps.form.service.FormUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.plugin.property.model.PropertyEditable;
-import com.google.gson.Gson;
+
 import org.joget.commons.util.FileManager;
 import org.joget.commons.util.LogUtil;
 
@@ -87,9 +87,6 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
                 formData.addFormError("file", "Only PDF files are allowed.");
                 return null;
             }
-
-            // Handle PDF file for preview and save coordinates
-            handlePDF(file);
         }
         return rowSet;
     }
@@ -109,36 +106,6 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
             }
         }
         return false;
-    }
-
-    private void handlePDF(File file) {
-        // Implement your logic for handling the PDF and signature boxes here
-        List<SignatureBox> signatureBoxes = new ArrayList<>();
-        // Example: Adding a dummy signature box
-        signatureBoxes.add(new SignatureBox(100, 150, 100, 50, 0));
-
-        saveSignatureBoxData(signatureBoxes);
-    }
-
-    private void saveSignatureBoxData(List<SignatureBox> data) {
-        try (FileWriter writer = new FileWriter("signature_boxes.json")) {
-            Gson gson = new Gson();
-            gson.toJson(data, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static class SignatureBox {
-        int x, y, width, height, page;
-
-        SignatureBox(int x, int y, int width, int height, int page) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.page = page;
-        }
     }
 
     @Override
