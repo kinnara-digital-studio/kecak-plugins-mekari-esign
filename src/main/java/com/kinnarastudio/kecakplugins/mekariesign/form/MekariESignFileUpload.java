@@ -76,8 +76,8 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
         if (rowSet != null && !rowSet.isEmpty()) {
             FormRow row = rowSet.iterator().next();
             row.forEach((key,value) -> {LogUtil.info(getClassName(),"key: " + key + "value: " + value);});
-            String filePath = FileManager.getBaseDirectory() + "/" + row.getTempFilePath(getPropertyString("Id"));
-            LogUtil.info(getClassName() , row.getTempFilePath(getPropertyString("Id")));
+            String filePath = FileManager.getBaseDirectory() + "/" + row.getTempFilePath(getPropertyString("id"));
+            LogUtil.info(getClassName() , row.getTempFilePath(getPropertyString("id")));
 //            String filePath = rowSet.iterator().next().getProperty("filePath");
             File file = new File(filePath);
 //            LogUtil.info(getClassName(), "File: " + file.getName());
@@ -189,7 +189,7 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
     @Override
     public String getVersion() {
         PluginManager pluginManager = (PluginManager) AppUtil.getApplicationContext().getBean("pluginManager");
-        ResourceBundle resourceBundle = pluginManager.getPluginMessageBundle(getClassName(), "/message/BuildNumber");
+        ResourceBundle resourceBundle = pluginManager.getPluginMessageBundle(getClassName(), "/messages/BuildNumber");
         return resourceBundle.getString("buildNumber");
     }
 

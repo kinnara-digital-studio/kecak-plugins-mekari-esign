@@ -3,7 +3,7 @@
     "title": "File Upload",
     "properties": [
       {
-        "name": "Id",
+        "name": "id",
         "label": "Id",
         "type": "textfield",
         "required": "True",
