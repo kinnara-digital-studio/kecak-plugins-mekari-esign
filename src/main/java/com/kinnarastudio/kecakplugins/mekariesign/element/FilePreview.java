@@ -2,6 +2,7 @@ package com.kinnarastudio.kecakplugins.mekariesign.element;
 
 import com.kinnarastudio.commons.Try;
 import com.kinnarastudio.commons.mekarisign.MekariSign;
+import com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFileUpload;
 import com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFormLoadBinder;
 import org.joget.apps.app.model.AppDefinition;
 import org.joget.apps.app.service.AppUtil;
@@ -28,8 +29,6 @@ import java.util.stream.Stream;
 import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 
 public class FilePreview extends Element implements FormBuilderPaletteElement, FileDownloadSecurity, FormStoreBinder, PropertyEditable {
-
-    private static final String PREVIEW_DIR = "/path/to/upload/dir/";
     private FormStoreBinder secondaryBinder = null;
 
     @Override
@@ -165,15 +164,14 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
 
     @Override
     public String getName() {
-        return "FilePreview";
+        return "File Preview";
     }
 
     @Override
     public String getVersion() {
         PluginManager pluginManager = (PluginManager) AppUtil.getApplicationContext().getBean("pluginManager");
-        ResourceBundle resourceBundle = pluginManager.getPluginMessageBundle(getClassName(), "/message/BuildNumber");
-//        String buildNumber = resourceBundle.getString("buildNumber");
-        return "Form Element";
+        ResourceBundle resourceBundle = pluginManager.getPluginMessageBundle(getClassName(), "/messages/BuildNumber");
+        return resourceBundle.getString("buildNumber");
     }
 
     @Override
@@ -194,7 +192,15 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
     @Override
     public String getPropertyOptions() {
         final String[] args = new String[]{ MekariESignFormLoadBinder.class.getName() };
-        return AppUtil.readPluginResource(getClass().getName(), "properties/form/MekariESignFileUpload.json", args, true, "/messages/MekariESignTool");
+        return AppUtil.readPluginResource(getClass().getName(), "properties/form/FilePreview.json", args, true, "/messages/MekariESignTool");
+    }
+
+    @Override
+    public void setStoreBinder(FormStoreBinder storeBinderFromProperties) {
+        super.setStoreBinder(new PdfViewerElementStoreBinder()); // inline store binder
+
+        // secondary store is set with store binder in properties
+        this.secondaryBinder = storeBinderFromProperties;
     }
 
     protected String getPdfFileName(Element element, FormData formData) {
@@ -293,5 +299,42 @@ public class FilePreview extends Element implements FormBuilderPaletteElement, F
 
     protected String getTsaPassword() {
         return getPropertyString("tsaPassword");
+    }
+
+    public static class PdfViewerElementStoreBinder extends FormBinder implements FormStoreBinder {
+        @Override
+        public FormRowSet store(Element element, FormRowSet formRowSet, FormData formData) {
+            return ((MekariESignFileUpload)element).store(element, formRowSet, formData);
+        }
+
+        @Override
+        public String getName() {
+            return "Proxy Store Binde for PDF Viewer Elementr";
+        }
+
+        @Override
+        public String getVersion() {
+            return getClass().getPackage().getImplementationVersion();
+        }
+
+        @Override
+        public String getDescription() {
+            return getClass().getPackage().getImplementationTitle();
+        }
+
+        @Override
+        public String getLabel() {
+            return getName();
+        }
+
+        @Override
+        public String getClassName() {
+            return getClass().getName();
+        }
+
+        @Override
+        public String getPropertyOptions() {
+            return null;
+        }
     }
 }
