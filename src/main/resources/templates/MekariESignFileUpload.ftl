@@ -6,6 +6,7 @@
         <script type="text/javascript">// Immediately after the js include
             Dropzone.autoDiscover = false;
         </script>
+
         <style>
             .form-fileupload {width:70%;}
             ul.form-fileupload-value {padding0; margin: 0;}
