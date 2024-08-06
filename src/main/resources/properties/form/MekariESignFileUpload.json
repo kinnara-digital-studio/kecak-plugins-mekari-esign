@@ -15,13 +15,13 @@
         "name": "label",
         "label": "Label",
         "type": "textfield",
-        "required": "true",
+        "required": "True",
         "value": "Digital Signature"
       },
       {
         "name": "stampType",
         "label": "Stamp Type",
-        "type": "select",
+        "type": "selectbox",
         "options": [
           {"label": "Signature", "value": "signature"},
           {"label": "Initial", "value": "initial"},
