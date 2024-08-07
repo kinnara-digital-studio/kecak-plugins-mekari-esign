@@ -2,12 +2,14 @@ package com.kinnarastudio.kecakplugins.mekariesign.datalist;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
@@ -17,6 +19,7 @@ import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.datalist.model.DataList;
 import org.joget.apps.datalist.model.DataListActionDefault;
 import org.joget.apps.datalist.model.DataListActionResult;
+import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.plugin.property.service.PropertyUtil;
 import org.joget.workflow.util.WorkflowUtil;
@@ -35,10 +38,10 @@ public class MekariESignDatalistActionFileDownloader extends DataListActionDefau
     @Override
     public DataListActionResult executeAction(DataList dataList, String[] rowKeys) {
         DataListActionResult result = new DataListActionResult();
-        result.setType(DataListActionResult.TYPE_REDIRECT);
         
         // only allow POST
         HttpServletRequest servletRequest = WorkflowUtil.getHttpServletRequest();
+        HttpServletResponse servletResponse = WorkflowUtil.getHttpServletResponse();
         if (servletRequest != null && !"POST".equalsIgnoreCase(servletRequest.getMethod())) {
             return null;
         }
@@ -51,10 +54,20 @@ public class MekariESignDatalistActionFileDownloader extends DataListActionDefau
                         .setAuthenticationToken(authToken)
                         .authenticateAndBuild();
 
-            String id = "";
-            File file = File.createTempFile("test", ".pdf", new File("/home/user/Documents/"));
+            String id = rowKeys[0];
+            File file = File.createTempFile("test", ".pdf");
             file.setWritable(true);
+
+            LogUtil.info(getClassName(), "ID: " + id);
+
             mekariSign.downloadDoc(id, file);
+
+            servletResponse.setContentType("application/pdf");
+            servletResponse.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
+            servletResponse.setContentLength((int) file.length());
+
+            Files.copy(file.toPath(), servletResponse.getOutputStream());
+            servletResponse.getOutputStream().flush();
         } 
         catch (BuildingException | IOException | RequestException e) 
         {
