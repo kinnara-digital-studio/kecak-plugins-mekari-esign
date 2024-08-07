@@ -1,4 +1,4 @@
-<div class = "form-cell" ${elementMetaData!}>
+<div class="form-cell" ${elementMetaData!}>
     <#if !(request.getAttribute("org.joget.apps.form.lib.FileUpload")?? || request.getAttribute("org.joget.plugin.enterprise.ImageUpload")??)  >
         <link rel="stylesheet" href="${request.contextPath}/js/dropzone/dropzone.css" />
         <script type="text/javascript" src="${request.contextPath}/js/dropzone/dropzone.js"></script>
@@ -8,15 +8,16 @@
         </script>
 
         <style>
-            .form-fileupload {width: 70%;}
+            .form-fileupload {width:70%;}
             ul.form-fileupload-value {padding: 0; margin: 0;}
             ul.form-fileupload-value li{display:block; margin-bottom: 5px;}
             ul.form-fileupload-value li .remove {color:red; display:inline-block; margin: 0 30px;}
             ul.form-fileupload-value li a {display: inline-block;}
+            .pdf-viewer {width: 100%; height: 500px; border: 1px solid #ccc; margin-top: 20px;}
         </style>
     </#if>
 
-<label class ="label" for="${elementParamName!}" field-tooltip="${elementParamName!}">${element.properties.label} <span class="form-cell-validator">${decoration}</span><#if error??> <span class="form-error-message">${error}</span></#if></label>
+<label class="label" for="${elementParamName!}" field-tooltip="${elementParamName!}">${element.properties.label} <span class="form-cell-validator">${decoration}</span><#if error??> <span class="form-error-message">${error}</span></#if></label>
     <div id="form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}" tabindex="0" class="form-fileupload <#if error??>form-error-cell</#if> <#if element.properties.readonly! == 'true'>readonly<#else>dropzone</#if>">
     <#if element.properties.readonly! != 'true'>
         <div class="dz-message needsclick">
@@ -33,7 +34,7 @@
                         <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
                     </div>
                     <input type="hidden" name="${elementParamName!}_path" value="" disabled/>
-                    <a id="pdfLink" href="#" target="_blank">Lihat PDF</a>
+                    <div id="pdfContainer"></div>
                 </li>
             </#if>
             <#if tempFilePaths??>
@@ -83,10 +84,9 @@
                     const file = event.target.files[0];
                     if (file && file.type === 'application/pdf') {
                         const fileURL = URL.createObjectURL(file);
-                        const pdfLink = document.getElementById('pdfLink');
-                        pdfLink.href = fileURL;
-                        pdfLink.textContent = 'Lihat PDF';
-                        console.log('PDF URL: ', fileURL); // Untuk debugging
+                        const pdfContainer = document.getElementById('pdfContainer');
+                        pdfContainer.innerHTML = '<iframe class="pdf-viewer" src="' + fileURL + '"></iframe>';
+                        console.log('PDF URL:', fileURL); // Untuk debugging
                     } else {
                         alert('Silakan unggah file PDF.');
                     }
