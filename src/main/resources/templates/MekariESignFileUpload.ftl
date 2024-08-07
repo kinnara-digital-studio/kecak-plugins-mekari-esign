@@ -1,4 +1,4 @@
-<div class="form-cell" ${elementMetaData!}>
+<div class = "form-cell" ${elementMetaData!}>
     <#if !(request.getAttribute("org.joget.apps.form.lib.FileUpload")?? || request.getAttribute("org.joget.plugin.enterprise.ImageUpload")??)  >
         <link rel="stylesheet" href="${request.contextPath}/js/dropzone/dropzone.css" />
         <script type="text/javascript" src="${request.contextPath}/js/dropzone/dropzone.js"></script>
@@ -8,15 +8,15 @@
         </script>
 
         <style>
-            .form-fileupload {width:70%;}
-            ul.form-fileupload-value {padding0; margin: 0;}
+            .form-fileupload {width: 70%;}
+            ul.form-fileupload-value {padding: 0; margin: 0;}
             ul.form-fileupload-value li{display:block; margin-bottom: 5px;}
             ul.form-fileupload-value li .remove {color:red; display:inline-block; margin: 0 30px;}
             ul.form-fileupload-value li a {display: inline-block;}
         </style>
     </#if>
 
-    <label class="label" for="${elementParamName!}" field-tooltip="${elementParamName!}">${element.properties.label} <span class="form-cell-validator">${decoration}</span><#if error??> <span class="form-error-message">${error}</span></#if></label>
+<label class ="label" for="${elementParamName!}" field-tooltip="${elementParamName!}">${element.properties.label} <span class="form-cell-validator">${decoration}</span><#if error??> <span class="form-error-message">${error}</span></#if></label>
     <div id="form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}" tabindex="0" class="form-fileupload <#if error??>form-error-cell</#if> <#if element.properties.readonly! == 'true'>readonly<#else>dropzone</#if>">
     <#if element.properties.readonly! != 'true'>
         <div class="dz-message needsclick">
@@ -27,13 +27,13 @@
         <ul class="form-fileupload-value">
             <#if element.properties.readonly! != 'true'>
                 <li class="template" style="display:none;">
-                    <span class="name" data-dz-name></span> <a class="remove"style="display:none">@@form.fileupload.remove@@</a> 
+                    <span class="name" data-dz-name></span> <a class="remove"style="display:none">@@form.fileupload.remove@@</a>
                     <strong class="error text-danger" data-dz-errormessage></strong>
                     <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                         <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
                     </div>
                     <input type="hidden" name="${elementParamName!}_path" value="" disabled/>
-                    <h1>Hello</h1>
+                    <a id="pdfLink" href="#" target="_blank">Lihat PDF</a>
                 </li>
             </#if>
             <#if tempFilePaths??>
@@ -77,6 +77,19 @@
                     resizeHeight : "${element.properties.resizeHeight!}",
                     resizeQuality : "${element.properties.resizeQuality!}",
                     resizeMethod : "${element.properties.resizeMethod!}"
+                });
+
+                $('#${elementParamName!}').on('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file && file.type === 'application/pdf') {
+                        const fileURL = URL.createObjectURL(file);
+                        const pdfLink = document.getElementById('pdfLink');
+                        pdfLink.href = fileURL;
+                        pdfLink.textContent = 'Lihat PDF';
+                        console.log('PDF URL: ', fileURL); // Untuk debugging
+                    } else {
+                        alert('Silakan unggah file PDF.');
+                    }
                 });
             });
         </script>
