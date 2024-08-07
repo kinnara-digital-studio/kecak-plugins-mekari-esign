@@ -6,7 +6,9 @@ import org.joget.apps.app.model.AppDefinition;
 import org.joget.apps.app.model.PluginDefaultProperties;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.model.*;
+import org.joget.commons.util.FileManager;
 import org.joget.plugin.base.PluginManager;
+import org.joget.plugin.base.PluginWebSupport;
 import org.joget.workflow.util.WorkflowUtil;
 
 import com.kinnarastudio.commons.mekarisign.MekariSign;
@@ -19,7 +21,10 @@ import com.kinnarastudio.commons.mekarisign.model.TokenType;
 import org.joget.plugin.property.service.PropertyUtil;
 import org.joget.workflow.util.WorkflowUtil;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.*;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
@@ -27,9 +32,10 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class MekariESignFormLoadBinder extends FormBinder implements FormLoadElementBinder {
+public class MekariESignFormLoadBinder extends FormBinder implements FormLoadElementBinder, PluginWebSupport {
     public final static String LABEL = "Mekari eSign Form Load Binder";
 
     @Override
@@ -40,13 +46,13 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
             HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
             String token = (String) session.getAttribute("MekariToken");
             AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, ServerType.valueOf(getPropertyString("serverType")));
-    
+
             mekariSign = MekariSign.getBuilder()
-                        .setAuthenticationToken(authToken)
-                        .authenticateAndBuild();
-            
+                    .setAuthenticationToken(authToken)
+                    .authenticateAndBuild();
+
             ResponseData document = mekariSign.getDocDetail(primaryKey);
-            
+
             FormRow formRow = new FormRow();
             formRow.setProperty("id", document.getId());
             formRow.setProperty("type", document.getType());
@@ -54,7 +60,7 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
             formRow.setProperty("category", document.getAttributes().getCategory().toString());
             formRow.setProperty("docUrl", document.getAttributes().getDocUrl());
             formRowSet.add(formRow);
-            
+
         } catch (BuildingException | RequestException | ParseException e) {
             e.printStackTrace();
         }
@@ -145,5 +151,26 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
                 .map(s -> s.getAttribute(name))
                 .map(String::valueOf)
                 .orElse("");
+    }
+
+    @Override
+    public void webService(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+        int BYTE_ARRAY_BUFFER_SIZE = 4096;
+        OutputStream os = httpServletResponse.getOutputStream();
+        httpServletResponse.setHeader("Content-Type", "application/pdf");
+        httpServletResponse.setHeader("Content-Disposition", "inline; filename=test.pdf");
+
+        try (
+                InputStream is = Files.newInputStream(new File(FileManager.getBaseDirectory() + "/9827bed3-3ac5-46e5-8942-a094123ad278/test.pdf").toPath());
+        ) {
+            final byte[] buffer = new byte[BYTE_ARRAY_BUFFER_SIZE];
+            int len;
+            while ((len = is.read(buffer)) >= 0) {
+                os.write(buffer, 0, len);
+            }
+            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+//            os.flush();
+
+        }
     }
 }
