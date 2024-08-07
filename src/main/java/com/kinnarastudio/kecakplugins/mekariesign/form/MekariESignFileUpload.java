@@ -31,6 +31,10 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
         final String value = FormUtil.getElementPropertyValue(this, formData);
         String encodedFileName = value;
 
+        final AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
+        dataModel.put("appId", appDefinition.getAppId());
+        dataModel.put("appVersion", appDefinition.getVersion());
+
         try {
             encodedFileName = URLEncoder.encode(value, "UTF8").replaceAll("\\+", "%20");
         } catch (UnsupportedEncodingException ignored) {

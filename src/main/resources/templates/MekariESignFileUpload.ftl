@@ -34,7 +34,7 @@ ul.form-fileupload-value li a { display: inline-block; }
                         <div class="progress-bar progress-bar-success" style="width: 0%;" data-dz-uploadprogress></div>
                     </div>
                     <input type="hidden" name="${elementParamName!}_path" value="" disabled/>
-                    <embed id="pdfViewer" class="pdf-viewer" src="https://sandbox.kecak.org/web/json/app/mekarisign/1/plugin/com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFormLoadBinder/service" type="application/pdf" />
+                    <embed id="pdfViewer" class="pdf-viewer" src="${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFormLoadBinder/service?path=" type="application/pdf" />
                 </li>
             </#if>
             <#if tempFilePaths??>

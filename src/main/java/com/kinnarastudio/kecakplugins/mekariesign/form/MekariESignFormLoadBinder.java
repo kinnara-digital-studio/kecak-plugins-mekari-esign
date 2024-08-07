@@ -160,8 +160,10 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
         httpServletResponse.setHeader("Content-Type", "application/pdf");
         httpServletResponse.setHeader("Content-Disposition", "inline; filename=test.pdf");
 
+        String path = httpServletRequest.getParameter("path");
+
         try (
-                InputStream is = Files.newInputStream(new File(FileManager.getBaseDirectory() + "/9827bed3-3ac5-46e5-8942-a094123ad278/test.pdf").toPath());
+                InputStream is = Files.newInputStream(new File(FileManager.getBaseDirectory() + "/" + path).toPath());
         ) {
             final byte[] buffer = new byte[BYTE_ARRAY_BUFFER_SIZE];
             int len;
