@@ -1,8 +1,11 @@
 package com.kinnarastudio.kecakplugins.mekariesign.datalist;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.datalist.model.DataList;
@@ -11,18 +14,43 @@ import org.joget.apps.datalist.model.DataListActionResult;
 import org.joget.plugin.base.PluginManager;
 import org.joget.workflow.util.WorkflowUtil;
 
+import com.kinnarastudio.commons.mekarisign.MekariSign;
+import com.kinnarastudio.commons.mekarisign.exception.BuildingException;
+import com.kinnarastudio.commons.mekarisign.exception.RequestException;
+import com.kinnarastudio.commons.mekarisign.model.AuthenticationToken;
+import com.kinnarastudio.commons.mekarisign.model.ServerType;
+import com.kinnarastudio.commons.mekarisign.model.TokenType;
+
 public class MekariESignDatalistActionFileDownloader extends DataListActionDefault{
     public final static String LABEL = "Mekari eSign Datalist Action File Downloader";
 
     @Override
-    public DataListActionResult executeAction(DataList arg0, String[] arg1) {
+    public DataListActionResult executeAction(DataList dataList, String[] rowKeys) {
         DataListActionResult result = new DataListActionResult();
         result.setType(DataListActionResult.TYPE_REDIRECT);
         
         // only allow POST
-        HttpServletRequest request = WorkflowUtil.getHttpServletRequest();
-        if (request != null && !"POST".equalsIgnoreCase(request.getMethod())) {
+        HttpServletRequest servletRequest = WorkflowUtil.getHttpServletRequest();
+        if (servletRequest != null && !"POST".equalsIgnoreCase(servletRequest.getMethod())) {
             return null;
+        }
+    
+        try {
+            HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
+            String token = (String) session.getAttribute("MekariToken");
+            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, ServerType.valueOf(getPropertyString("serverType")));
+            MekariSign mekariSign = MekariSign.getBuilder()
+                        .setAuthenticationToken(authToken)
+                        .authenticateAndBuild();
+
+            String id = "";
+            File file = File.createTempFile("test", ".pdf", new File("/home/user/Documents/"));
+            file.setWritable(true);
+            mekariSign.downloadDoc(id, file);
+        } 
+        catch (BuildingException | IOException | RequestException e) 
+        {
+            e.printStackTrace();
         }
 
         return result;
