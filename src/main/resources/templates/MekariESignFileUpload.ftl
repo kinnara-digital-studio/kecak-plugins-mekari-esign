@@ -34,7 +34,7 @@
                             <div class="progress-bar progress-bar-success" style="width: 0%;" data-dz-uploadprogress></div>
                         </div>
                         <input type="hidden" name="${elementParamName!}_path" value="" disabled/>
-                        <embed id="pdfViewer" class="pdf-viewer" src="${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFormLoadBinder/service?path=" type="application/pdf" />
+                        <embed id="pdfViewer" class="pdf-viewer" src="${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFormLoadBinder/service" type="application/pdf" />
                     </li>
                 </#if>
                 <#if tempFilePaths??>
@@ -62,36 +62,35 @@
             </ul>
         </div>
         <#if element.properties.readonly! != 'true'>
-        <script>
-            $(document).ready(function() {
-                $('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}').fileUploadField({
-                url: "${element.serviceUrl!}",
-                paramName: "${elementParamName!}",
-                multiple: "${element.properties.multiple!}",
-                maxSize: "${element.properties.maxSize!}",
-                maxSizeMsg: "${element.properties.maxSizeMsg!}",
-                fileType: "${element.properties.fileType!}",
-                fileTypeMsg: "${element.properties.fileTypeMsg!}",
-                padding: "${element.properties.padding!}",
-                removeFile: "${element.properties.removeFile!}",
-                resizeWidth: "${element.properties.resizeWidth!}",
-                resizeHeight: "${element.properties.resizeHeight!}",
-                resizeQuality: "${element.properties.resizeQuality!}",
-                resizeMethod: "${element.properties.resizeMethod!}"
-            });
-
-            $('#${elementParamName!}').on('change', function(event) {
-                const file = event.target.files[0];
-                if (file && file.type === 'application/pdf') {
-                    const fileURL = URL.createObjectURL(file);
-                    const pdfViewer = document.getElementById('pdfViewer');
-                    pdfViewer.src = fileURL;
-                    } else {
-                    alert('Silakan unggah file PDF.');
-                    }
+            <script>
+                $(document).ready(function() {
+                    $('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}').fileUploadField({
+                    url: "${element.serviceUrl!}",
+                    paramName: "${elementParamName!}",
+                    multiple: "${element.properties.multiple!}",
+                    maxSize: "${element.properties.maxSize!}",
+                    maxSizeMsg: "${element.properties.maxSizeMsg!}",
+                    fileType: "${element.properties.fileType!}",
+                    fileTypeMsg: "${element.properties.fileTypeMsg!}",
+                    padding: "${element.properties.padding!}",
+                    removeFile: "${element.properties.removeFile!}",
+                    resizeWidth: "${element.properties.resizeWidth!}",
+                    resizeHeight: "${element.properties.resizeHeight!}",
+                    resizeQuality: "${element.properties.resizeQuality!}",
+                    resizeMethod: "${element.properties.resizeMethod!}"
                 });
-            });
-        </script>
-    </#if>
-</div>
 
+                    $('#${elementParamName!}').on('change', function(event) {
+                        const file = event.target.files[0];
+                        if (file && file.type === 'application/pdf') {
+                            const fileURL = URL.createObjectURL(file);
+                            const pdfViewer = document.getElementById('pdfViewer');
+                            pdfViewer.src = fileURL;
+                        } else {
+                            alert('Silakan unggah file PDF.');
+                        }
+                    });
+                });
+            </script>
+        </#if>
+</div>
