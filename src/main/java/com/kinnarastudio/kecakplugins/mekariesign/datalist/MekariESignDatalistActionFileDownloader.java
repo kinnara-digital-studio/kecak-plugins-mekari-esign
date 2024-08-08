@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
@@ -19,6 +20,7 @@ import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.datalist.model.DataList;
 import org.joget.apps.datalist.model.DataListActionDefault;
 import org.joget.apps.datalist.model.DataListActionResult;
+import org.joget.apps.datalist.model.DataListCollection;
 import org.joget.commons.util.LogUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.plugin.property.service.PropertyUtil;
@@ -58,12 +60,34 @@ public class MekariESignDatalistActionFileDownloader extends DataListActionDefau
             File file = File.createTempFile("test", ".pdf");
             file.setWritable(true);
 
-            LogUtil.info(getClassName(), "ID: " + id);
+            for (String rowKey : rowKeys)
+            {
+                LogUtil.info(getClassName(), "Row Key: " + rowKey);
+            }
 
             mekariSign.downloadDoc(id, file);
 
+            String filename = "";
+            DataListCollection <Map<String, String>> rows = dataList.getRows();
+            if (rows != null) {
+                for (Object row : rows) {
+                    Map<String, String> rowData = (Map<String, String>) row;
+                    if (rowData.get("id").equals(id)) { 
+                        filename = (String) rowData.get("filename"); 
+                        break;
+                    }
+                }
+            }
+
+            if (filename.equals(""))
+            {
+                filename = "file";
+            }
+            
+            LogUtil.info(getClassName(), "Filename: " + filename);
+
             servletResponse.setContentType("application/pdf");
-            servletResponse.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
+            servletResponse.setHeader("Content-Disposition", "attachment; filename=" + filename);
             servletResponse.setContentLength((int) file.length());
 
             Files.copy(file.toPath(), servletResponse.getOutputStream());
