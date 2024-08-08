@@ -142,13 +142,13 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
     public FormRowSet store(Element element, FormRowSet formRowSet, FormData formData) {
         HttpServletRequest request = getHttpServletRequest();
         String filePath = request.getParameter("filePath");
-
+        LogUtil.info(filePath, "req");
         if (filePath != null && !filePath.isEmpty()) {
             FormRow row = new FormRow();
             row.setProperty("filePath", filePath);
             formRowSet.add(row);
         }
-
+        LogUtil.info(formRowSet.toString(), "formRowSet");
         return formRowSet;
     }
 
