@@ -31,9 +31,8 @@
     "binder": {
         "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder",
         "properties": {
-            "serverType": "SANDBOX",
-            "documentCategory": "PSRE",
-            "signingStatus": "IN_PROGRESS",
+            "documentCategory": "GLOBAL",
+            "signingStatus": "COMPLETED",
             "stampingStatus": "NONE"
         }
     },
@@ -60,7 +59,25 @@
             "name": "filename",
             "filterable": true,
             "hidden": "false",
-            "sortable": "false"
+            "sortable": "false",
+            "datalist_type": "column",
+            "permission": {
+                "className": "",
+                "properties": {}
+            },
+            "exclude_export": "",
+            "width": "",
+            "style": "",
+            "alignment": "",
+            "headerAlignment": "",
+            "action": {
+                "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistActionFileDownloader",
+                "properties": {}
+            },
+            "format": {
+                "className": "",
+                "properties": {}
+            }
         },
         {
             "id": "column_3",
@@ -76,7 +93,25 @@
             "name": "docURL",
             "filterable": true,
             "hidden": "false",
-            "sortable": "false"
+            "sortable": "false",
+            "datalist_type": "column",
+            "permission": {
+                "className": "",
+                "properties": {}
+            },
+            "exclude_export": "",
+            "width": "",
+            "style": "",
+            "alignment": "",
+            "headerAlignment": "",
+            "action": {
+                "className": "",
+                "properties": {}
+            },
+            "format": {
+                "className": "",
+                "properties": {}
+            }
         }
     ]
 }
