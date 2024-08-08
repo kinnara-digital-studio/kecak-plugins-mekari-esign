@@ -9,6 +9,10 @@
                 "required": "true",
                 "options": [
                     {
+                        "value": "none",
+                        "label": "None"
+                    },
+                    {
                         "value": "GLOBAL",
                         "label": "Global"
                     },
@@ -24,6 +28,10 @@
                 "type": "selectbox",
                 "required": "true",
                 "options": [
+                    {
+                        "value": "none",
+                        "label": "None"
+                    },
                     {
                         "value": "IN_PROGRESS",
                         "label": "In Progress"
