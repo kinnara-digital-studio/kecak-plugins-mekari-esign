@@ -34,67 +34,51 @@ import com.kinnarastudio.commons.mekarisign.model.ServerType;
 import com.kinnarastudio.commons.mekarisign.model.TokenType;
 import com.kinnarastudio.kecakplugins.mekariesign.webservice.MekariESignWebhook;
 
-public class MekariESignDatalistActionFileDownloader extends DataListActionDefault{
+public class MekariESignDatalistActionFileDownloader extends DataListActionDefault {
     public final static String LABEL = "Mekari eSign Datalist Action File Downloader";
 
     @Override
     public DataListActionResult executeAction(DataList dataList, String[] rowKeys) {
         DataListActionResult result = new DataListActionResult();
-        
+
         // only allow POST
         HttpServletRequest servletRequest = WorkflowUtil.getHttpServletRequest();
         HttpServletResponse servletResponse = WorkflowUtil.getHttpServletResponse();
         if (servletRequest != null && !"POST".equalsIgnoreCase(servletRequest.getMethod())) {
             return null;
         }
-    
+
         try {
             HttpSession session = WorkflowUtil.getHttpServletRequest().getSession();
             String token = (String) session.getAttribute("MekariToken");
-            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, ServerType.valueOf(getPropertyString("serverType")));
+            AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token,
+                    ServerType.valueOf(getPropertyString("serverType")));
             MekariSign mekariSign = MekariSign.getBuilder()
-                        .setAuthenticationToken(authToken)
-                        .authenticateAndBuild();
+                    .setAuthenticationToken(authToken)
+                    .authenticateAndBuild();
 
             String id = rowKeys[0];
-            File file = File.createTempFile("test", ".pdf");
-            file.setWritable(true);
-
-            for (String rowKey : rowKeys)
-            {
-                LogUtil.info(getClassName(), "Row Key: " + rowKey);
-            }
-
-            mekariSign.downloadDoc(id, file);
 
             String filename = "";
-            DataListCollection <Map<String, String>> rows = dataList.getRows();
+            DataListCollection<Map<String, String>> rows = dataList.getRows();
             if (rows != null) {
                 for (Object row : rows) {
                     Map<String, String> rowData = (Map<String, String>) row;
-                    if (rowData.get("id").equals(id)) { 
-                        filename = (String) rowData.get("filename"); 
+                    if (rowData.get("id").equals(id)) {
+                        filename = (String) rowData.get("filename");
                         break;
                     }
                 }
             }
 
-            if (filename.equals(""))
-            {
+            if (filename.isEmpty()) {
                 filename = "file";
             }
-            
-            LogUtil.info(getClassName(), "Filename: " + filename);
 
             servletResponse.setContentType("application/pdf");
             servletResponse.setHeader("Content-Disposition", "attachment; filename=" + filename);
-            servletResponse.setContentLength((int) file.length());
-
-            Files.copy(file.toPath(), servletResponse.getOutputStream());
-            servletResponse.getOutputStream().flush();
-        } 
-        catch (BuildingException | IOException | RequestException e) 
-        {
+            mekariSign.downloadDoc(id, servletResponse.getOutputStream());
+        } catch (BuildingException | IOException | RequestException e) {
             e.printStackTrace();
         }
 
@@ -103,10 +87,13 @@ public class MekariESignDatalistActionFileDownloader extends DataListActionDefau
 
     @Override
     public String getPropertyString(String property) {
-        PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil.getApplicationContext().getBean("pluginDefaultPropertiesDao");
+        PluginDefaultPropertiesDao pluginDefaultPropertiesDao = (PluginDefaultPropertiesDao) AppUtil
+                .getApplicationContext().getBean("pluginDefaultPropertiesDao");
         AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
 
-        return Optional.ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(MekariESignWebhook.class.getName(), appDefinition, null, null, null, 1))
+        return Optional
+                .ofNullable(pluginDefaultPropertiesDao.getPluginDefaultPropertiesList(
+                        MekariESignWebhook.class.getName(), appDefinition, null, null, null, 1))
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .findFirst()
@@ -140,7 +127,7 @@ public class MekariESignDatalistActionFileDownloader extends DataListActionDefau
     @Override
     public String getLinkLabel() {
         String label = getPropertyString("label");
-		return !"".equals(label) ? getPropertyString("label") : getLabel();
+        return !"".equals(label) ? getPropertyString("label") : getLabel();
     }
 
     @Override
