@@ -46,8 +46,10 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
         new DataListColumn("id", "ID", true, true),
         new DataListColumn("type", "Type", true, true),
         new DataListColumn("filename", "Filename", true, true),
+        new DataListColumn("status", "Status", true, true),
         new DataListColumn("category", "Category", true, true),
-        new DataListColumn("docURL", "Document URL", true, true)
+        new DataListColumn("docURL", "Document URL", true, true),
+        new DataListColumn("updated_at", "Last Modified", true, true)
     };
 
     @Override
@@ -124,8 +126,10 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
                 maps.put("id", document.getId());
                 maps.put("type", document.getType());
                 maps.put("filename", document.getAttributes().getFilename());
+                maps.put("status", document.getAttributes().getSigningStatus().toString());
                 maps.put("category", document.getAttributes().getCategory().toString());
                 maps.put("docURL", document.getAttributes().getDocUrl());
+                maps.put("updated_at", document.getAttributes().getUpdatedAt().toString());
                 dataListCollection.add(maps);
             }
         } catch (BuildingException | ParseException e) {

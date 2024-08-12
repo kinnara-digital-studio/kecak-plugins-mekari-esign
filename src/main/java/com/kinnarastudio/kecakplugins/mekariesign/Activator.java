@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistActionFileDownloader;
-import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistColumnFormatter;
+import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistColumnStatusFormatter;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder;
 import com.kinnarastudio.kecakplugins.mekariesign.element.FilePreview;
 import com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFileUpload;
@@ -35,7 +35,7 @@ public class Activator implements BundleActivator {
         registrationList.add(context.registerService(SignerForm.class.getName(), new SignerForm(), null));
         registrationList.add(context.registerService(SignatureType.class.getName(), new SignatureType(), null));
         registrationList.add(context.registerService(FilePreview.class.getName(), new FilePreview(), null));
-        registrationList.add(context.registerService(MekariESignDatalistColumnFormatter.class.getName(), new MekariESignDatalistColumnFormatter(), null));
+        registrationList.add(context.registerService(MekariESignDatalistColumnStatusFormatter.class.getName(), new MekariESignDatalistColumnStatusFormatter(), null));
         registrationList.add(context.registerService(MekariESignDatalistActionFileDownloader.class.getName(), new MekariESignDatalistActionFileDownloader(), null));
     }
 
