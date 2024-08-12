@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import EnhydraShark.App;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder;
 import com.kinnarastudio.kecakplugins.mekariesign.webservice.MekariESignWebhook;
@@ -18,7 +17,6 @@ import org.joget.apps.app.service.AppService;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.datalist.model.*;
 import org.joget.apps.datalist.service.DataListService;
-import org.joget.apps.form.lib.SubmitButton;
 import org.joget.apps.form.model.Form;
 import org.joget.apps.form.model.FormData;
 import org.joget.apps.form.service.FormService;
@@ -32,7 +30,6 @@ import org.springframework.context.ApplicationContext;
 
 import com.kinnarastudio.commons.mekarisign.model.ServerType;
 
-import static org.joget.apps.datalist.model.DataList.CHECKBOX_POSITION_LEFT;
 import static org.joget.apps.datalist.model.DataList.CHECKBOX_POSITION_NO;
 
 public class MekariESignUserviewMenu extends UserviewMenu {
@@ -150,14 +147,14 @@ public class MekariESignUserviewMenu extends UserviewMenu {
     }
 
     protected String getJspForm(String jspFormFile, String jspUnauthorizedFile) {
-        AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
         ApplicationContext ac = AppUtil.getApplicationContext();
         AppService appService = (AppService) ac.getBean("appService");
         FormService formService = (FormService) ac.getBean("formService");
         String formJsonDef = AppUtil.readPluginResource(getClassName(), "/jsonDefinitions/mekariNewDocRequest.json");
         Form form = (Form) formService.createElementFromJson(formJsonDef);
         FormData formData = new FormData();
-        form = appService.viewDataForm(form, null, "Submit", "Cancel", "window", formData, null, null);
+        String url = getUrl();
+        form = appService.viewDataForm(form, null, "Submit", "Cancel", "window", formData, url, url);
         String formHtml = formService.retrieveFormHtml(form, formData);
         String formJson = formService.generateElementJson(form);
         this.setProperty("view", "formView");
