@@ -244,6 +244,7 @@ public class MekariESignUserviewMenu extends UserviewMenu {
     }
 
     protected String getRequestFormLabel() {
-        return getPropertyString("requestFormLabel");
+        String label = getPropertyString("requestFormLabel");
+        return label == null || label.isEmpty() ? "New Request" : label ;
     }
 }
