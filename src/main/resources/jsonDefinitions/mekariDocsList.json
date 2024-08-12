@@ -31,8 +31,8 @@
     "binder": {
         "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder",
         "properties": {
-            "documentCategory": "GLOBAL",
-            "signingStatus": "COMPLETED",
+            "documentCategory": "none",
+            "signingStatus": "none",
             "stampingStatus": "NONE"
         }
     },
