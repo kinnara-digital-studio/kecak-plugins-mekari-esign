@@ -26,8 +26,6 @@ import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 
 public class MekariESignFileUpload extends FileUpload implements FormBuilderPaletteElement, FileDownloadSecurity, FormStoreBinder, PropertyEditable {
 
-    public final static int BYTE_ARRAY_BUFFER_SIZE = 4096;
-    private static final String PREVIEW_DIR = "/path/to/upload/dir/";
     private static final String LABEL = "Mekari E-Sign File Upload";
 
     @Override
@@ -70,8 +68,12 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
 
         dataModel.put("stampFile", stampFile);
 
-        String nonce = SecurityUtil.generateNonce(new String[]{getClassName(), appDef.getAppId(), appDef.getVersion().toString()}, 1);
-        dataModel.put("nonce", nonce);
+        try {
+            String nonce = SecurityUtil.generateNonce(new String[]{getClassName(), appDef.getAppId(), appDef.getVersion().toString()}, 1);
+            dataModel.put("nonce", URLEncoder.encode(nonce, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            LogUtil.error(getClassName(), e, e.getMessage());
+        }
 
         return FormUtil.generateElementHtml(this, formData, template, dataModel);
     }
