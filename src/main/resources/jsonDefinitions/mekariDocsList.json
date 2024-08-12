@@ -15,13 +15,13 @@
         {
             "name": "Mekari eSign Datalist Action",
             "icon": "",
-            "className": "%s",
+            "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction",
             "label": "Mekari eSign Datalist Action",
             "type": "text",
             "id": "action_0",
             "properties": {
-                "customId": "newRequest",
-                "label": "%s",
+                "customId": "addForm",
+                "label": "Add Form",
                 "datalist_type": "action"
             }
         }
@@ -29,7 +29,7 @@
     "rowActions": [],
     "filters": [],
     "binder": {
-        "className": "%s",
+        "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder",
         "properties": {
             "documentCategory": "none",
             "signingStatus": "none",
@@ -42,16 +42,26 @@
             "label": "ID",
             "name": "id",
             "filterable": true,
-            "hidden": "false",
-            "sortable": "false"
-        },
-        {
-            "id": "column_1",
-            "label": "Type",
-            "name": "type",
-            "filterable": true,
-            "hidden": "false",
-            "sortable": "false"
+            "hidden": "true",
+            "sortable": "false",
+            "datalist_type": "column",
+            "permission": {
+                "className": "",
+                "properties": {}
+            },
+            "include_export": "",
+            "width": "",
+            "style": "",
+            "alignment": "",
+            "headerAlignment": "",
+            "action": {
+                "className": "",
+                "properties": {}
+            },
+            "format": {
+                "className": "",
+                "properties": {}
+            }
         },
         {
             "id": "column_2",
@@ -88,9 +98,9 @@
             "sortable": "false"
         },
         {
-            "id": "column_4",
-            "label": "Document URL",
-            "name": "docURL",
+            "id": "column_1",
+            "label": "Status",
+            "name": "status",
             "filterable": true,
             "hidden": "false",
             "sortable": "false",
@@ -109,9 +119,17 @@
                 "properties": {}
             },
             "format": {
-                "className": "",
+                "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistColumnStatusFormatter",
                 "properties": {}
             }
+        },
+        {
+            "id": "column_4",
+            "label": "Last Modified",
+            "name": "updated_at",
+            "filterable": true,
+            "hidden": "false",
+            "sortable": "false"
         }
     ]
 }
