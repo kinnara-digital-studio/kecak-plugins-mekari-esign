@@ -82,13 +82,39 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
             String token = (String) session.getAttribute("MekariToken");
             AuthenticationToken authToken = new AuthenticationToken(token, TokenType.BEARER, 3600, token, ServerType.valueOf(getPropertyString("serverType")));
             
+            LogUtil.info(getClassName(), "Token: " + token);
+
             mekariSign = MekariSign.getBuilder()
                         .setAuthenticationToken(authToken)
                         .authenticateAndBuild();
             
             int page = (start / 10) + 1;
             
-            GetDocumentListBody documentList = mekariSign.getDoc(page, rows, DocumentCategory.valueOf(getPropertyString("documentCategory")), SigningStatus.valueOf(getPropertyString("signingStatus")), StampingStatus.valueOf(getPropertyString("stampingStatus")));
+            DocumentCategory documentCategory;
+            SigningStatus signingStatus;
+
+            if (!getPropertyString("documentCategory").equals("none"))
+            {
+                documentCategory = DocumentCategory.valueOf(getPropertyString("documentCategory"));
+                
+            } else {
+                documentCategory = null;
+            }
+
+            if (!getPropertyString("signingStatus").equals("none"))
+            {
+                signingStatus = SigningStatus.valueOf(getPropertyString("signingStatus"));
+            }
+            else {
+                signingStatus = null;
+            }
+
+            LogUtil.info(getClassName(), "Document Category: " + getPropertyString("documentCategory"));
+            LogUtil.info(getClassName(), "Signing Status: " + getPropertyString("signingStatus"));
+
+            GetDocumentListBody documentList = mekariSign.getDoc(page, rows, documentCategory, signingStatus, StampingStatus.valueOf(getPropertyString("stampingStatus")));
+
+            // documentList = mekariSign.getDoc(page, rows, null, null, null);
 
             ResponseData[] documents = documentList.getRespData();
         
@@ -127,8 +153,29 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
             mekariSign = MekariSign.getBuilder()
                         .setAuthenticationToken(authToken)
                         .authenticateAndBuild();
-            
-            GetDocumentListBody documentList = mekariSign.getDoc(1, 1, DocumentCategory.valueOf(getPropertyString("documentCategory")), SigningStatus.valueOf(getPropertyString("signingStatus")), StampingStatus.valueOf(getPropertyString("stampingStatus")));
+            DocumentCategory documentCategory;
+            SigningStatus signingStatus;
+
+            if (!getPropertyString("documentCategory").equals("none"))
+            {
+                documentCategory = DocumentCategory.valueOf(getPropertyString("documentCategory"));
+                
+            } else {
+                documentCategory = null;
+            }
+
+            if (!getPropertyString("signingStatus").equals("none"))
+            {
+                signingStatus = SigningStatus.valueOf(getPropertyString("signingStatus"));
+            }
+            else {
+                signingStatus = null;
+            }
+
+            LogUtil.info(getClassName(), "Document Category: " + getPropertyString("documentCategory"));
+            LogUtil.info(getClassName(), "Signing Status: " + getPropertyString("signingStatus"));
+
+            GetDocumentListBody documentList = mekariSign.getDoc(1, 1, documentCategory, signingStatus, StampingStatus.valueOf(getPropertyString("stampingStatus")));
 
             return documentList.getDocListPagination().getDocumentCount();
         } catch (BuildingException | RequestException | ParseException e) {
