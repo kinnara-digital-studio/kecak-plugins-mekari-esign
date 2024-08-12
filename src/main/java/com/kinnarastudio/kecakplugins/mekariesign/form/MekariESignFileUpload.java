@@ -8,6 +8,8 @@ import org.joget.apps.form.model.*;
 import org.joget.apps.form.service.FormUtil;
 import org.joget.commons.util.FileManager;
 import org.joget.commons.util.LogUtil;
+import org.joget.commons.util.ResourceBundleUtil;
+import org.joget.commons.util.SecurityUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.plugin.property.model.PropertyEditable;
 
@@ -67,6 +69,10 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
         }
 
         dataModel.put("stampFile", stampFile);
+
+        String nonce = SecurityUtil.generateNonce(new String[]{getClassName(), appDef.getAppId(), appDef.getVersion().toString()}, 1);
+        dataModel.put("nonce", nonce);
+
         return FormUtil.generateElementHtml(this, formData, template, dataModel);
     }
 
@@ -204,12 +210,23 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
         LogUtil.info(getClassName(), "webSercice : _caller [" + caller + "]");
 
         if (MekariESignFileUpload.class.getName().equals(caller)) {
+            AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
+            String nonce = httpServletRequest.getParameter("_nonce");
+            String appId = appDefinition.getAppId();
+            String appVersion = appDefinition.getVersion().toString();
+
+            if (!SecurityUtil.verifyNonce(nonce, new String[]{getClassName(), appId, appVersion})) {
+                httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN, ResourceBundleUtil.getMessage("general.error.error403"));
+                return;
+            }
+
             OutputStream os = httpServletResponse.getOutputStream();
             httpServletResponse.setHeader("Content-Type", "application/pdf");
             httpServletResponse.setHeader("Content-Disposition", "inline; filename=test.pdf");
 
             String path = httpServletRequest.getParameter("_path");
             Files.copy(new File(FileManager.getBaseDirectory() + "/" + path).toPath(), os);
+
         } else {
             super.webService(httpServletRequest, httpServletResponse);
         }
