@@ -79,13 +79,13 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
         FormRowSet rowSet = super.formatData(formData);
         if (rowSet != null && !rowSet.isEmpty()) {
             FormRow row = rowSet.iterator().next();
-            row.forEach((key,value) -> {LogUtil.info(getClassName(),"key: " + key + "value: " + value);});
+            //row.forEach((key,value) -> {LogUtil.info(getClassName(),"key: " + key + "value: " + value);});
             String filePath = FileManager.getBaseDirectory() + "/" + row.getTempFilePath(getPropertyString("id"));
-            LogUtil.info(getClassName() , row.getTempFilePath(getPropertyString("id")));
+
 //            String filePath = rowSet.iterator().next().getProperty("filePath");
             File file = new File(filePath);
 //            LogUtil.info(getClassName(), "File: " + file.getName());
-
+            System.out.println(file.getAbsolutePath());
             // Check if the file is a PDF
             if (!isPDF(file)) {
                 formData.addFormError("file", "Only PDF files are allowed.");
@@ -148,7 +148,6 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
             row.setProperty("filePath", filePath);
             formRowSet.add(row);
         }
-        LogUtil.info(formRowSet.toString(), "formRowSet");
         return formRowSet;
     }
 

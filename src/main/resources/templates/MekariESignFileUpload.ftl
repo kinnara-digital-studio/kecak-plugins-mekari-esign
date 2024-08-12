@@ -20,10 +20,10 @@
     <label class = "label" for="${elementParamName!}" field-tooltip="${elementParamName!}">${element.properties.label} <span class="form-cell-validator">${decoration}</span><#if error??> <span class="form-error-message">${error}</span></#if></label>
         <div id="form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}" tabindex="0" class="form-fileupload <#if error??>form-error-cell</#if> <#if element.properties.readonly! == 'true'>readonly<#else>dropzone</#if>">
             <#if element.properties.readonly! != 'true'>
-                <div class="dz-message needsclick">
+                <div class="dz-message needsclick" id="test">
                     @@form.fileupload.dropFile@@
                 </div>
-                <input style="display: none" id="${elementParamName!}" name="${elementParamName!}" type="file" size="${element.properties.size!}" <#if error??>class="form-error-cell"</#if> <#if element.properties.multiple! == 'true'>multiple</#if>/>
+                <input style="display: none" id="test" class="inputFile" name="${elementParamName!}" type="file" size="${element.properties.size!}" <#if error??>class="form-error-cell"</#if> <#if element.properties.multiple! == 'true'>multiple</#if>/>
             </#if>
             <ul class="form-fileupload-value">
                 <#if element.properties.readonly! != 'true'>
@@ -33,13 +33,14 @@
                         <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                             <div class="progress-bar progress-bar-success" style="width: 0%;" data-dz-uploadprogress></div>
                         </div>
-                        <input type="hidden" name="${elementParamName!}_path" value="" disabled/>
-                        <embed id="pdfViewer" class="pdf-viewer" src="${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFormLoadBinder/service?path=6f97a2d2-44a9-4505-8cbf-ccee5b82a416/test.pdf" type="application/pdf" />
+                        <input type="hidden" name="${elementParamName!}_path" id="test2" value="" />
+                        <embed class="pdfViewer pdf-viewer" src="" type="application/pdf" />
                     </li>
                 </#if>
                 <#if tempFilePaths??>
                     <#list tempFilePaths?keys as key>
                         <li>
+
                             <span class="name">${tempFilePaths[key]!?html}</span>
                             <#if element.properties.readonly! != 'true'>
                                 <a class="remove">@@form.fileupload.remove@@</a>
@@ -66,32 +67,82 @@
             <script>
                 $(document).ready(function() {
                     $('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}').fileUploadField({
-                    url: "${element.serviceUrl!}",
-                    paramName: "${elementParamName!}",
-                    multiple: "${element.properties.multiple!}",
-                    maxSize: "${element.properties.maxSize!}",
-                    maxSizeMsg: "${element.properties.maxSizeMsg!}",
-                    fileType: "${element.properties.fileType!}",
-                    fileTypeMsg: "${element.properties.fileTypeMsg!}",
-                    padding: "${element.properties.padding!}",
-                    removeFile: "${element.properties.removeFile!}",
-                    resizeWidth: "${element.properties.resizeWidth!}",
-                    resizeHeight: "${element.properties.resizeHeight!}",
-                    resizeQuality: "${element.properties.resizeQuality!}",
-                    resizeMethod: "${element.properties.resizeMethod!}"
-                });
-
-                    $('#${elementParamName!}').on('change', function(event) {
-                        const file = event.target.files[0];
-                        if (file && file.type === 'application/pdf') {
-                            const fileURL = URL.createObjectURL(file);
-                            const pdfViewer = document.getElementById('pdfViewer');
-                            pdfViewer.src = fileURL;
-                        } else {
-                            alert('Silakan unggah file PDF.');
-                        }
+                        url: "${element.serviceUrl!}",
+                        paramName: "${elementParamName!}",
+                        multiple: "${element.properties.multiple!}",
+                        maxSize: "${element.properties.maxSize!}",
+                        maxSizeMsg: "${element.properties.maxSizeMsg!}",
+                        fileType: "${element.properties.fileType!}",
+                        fileTypeMsg: "${element.properties.fileTypeMsg!}",
+                        padding: "${element.properties.padding!}",
+                        removeFile: "${element.properties.removeFile!}",
+                        resizeWidth: "${element.properties.resizeWidth!}",
+                        resizeHeight: "${element.properties.resizeHeight!}",
+                        resizeQuality: "${element.properties.resizeQuality!}",
+                        resizeMethod: "${element.properties.resizeMethod!}"
                     });
-                });
+
+                    //fungsi update pdf secara dinamis
+                    function updatePdfViewer(inputElement) {
+                        var pdfViewer = inputElement.siblings('.pdfViewer');
+                        if (pdfViewer.length > 0) {
+                        var inputValue = inputElement.val();
+                        if (inputValue) {
+                            // Ensure the value starts with a forward slash if it doesn't already
+                            if (!inputValue.startsWith('/')) {
+                                inputValue = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFormLoadBinder/service?path=" + inputValue;
+                            }
+                            pdfViewer.attr('src', inputValue);
+                            } else {
+                                pdfViewer.attr('src', ''); // Clear the src if the input is empty
+                            }
+                        }
+                    }
+
+                    // buat observer untuk listen terhadap perubahan yang terjadi
+                    $('input[name="${elementParamName!}_path"]').each(function() {
+                        var input = $(this)[0]; // Get the DOM element
+                        var observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                                updatePdfViewer($(input));
+                            }
+                        });
+                    });
+
+                    observer.observe(input, { attributes: true, attributeFilter: ['value'] });
+
+                    // Initial update
+                    updatePdfViewer($(this));
+                    });
+
+                    // Optional: Handle dynamically added inputs
+                    var containerObserver = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.type === 'childList') {
+                                $(mutation.addedNodes).find('input[name="${elementParamName!}_path"]').each(function() {
+                                    // Set observer ketika sudah berubah
+                                    var input = $(this)[0];
+                                    var observer = new MutationObserver(function(mutations) {
+                                        mutations.forEach(function(mutation) {
+                                            if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                                            updatePdfViewer($(input));
+                                            }
+                                        });
+                                    });
+
+                                observer.observe(input, { attributes: true, attributeFilter: ['value'] });
+
+                                // Initial update for new input
+                                updatePdfViewer($(this));
+                                });
+                            }
+                        });
+                    });
+
+                    containerObserver.observe($('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}')[0], { childList: true, subtree: true });
+            });
             </script>
+
         </#if>
 </div>
