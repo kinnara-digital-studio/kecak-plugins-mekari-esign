@@ -6,11 +6,10 @@ import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.lib.FileUpload;
 import org.joget.apps.form.model.*;
 import org.joget.apps.form.service.FormUtil;
-import org.joget.plugin.base.PluginManager;
-import org.joget.plugin.property.model.PropertyEditable;
-
 import org.joget.commons.util.FileManager;
 import org.joget.commons.util.LogUtil;
+import org.joget.plugin.base.PluginManager;
+import org.joget.plugin.property.model.PropertyEditable;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,12 +17,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 
 public class MekariESignFileUpload extends FileUpload implements FormBuilderPaletteElement, FileDownloadSecurity, FormStoreBinder, PropertyEditable {
 
+    public final static int BYTE_ARRAY_BUFFER_SIZE = 4096;
     private static final String PREVIEW_DIR = "/path/to/upload/dir/";
     private static final String LABEL = "Mekari E-Sign File Upload";
 
@@ -199,24 +200,18 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
 
     @Override
     public void webService(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-        int BYTE_ARRAY_BUFFER_SIZE = 4096;
-        OutputStream os = httpServletResponse.getOutputStream();
-        httpServletResponse.setHeader("Content-Type", "application/pdf");
-        httpServletResponse.setHeader("Content-Disposition", "inline; filename=test.pdf");
+        String caller = httpServletRequest.getParameter("_caller");
+        LogUtil.info(getClassName(), "webSercice : _caller [" + caller + "]");
 
-        String path = httpServletRequest.getParameter("path");
+        if (MekariESignFileUpload.class.getName().equals(caller)) {
+            OutputStream os = httpServletResponse.getOutputStream();
+            httpServletResponse.setHeader("Content-Type", "application/pdf");
+            httpServletResponse.setHeader("Content-Disposition", "inline; filename=test.pdf");
 
-        try (
-                InputStream is = Files.newInputStream(new File(FileManager.getBaseDirectory() + "/" + path).toPath());
-        ) {
-            final byte[] buffer = new byte[BYTE_ARRAY_BUFFER_SIZE];
-            int len;
-            while ((len = is.read(buffer)) >= 0) {
-                os.write(buffer, 0, len);
-            }
-            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-//            os.flush();
-
+            String path = httpServletRequest.getParameter("_path");
+            Files.copy(new File(FileManager.getBaseDirectory() + "/" + path).toPath(), os);
+        } else {
+            super.webService(httpServletRequest, httpServletResponse);
         }
     }
 }
