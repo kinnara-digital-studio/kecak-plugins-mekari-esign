@@ -90,7 +90,7 @@
                         if (inputValue) {
                             // Ensure the value starts with a forward slash if it doesn't already
                             if (!inputValue.startsWith('/')) {
-                                inputValue = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_caller=${className}&_path=" + inputValue;
+                                inputValue = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_nonce=${nonce}&_caller=${className}&_path=" + inputValue;
                             }
                             pdfViewer.attr('src', inputValue);
                             } else {
