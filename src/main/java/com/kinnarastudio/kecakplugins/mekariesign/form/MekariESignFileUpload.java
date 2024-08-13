@@ -13,19 +13,21 @@ import org.joget.commons.util.SecurityUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.plugin.property.model.PropertyEditable;
 
+import org.joget.commons.util.LogUtil;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.file.Files;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 
 public class MekariESignFileUpload extends FileUpload implements FormBuilderPaletteElement, FileDownloadSecurity, FormStoreBinder, PropertyEditable {
 
+    private static final String PREVIEW_DIR = "/path/to/upload/dir/";
     private static final String LABEL = "Mekari E-Sign File Upload";
 
     @Override
@@ -94,9 +96,9 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
             //row.forEach((key,value) -> {LogUtil.info(getClassName(),"key: " + key + "value: " + value);});
             String filePath = FileManager.getBaseDirectory() + "/" + row.getTempFilePath(getPropertyString("id"));
 
-//            String filePath = rowSet.iterator().next().getProperty("filePath");
+            //String filePath = rowSet.iterator().next().getProperty("filePath");
             File file = new File(filePath);
-//            LogUtil.info(getClassName(), "File: " + file.getName());
+            //LogUtil.info(getClassName(), "File: " + file.getName());
             System.out.println(file.getAbsolutePath());
             // Check if the file is a PDF
             if (!isPDF(file)) {

@@ -97,16 +97,15 @@
                                 pdfViewer.attr('src', ''); // Clear the src if the input is empty
                             }
                         }
-
                     }
 
                     // buat observer untuk listen terhadap perubahan yang terjadi
-                    $('input[name="${elementParamName!}_path"]').each(function(input) {
-                       // var input = $(this)[0]; // Get the DOM element
+                    $('input[name="${elementParamName!}_path"]').each(function() {
+                        var input = $(this)[0]; // Get the DOM element
                         var observer = new MutationObserver(function(mutations) {
                         mutations.forEach(function(mutation) {
                             if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
-                                updatePdfViewer(input);
+                                updatePdfViewer($(input));
                             }
                         });
                     });
@@ -142,8 +141,7 @@
                     });
 
                     containerObserver.observe($('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}')[0], { childList: true, subtree: true });
-            });
+                });
             </script>
-
         </#if>
 </div>

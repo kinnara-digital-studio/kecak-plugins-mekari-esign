@@ -1,42 +1,50 @@
 {
-  "className": "org.joget.apps.form.model.Form",
-  "properties": {
-      "loadBinder": {
-          "className": "org.joget.apps.form.lib.WorkflowFormBinder"
-      },
-      "name": "File",
-      "description": "",
-      "id": "file",
-      "storeBinder": {
-          "className": "org.joget.apps.form.lib.WorkflowFormBinder"
-      },
-      "tableName": "doc_file"
-  },
-  "elements": [
-      {
-          "elements": [
-              {
-                  "elements": [
-                      {
-                          "className": "com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFileUpload",
-                          "properties": {
-                              "stampType": "signature",
-                              "id": "fileUpload",
-                              "label": "File Upload"
-                          }
-                      }
-                  ],
-                  "className": "org.joget.apps.form.model.Column",
-                  "properties": {
-                      "width": "100%"
-                  }
-              }
-          ],
-          "className": "org.joget.apps.form.model.Section",
-          "properties": {
-              "label": "Section",
-              "id": "section1"
-          }
-      }
-  ]
+    "className": "org.joget.apps.form.model.Form",
+    "properties": {
+        "loadBinder": {
+            "className": "org.joget.apps.form.lib.WorkflowFormBinder"
+        },
+        "name": "File",
+        "description": "",
+        "id": "file",
+        "storeBinder": {
+            "className": "org.joget.apps.form.lib.WorkflowFormBinder"
+        },
+        "tableName": "doc_file"
+    },
+    "elements": [
+        {
+            "elements": [
+                {
+                    "elements": [
+                        {
+                            "className": "com.kinnarastudio.kecakplugins.mekariesign.form.MekariESignFileUpload",
+                            "properties": {
+                                "validator": {
+                                    "className": "org.joget.apps.form.lib.DefaultValidator",
+                                    "properties": {
+                                        "type": "",
+                                        "message": "",
+                                        "mandatory": "true"
+                                    }
+                                },
+                                "stampType": "signature",
+                                "id": "fileUpload",
+                                "label": "File Upload"
+                            }
+                        }
+                    ],
+                    "className": "org.joget.apps.form.model.Column",
+                    "properties": {
+                        "width": "100%"
+                    }
+                }
+            ],
+            "className": "org.joget.apps.form.model.Section",
+            "properties": {
+                "label": "Section",
+                "id": "section1"
+            }
+        }
+    ]
 }
