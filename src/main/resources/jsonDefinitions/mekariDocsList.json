@@ -15,13 +15,13 @@
         {
             "name": "Mekari eSign Datalist Action",
             "icon": "",
-            "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction",
+            "className": "%s",
             "label": "Mekari eSign Datalist Action",
             "type": "text",
             "id": "action_0",
             "properties": {
-                "customId": "addForm",
-                "label": "Add Form",
+                "customId": "newRequest",
+                "label": "%s",
                 "datalist_type": "action"
             }
         }
@@ -29,7 +29,7 @@
     "rowActions": [],
     "filters": [],
     "binder": {
-        "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder",
+        "className": "%s",
         "properties": {
             "documentCategory": "none",
             "signingStatus": "none",
@@ -81,7 +81,7 @@
             "alignment": "",
             "headerAlignment": "",
             "action": {
-                "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistActionFileDownloader",
+                "className": "%s",
                 "properties": {}
             },
             "format": {
@@ -119,7 +119,7 @@
                 "properties": {}
             },
             "format": {
-                "className": "com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistColumnStatusFormatter",
+                "className": "%s",
                 "properties": {}
             }
         },

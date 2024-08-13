@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistAction;
+import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistActionFileDownloader;
+import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignDatalistColumnStatusFormatter;
 import com.kinnarastudio.kecakplugins.mekariesign.datalist.MekariESignInboxDataListBinder;
 import com.kinnarastudio.kecakplugins.mekariesign.webservice.MekariESignWebhook;
 import org.joget.apps.app.dao.PluginDefaultPropertiesDao;
@@ -212,7 +214,9 @@ public class MekariESignUserviewMenu extends UserviewMenu {
             final Object[] args = new Object[]{
                     MekariESignDatalistAction.class.getName(),
                     getRequestFormLabel(),
-                    MekariESignInboxDataListBinder.class.getName()
+                    MekariESignInboxDataListBinder.class.getName(),
+                    MekariESignDatalistActionFileDownloader.class.getName(),
+                    MekariESignDatalistColumnStatusFormatter.class.getName()
             };
 
             String dataListJson = AppUtil.readPluginResource(getClassName(), "/jsonDefinitions/mekariDocsList.json", args, true);
