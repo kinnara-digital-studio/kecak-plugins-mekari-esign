@@ -22,5 +22,16 @@
                 "value": "Mekari eSign"
             }
         ]
+    },
+    {
+        "title": "Request Form",
+        "properties": [
+            {
+                "name": "requestFormLabel",
+                "label": "Request Form Label",
+                "type": "textfield",
+                "value": "New Request"
+            }
+        ]
     }
 ]

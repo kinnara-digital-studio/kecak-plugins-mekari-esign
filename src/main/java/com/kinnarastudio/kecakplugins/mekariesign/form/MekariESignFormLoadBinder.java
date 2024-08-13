@@ -32,9 +32,10 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class MekariESignFormLoadBinder extends FormBinder implements FormLoadElementBinder {
+public class MekariESignFormLoadBinder extends FormBinder implements FormLoadElementBinder, PluginWebSupport {
     public final static String LABEL = "Mekari eSign Form Load Binder";
 
     @Override
@@ -152,5 +153,26 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
                 .orElse("");
     }
 
+    @Override
+    public void webService(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+        int BYTE_ARRAY_BUFFER_SIZE = 4096;
+        OutputStream os = httpServletResponse.getOutputStream();
+        httpServletResponse.setHeader("Content-Type", "application/pdf");
+        httpServletResponse.setHeader("Content-Disposition", "inline; filename=test.pdf");
 
+        String path = httpServletRequest.getParameter("path");
+
+        try (
+                InputStream is = Files.newInputStream(new File(FileManager.getBaseDirectory() + "/" + path).toPath());
+        ) {
+            final byte[] buffer = new byte[BYTE_ARRAY_BUFFER_SIZE];
+            int len;
+            while ((len = is.read(buffer)) >= 0) {
+                os.write(buffer, 0, len);
+            }
+            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+//            os.flush();
+
+        }
+    }
 }

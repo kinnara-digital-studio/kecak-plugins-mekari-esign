@@ -12,12 +12,9 @@ import org.joget.plugin.property.model.PropertyEditable;
 import org.joget.commons.util.FileManager;
 import org.joget.commons.util.LogUtil;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.util.*;
 
 import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
@@ -195,29 +192,5 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
 
     public void setEditable(String editable) {
         // Implement your logic for setting editable properties
-    }
-
-    @Override
-    public void webService(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-        int BYTE_ARRAY_BUFFER_SIZE = 4096;
-        OutputStream os = httpServletResponse.getOutputStream();
-        httpServletResponse.setHeader("Content-Type", "application/pdf");
-        httpServletResponse.setHeader("Content-Disposition", "inline; filename=test.pdf");
-
-
-        String path = httpServletRequest.getParameter("path");
-
-        try (
-                InputStream is = Files.newInputStream(new File(FileManager.getBaseDirectory() + "/" + path).toPath());
-        ) {
-            final byte[] buffer = new byte[BYTE_ARRAY_BUFFER_SIZE];
-            int len;
-            while ((len = is.read(buffer)) >= 0) {
-                os.write(buffer, 0, len);
-            }
-            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-//            os.flush();
-
-        }
     }
 }

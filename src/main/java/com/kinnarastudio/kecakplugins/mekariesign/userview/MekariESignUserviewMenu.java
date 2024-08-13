@@ -214,6 +214,7 @@ public class MekariESignUserviewMenu extends UserviewMenu {
         if (cachedDataList == null) {
             final Object[] args = new Object[]{
                     MekariESignDatalistAction.class.getName(),
+                    getRequestFormLabel(),
                     MekariESignInboxDataListBinder.class.getName()
             };
 
@@ -240,5 +241,10 @@ public class MekariESignUserviewMenu extends UserviewMenu {
                 .map(s -> s.getAttribute(name))
                 .map(String::valueOf)
                 .orElse("");
+    }
+
+    protected String getRequestFormLabel() {
+        String label = getPropertyString("requestFormLabel");
+        return label == null || label.isEmpty() ? "New Request" : label ;
     }
 }
