@@ -13,7 +13,6 @@ import org.joget.commons.util.SecurityUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.plugin.property.model.PropertyEditable;
 
-import org.joget.commons.util.FileManager;
 import org.joget.commons.util.LogUtil;
 
 import javax.servlet.ServletException;
@@ -97,9 +96,9 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
             //row.forEach((key,value) -> {LogUtil.info(getClassName(),"key: " + key + "value: " + value);});
             String filePath = FileManager.getBaseDirectory() + "/" + row.getTempFilePath(getPropertyString("id"));
 
-//            String filePath = rowSet.iterator().next().getProperty("filePath");
+            //String filePath = rowSet.iterator().next().getProperty("filePath");
             File file = new File(filePath);
-//            LogUtil.info(getClassName(), "File: " + file.getName());
+            //LogUtil.info(getClassName(), "File: " + file.getName());
             System.out.println(file.getAbsolutePath());
             // Check if the file is a PDF
             if (!isPDF(file)) {

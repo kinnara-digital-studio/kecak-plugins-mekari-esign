@@ -141,8 +141,7 @@
                     });
 
                     containerObserver.observe($('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}')[0], { childList: true, subtree: true });
-            });
+                });
             </script>
-
         </#if>
 </div>
