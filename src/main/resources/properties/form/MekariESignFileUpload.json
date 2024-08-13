@@ -10,7 +10,13 @@
         "regex_validation" : "^[a-zA-Z0-9_]+$",
         "validation_message" : "invalid Id"
       },
-
+      {
+        "name" : "validator",
+        "label" : "@@form.fileupload.validator@@",
+        "type" : "elementselect",
+        "options_ajax" : "[CONTEXT_PATH]/web/property/json/getElements?classname=org.joget.apps.form.model.FormValidator",
+        "url" : "[CONTEXT_PATH]/web/property/json[APP_PATH]/getPropertyOptions"
+      },
       {
         "name": "label",
         "label": "Label",
