@@ -175,36 +175,4 @@ public class MekariESignFormLoadBinder extends FormBinder implements FormLoadEle
 
         }
     }
-
-    protected int getPagePosition(String positions) throws DigitalCertificateException {
-        return getPositionIndex(positions, 0, Try.onFunction(Integer::parseInt, (RuntimeException e) -> 1));
-    }
-
-    protected float getTopPosition(String positions) throws DigitalCertificateException {
-        return getPositionIndex(positions, 1, Try.onFunction(Float::parseFloat, (RuntimeException e) -> 0f));
-    }
-
-
-    protected float getLeftPosition(String positions) throws DigitalCertificateException {
-        return getPositionIndex(positions, 2, Try.onFunction(Float::parseFloat, (RuntimeException e) -> 0f));
-    }
-
-    protected float getScaleXPosition(String positions) throws DigitalCertificateException {
-        return getPositionIndex(positions, 4, Try.onFunction(Float::parseFloat, (RuntimeException e) -> 1f));
-    }
-
-    protected float getScaleYPosition(String positions) throws DigitalCertificateException {
-        return getPositionIndex(positions, 3, Try.onFunction(Float::parseFloat, (RuntimeException e) -> 1f));
-    }
-
-    protected <T> T getPositionIndex(String positions, int index, Function<String, T> parser) throws DigitalCertificateException {
-        return Optional.of(positions)
-                .map(s -> s.split(";"))
-                .map(Arrays::stream)
-                .orElseGet(Stream::empty)
-                .skip(index)
-                .findFirst()
-                .map(parser)
-                .orElseThrow(() -> new DigitalCertificateException("Invalid positions [" + positions + "] at index [" + index + "]"));
-    }
 }

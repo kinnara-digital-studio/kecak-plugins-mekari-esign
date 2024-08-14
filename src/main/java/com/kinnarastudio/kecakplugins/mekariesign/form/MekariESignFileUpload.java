@@ -1,6 +1,8 @@
 package com.kinnarastudio.kecakplugins.mekariesign.form;
 
+import com.kinnarastudio.commons.Try;
 import com.kinnarastudio.commons.mekarisign.MekariSign;
+import com.kinnarastudio.kecakplugins.mekariesign.exception.DigitalCertificateException;
 import org.joget.apps.app.model.AppDefinition;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.lib.FileUpload;
@@ -22,6 +24,8 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 
@@ -234,5 +238,41 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
         } else {
             super.webService(httpServletRequest, httpServletResponse);
         }
+    }
+
+    protected String getPdfName(FormData formData) throws DigitalCertificateException {
+        return Optional.of(formData).map(fd -> fd.getLoadBinderData(this)).map(Collection::stream).orElseGet(Stream::empty).findFirst().map(r -> r.getProperty(getPropertyString(FormUtil.PROPERTY_ID))).orElseThrow(() -> new DigitalCertificateException("File not found"));
+    }
+
+    protected int getPagePosition(String positions) throws DigitalCertificateException {
+        return getPositionIndex(positions, 0, Try.onFunction(Integer::parseInt, (RuntimeException e) -> 1));
+    }
+
+    protected float getTopPosition(String positions) throws DigitalCertificateException {
+        return getPositionIndex(positions, 1, Try.onFunction(Float::parseFloat, (RuntimeException e) -> 0f));
+    }
+
+
+    protected float getLeftPosition(String positions) throws DigitalCertificateException {
+        return getPositionIndex(positions, 2, Try.onFunction(Float::parseFloat, (RuntimeException e) -> 0f));
+    }
+
+    protected float getScaleXPosition(String positions) throws DigitalCertificateException {
+        return getPositionIndex(positions, 4, Try.onFunction(Float::parseFloat, (RuntimeException e) -> 1f));
+    }
+
+    protected float getScaleYPosition(String positions) throws DigitalCertificateException {
+        return getPositionIndex(positions, 3, Try.onFunction(Float::parseFloat, (RuntimeException e) -> 1f));
+    }
+
+    protected <T> T getPositionIndex(String positions, int index, Function<String, T> parser) throws DigitalCertificateException {
+        return Optional.of(positions)
+                .map(s -> s.split(";"))
+                .map(Arrays::stream)
+                .orElseGet(Stream::empty)
+                .skip(index)
+                .findFirst()
+                .map(parser)
+                .orElseThrow(() -> new DigitalCertificateException("Invalid positions [" + positions + "] at index [" + index + "]"));
     }
 }
