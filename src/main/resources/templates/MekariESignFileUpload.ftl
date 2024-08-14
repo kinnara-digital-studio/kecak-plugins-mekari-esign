@@ -35,6 +35,12 @@
                     </div>
                     <input type="hidden" name="${elementParamName!}_path" value="" />
                     <embed class="pdfViewer pdf-viewer" src="" type="application/pdf" />
+
+                    <!-- Digital Signature Box -->
+                    <div id="signature-box" style="position: absolute; width: 150px; height: 50px; border: 2px dashed #000; background-color: rgba(255, 255, 255, 0.5); cursor: move;">
+                        Sign Here
+                    </div>
+
                 </li>
             </#if>
             <#if tempFilePaths??>
@@ -63,14 +69,7 @@
     </div>
 
     <#if element.properties.readonly! != 'true'>
-        <div class="pdf-viewer-container" style="position: relative; width: 100%; height: 500px;">
-            <embed class="pdfViewer pdf-viewer" src="" type="application/pdf" style="width: 100%; height: 100%; border: 1px solid #ccc;"/>
 
-            <!-- Digital Signature Box -->
-            <div id="signature-box" style="position: absolute; width: 150px; height: 50px; border: 2px dashed #000; background-color: rgba(255, 255, 255, 0.5); cursor: move;">
-                Sign Here
-            </div>
-        </div>
 
         <!-- Hidden fields to store X and Y positions -->
         <input type="hidden" id="positionX" name="positionX" value="0">
@@ -154,7 +153,7 @@ updatePdfViewer($(input));
 
                 // Initialize draggable signature box
                 $("#signature-box").draggable({
-containment: ".pdf-viewer-container",
+containment: ".pdfViewer pdf-viewer",
 stop: function(event, ui) {
 var positionX = ui.position.left;
 var positionY = ui.position.top;
