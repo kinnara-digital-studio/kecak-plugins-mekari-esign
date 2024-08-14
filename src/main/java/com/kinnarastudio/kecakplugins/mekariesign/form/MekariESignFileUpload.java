@@ -15,8 +15,6 @@ import org.joget.commons.util.SecurityUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.plugin.property.model.PropertyEditable;
 
-import org.joget.commons.util.LogUtil;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -97,12 +95,8 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
         FormRowSet rowSet = super.formatData(formData);
         if (rowSet != null && !rowSet.isEmpty()) {
             FormRow row = rowSet.iterator().next();
-            //row.forEach((key,value) -> {LogUtil.info(getClassName(),"key: " + key + "value: " + value);});
             String filePath = FileManager.getBaseDirectory() + "/" + row.getTempFilePath(getPropertyString("id"));
-
-            //String filePath = rowSet.iterator().next().getProperty("filePath");
             File file = new File(filePath);
-            //LogUtil.info(getClassName(), "File: " + file.getName());
             System.out.println(file.getAbsolutePath());
             // Check if the file is a PDF
             if (!isPDF(file)) {
@@ -160,10 +154,19 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
     public FormRowSet store(Element element, FormRowSet formRowSet, FormData formData) {
         HttpServletRequest request = getHttpServletRequest();
         String filePath = request.getParameter("filePath");
-        LogUtil.info(filePath, "req");
+        String positionX = request.getParameter("positionX");
+        String positionY = request.getParameter("positionY");
+        LogUtil.info(getClassName(), "File Path: " + filePath + ", PositionX: " + positionX + ", PositionY: " + positionY);
+
         if (filePath != null && !filePath.isEmpty()) {
             FormRow row = new FormRow();
             row.setProperty("filePath", filePath);
+            if (positionX != null) {
+                row.setProperty("positionX", positionX);
+            }
+            if (positionY != null) {
+                row.setProperty("positionY", positionY);
+            }
             formRowSet.add(row);
         }
         return formRowSet;
@@ -201,8 +204,6 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
         return AppUtil.readPluginResource(getClass().getName(), "properties/form/MekariESignFileUpload.json", null, true, "/messages/MekariESignTool");
     }
 
-    // Other methods as needed
-
     public String getEditable() {
         // Implement your logic for editable properties
         return "true";
@@ -215,7 +216,7 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
     @Override
     public void webService(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         String caller = httpServletRequest.getParameter("_caller");
-        LogUtil.info(getClassName(), "webSercice : _caller [" + caller + "]");
+        LogUtil.info(getClassName(), "webService : _caller [" + caller + "]");
 
         if (MekariESignFileUpload.class.getName().equals(caller)) {
             AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
@@ -251,7 +252,6 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
     protected float getTopPosition(String positions) throws DigitalCertificateException {
         return getPositionIndex(positions, 1, Try.onFunction(Float::parseFloat, (RuntimeException e) -> 0f));
     }
-
 
     protected float getLeftPosition(String positions) throws DigitalCertificateException {
         return getPositionIndex(positions, 2, Try.onFunction(Float::parseFloat, (RuntimeException e) -> 0f));
