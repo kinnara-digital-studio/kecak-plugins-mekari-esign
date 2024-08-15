@@ -90,8 +90,24 @@ public class MekariESignInboxDataListBinder extends DataListBinderDefault {
                         .setAuthenticationToken(authToken)
                         .authenticateAndBuild();
             
-            int page = (start / 10) + 1;
-            
+            int page = 0;
+            switch (start) {
+                case 10:
+                    page = (start / 10) + 1;
+                case 20:
+                    page = (start / 20) + 1;
+                case 30:
+                    page = (start / 30) + 1;
+                case 40:
+                    page = (start / 40) + 1;
+                case 50:
+                    page = (start / 50) + 1;
+                case 100:
+                    page = (start / 100) + 1;
+                default:
+                    
+            }
+
             DocumentCategory documentCategory;
             SigningStatus signingStatus;
 
