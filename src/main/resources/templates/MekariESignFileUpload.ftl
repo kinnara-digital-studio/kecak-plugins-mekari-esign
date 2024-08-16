@@ -1,223 +1,137 @@
-<#if includeMetaData!>
 <div class="form-cell" ${elementMetaData!}>
-        <label class="label" style="position:absolute;top:10px;left:10px;">
-            ${element.properties.label!}
-            <span class="form-cell-validator">${decoration!}</span>
-            <#if error??> <span class="form-error-message">${error!}</span></#if>
-        </label>
-        <div style='border: 5px solid grey;height:100px;background-color:#EFF1F2;color:#C4C7CB;align:center;'>
-            <span style='position:absolute;top:10px;left:270px;font-weight:bold;font-size:70px;align:center;'>PDF</span>
-        <div>
-    </div>
-<#else>
-    <#assign uniqueKey = element.properties.elementUniqueKey >
+    <#if !(request.getAttribute("org.joget.apps.form.lib.FileUpload")?? || request.getAttribute("org.joget.plugin.enterprise.ImageUpload")??)>
+        <link rel="stylesheet" href="${request.contextPath}/js/dropzone/dropzone.css" />
+        <script type="text/javascript" src="${request.contextPath}/js/dropzone/dropzone.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+        <script src="${request.contextPath}/plugin/org.joget.apps.form.lib.FileUpload/js/jquery.fileupload.js"></script>
+        <script type="text/javascript">
+            Dropzone.autoDiscover = false;
+        </script>
 
-    <script src="${request.contextPath}/plugin/${className}/node_modules/pdfjs-dist/build/pdf.js"></script>
-    <script src="${request.contextPath}/plugin/${className}/node_modules/fabric/dist/fabric.min.js"></script>
-
-    <style>
-.md-btn {
-background: #2916c3;
-border: none;
-border-radius: 4px;
-min-height: 31px;
-min-width: 70px;
-padding: 4px 16px;
-text-align: center;
-text-shadow: none;
-text-transform: uppercase;
--webkit-transition: all 280ms cubic-bezier(.4, 0, .2, 1);
-transition: all 280ms cubic-bezier(.4, 0, .2, 1);
-color: #ffffff;
-box-sizing: border-box;
-cursor: pointer;
--webkit-appearance: none;
-display: inline-block;
-vertical-align: middle;
-font: 500 14px/31px Roboto, sans-serif!important;
-}
-.wrapper {
-position: relative;
-height: 500px;
-}
-.wrapper canvas {
-position: absolute;
-top: 0;
-left: 0;
-}
+        <style>
+.form-fileupload { width: 70%; }
+ul.form-fileupload-value { padding: 0; margin: 0; }
+ul.form-fileupload-value li { display: block; margin-bottom: 5px; }
+ul.form-fileupload-value li .remove { color: red; display: inline-block; margin: 0 30px; }
+ul.form-fileupload-value li a { display: inline-block; }
+.pdf-viewer { width: 100%; height: 500px; border: 1px solid #ccc; margin-top: 20px; }
+#embedContainer { width: 100%; height: 500px; position: relative; overflow: hidden; border: 2px solid #000000; margin-top: 20px; display: none; }
+#signaturePad { display: none; position: relative; }
+#dragBox { width: 100px; height: 50px; background-color: rgba(0, 0, 0, 0.1); border: 2px solid #000; position: absolute; cursor: move; }
 </style>
+</#if>
 
-<div class="form-cell">
-        <label class="label" style="margin-bottom: 10px;">
-            Upload PDF
-            <span class="form-cell-validator">${decoration!}</span>
-            <#if error??> <span class="form-error-message">${error!}</span></#if>
-        </label>
-        <input type="file" id="pdfUploadInput" name="${elementParamName!}_upload" accept="application/pdf" />
-
-        <div style="text-align:center;background-color: #5480fb;color: #e5e5ef; margin-top: 20px;">
-            <span class="md-btn md-btn-secondary" onclick="downloadPDF()" style="cursor:pointer;">
-                <i class="fa fa-download"></i>
-                Download
-           </span>
-
-            <span class="md-btn md-btn-secondary prev" style="cursor:pointer;">
-                <i class="fa fa-angle-left"></i>
-                Prev
-            </span>
-            ||
-            <span class="md-btn md-btn-secondary next" style="cursor:pointer;">
-                Next
-                <i class="fa fa-angle-right"></i>
-            </span>
-            &nbsp; &nbsp;
-            <span>Page: <span class="page_num"></span> / <span class="page_count"></span></span>
-        </div>
-
-        <div id="document-container-${uniqueKey}" style="width:750px;height:600px;overflow-y:scroll;background: gray; margin-top: 20px;">
-            <div class="wrapper">
-                <canvas id="pdf-canvas-${uniqueKey}" width="100%" height="500px" style="display:block;cursor:pointer;cursor: hand;"></canvas>
-                <canvas id="stamp-canvas-${uniqueKey}"></canvas>
+<label class="label" for="${elementParamName!}" field-tooltip="${elementParamName!}">${element.properties.label} <span class="form-cell-validator">${decoration}</span><#if error??> <span class="form-error-message">${error}</span></#if></label>
+    <div id="form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}" tabindex="0" class="form-fileupload <#if error??>form-error-cell</#if> <#if element.properties.readonly! == 'true'>readonly<#else>dropzone</#if>">
+        <#if element.properties.readonly! != 'true'>
+            <div class="dz-message needsclick">
+                @@form.fileupload.dropFile@@
             </div>
-
-            <div class="uk-panel uk-panel-box" id="signature-or-initial">
-                <div class="item">
-                    <img src="" alt="Signature" data-tipe="1" >
-                </div>
-            </div>
-        </div>
-        <input id="${elementParamName!}_${uniqueKey!}" name="${elementParamName!}" type="hidden" value="1;0;0;1;1">
+            <input style="display: none" class="inputFile" name="${elementParamName!}" type="file" size="${element.properties.size!}" <#if error??>class="form-error-cell"</#if> <#if element.properties.multiple! == 'true'>multiple</#if>/>
+        </#if>
+        <ul class="form-fileupload-value">
+            <#if element.properties.readonly! != 'true'>
+                <li class="template" style="display: none;">
+                    <span class="name" data-dz-name></span> <a class="remove" style="display: none">@@form.fileupload.remove@@</a>
+                    <strong class="error text-danger" data-dz-errormessage></strong>
+                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress-bar progress-bar-success" style="width: 0%;" data-dz-uploadprogress></div>
+                    </div>
+                    <input type="hidden" name="${elementParamName!}_path" value="" />
+                </li>
+            </#if>
+            <#if tempFilePaths??>
+                <#list tempFilePaths?keys as key>
+                    <li>
+                        <span class="name">${tempFilePaths[key]!?html}</span>
+                        <#if element.properties.readonly! != 'true'>
+                            <a class="remove">@@form.fileupload.remove@@</a>
+                        </#if>
+                        <input type="hidden" name="${elementParamName!}_path" value="${key!?html}"/>
+                    </li>
+                </#list>
+            </#if>
+            <#if filePaths??>
+                <#list filePaths?keys as key>
+                    <li>
+                        <a href="${request.contextPath}${key!?html}" target="_blank"><span class="name">${filePaths[key]!?html}</span></a>
+                        <#if element.properties.readonly! != 'true'>
+                            <a class="remove">@@form.fileupload.remove@@</a>
+                        </#if>
+                        <input type="hidden" name="${elementParamName!}_path" value="${filePaths[key]!?html}"/>
+                    </li>
+                </#list>
+            </#if>
+        </ul>
     </div>
 
-    <script>
-        $(document).ready(function(){
-var url = "${request.contextPath}${pdfFile!?html}";
+    <div id="embedContainer">
+        <embed class="pdfViewer pdf-viewer" src="" type="application/pdf" width="100%" height="100%">
+    </div>
+    <div id="signaturePad">
+        <div id="dragBox">Sign Here</div>
+    </div>
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = "${request.contextPath}/plugin/${className}/node_modules/pdfjs-dist/build/pdf.worker.js";
-
-var pdfDoc = null,
-pageNum = 1,
-pageRendering = false,
-pageNumPending = null,
-scale = 1,
-pdfCanvas = document.getElementById('pdf-canvas-${uniqueKey}'),
-                stampCanvas = document.getElementById('stamp-canvas-${uniqueKey}'),
-                fobject = null,
-                ctx = pdfCanvas.getContext('2d');
-
-            function renderPage(num) {
-pageRendering = true;
-pdfDoc.getPage(num).then(function(page) {
-var viewport = page.getViewport({scale: scale});
-                    pdfCanvas.height = viewport.height;
-                    pdfCanvas.width = viewport.width;
-                    var renderContext = {
-canvasContext: ctx,
-viewport: viewport
-};
-                    var renderTask = page.render(renderContext);
-                    renderTask.promise.then(function() {
-pageRendering = false;
-if ('${stampFile!}' && !fobject) {
-stampCanvas.width = pdfCanvas.width;
-stampCanvas.height = pdfCanvas.height;
-
-fobject = new fabric.Canvas(stampCanvas, {
-width: stampCanvas.offsetWidth,
-height: stampCanvas.offsetHeight,
-selection: false
+    <#if element.properties.readonly! != 'true'>
+        <script>
+            $(document).ready(function() {
+$('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}').fileUploadField({
+url: "${element.serviceUrl!}",
+paramName: "${elementParamName!}",
+multiple: "${element.properties.multiple!}",
+maxSize: "${element.properties.maxSize!}",
+maxSizeMsg: "${element.properties.maxSizeMsg!}",
+fileType: "${element.properties.fileType!}",
+fileTypeMsg: "${element.properties.fileTypeMsg!}",
+padding: "${element.properties.padding!}",
+removeFile: "${element.properties.removeFile!}",
+resizeWidth: "${element.properties.resizeWidth!}",
+resizeHeight: "${element.properties.resizeHeight!}",
+resizeQuality: "${element.properties.resizeQuality!}",
+resizeMethod: "${element.properties.resizeMethod!}",
 });
 
-                            fabric.Image.fromURL('${request.contextPath}${stampFile!?html}', function(img){
-fobject.add(img);
-fobject.on('object:moving', onStampChange, false);
-fobject.on('object:scaling', onStampChange, false);
-img.controls.mtr = new fabric.Control({ visible: false });
-                            });
-                        }
-                        if (pageNumPending !== null) {
-renderPage(pageNumPending);
-pageNumPending = null;
+                function updatePdfViewer() {
+var pdfPath = $('input[name="${elementParamName!}_path"]').val();
+if (pdfPath) {
+if (!pdfPath.startsWith('/')) {
+pdfPath = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_nonce=${nonce}&_caller=${className}&_path=" + pdfPath;
+}
+                        $('.pdfViewer').attr('src', pdfPath);
+                        $('#embedContainer').show();
+                        $('#signaturePad').show();
+                    } else {
+$('.pdfViewer').attr('src', '');
+$('#embedContainer').hide();
+$('#signaturePad').hide();
+}
+                }
+
+                // Observe changes to the file input
+                var observer = new MutationObserver(function(mutations) {
+mutations.forEach(function(mutation) {
+if (mutation.type === 'childList') {
+updatePdfViewer();
 }
                     });
                 });
-                $('.page_num').html(num);
-                onPageChange(num);
-            }
 
-            function onStampChange(event) {
-let top = event.transform.target.top;
-let left = event.transform.target.left;
-let scaleY = event.transform.target.scaleY;
-let scaleX = event.transform.target.scaleX;
-let value = [pageNum, top, left, scaleY, scaleX].join(';');
-$('#${elementParamName!}_${uniqueKey!}').val(value);
+                observer.observe($('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}')[0], { childList: true, subtree: true });
+
+                // Initial check
+                updatePdfViewer();
+
+                // Make the signature pad draggable
+                var $dragBox = $('#dragBox');
+                $dragBox.draggable({
+containment: "#embedContainer",
+stop: function(event, ui) {
+$('input[name="positionX"]').val(ui.position.left);
+$('input[name="positionY"]').val(ui.position.top);
 }
-
-            function onPageChange(page) {
-let oldValue = $('#${elementParamName!}_${uniqueKey!}').val();
-let split = oldValue.split(';');
-let top = split[1];
-let left = split[2];
-let scaleY = split[3];
-let scaleX = split[4];
-let newValue = [page, top, left, scaleY, scaleX].join(';');
-$('#${elementParamName!}_${uniqueKey!}').val(newValue);
-}
-
-            function queueRenderPage(num) {
-if (pageRendering) {
-pageNumPending = num;
-} else {
-renderPage(num);
-}
-            }
-
-            function onPrevPage() {
-if (pageNum <= 1) {
-return;
-}
-                pageNum--;
-                queueRenderPage(pageNum);
-            }
-            $('.prev').on('click', onPrevPage);
-
-            function onNextPage() {
-if (pageNum >= pdfDoc.numPages) {
-return;
-}
-                pageNum++;
-                queueRenderPage(pageNum);
-            }
-            $('.next').on('click', onNextPage);
-
-            pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
-pdfDoc = pdfDoc_;
-$('.page_count').html(pdfDoc.numPages);
-renderPage(pageNum);
-}).catch(console.error);
-
-            function downloadPDF(){
-window.open('${request.contextPath}${pdfFile!?html}?attachment=true');
-            }
-
-            $('#pdfUploadInput').on('change', function(event){
-                var file = event.target.files[0];
-                if(file && file.type === "application/pdf"){
-                var reader = new FileReader();
-                reader.onload = function(e){
-                url = e.target.result;
-                pdfjsLib.getDocument({data: e.target.result}).promise.then(pdfDoc_ => {
-                pdfDoc = pdfDoc_;
-                $('.page_count').html(pdfDoc.numPages);
-                renderPage(pageNum);
-                }).catch(console.error);
-                                    };
-                                    reader.readAsArrayBuffer(file);
-                                } else {
-                alert('Please upload a valid PDF file.');
-                }
+                });
             });
-        });
-    </script>
-</#if>
+        </script>
+    </#if>
+</div>
