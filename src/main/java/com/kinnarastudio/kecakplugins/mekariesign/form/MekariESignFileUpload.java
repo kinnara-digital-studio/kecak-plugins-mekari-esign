@@ -1,6 +1,8 @@
 package com.kinnarastudio.kecakplugins.mekariesign.form;
 
+import com.kinnarastudio.commons.Try;
 import com.kinnarastudio.commons.mekarisign.MekariSign;
+import com.kinnarastudio.kecakplugins.mekariesign.exception.DigitalCertificateException;
 import org.joget.apps.app.model.AppDefinition;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.lib.FileUpload;
@@ -13,8 +15,6 @@ import org.joget.commons.util.SecurityUtil;
 import org.joget.plugin.base.PluginManager;
 import org.joget.plugin.property.model.PropertyEditable;
 
-import org.joget.commons.util.LogUtil;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,12 +22,13 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.joget.workflow.util.WorkflowUtil.getHttpServletRequest;
 
 public class MekariESignFileUpload extends FileUpload implements FormBuilderPaletteElement, FileDownloadSecurity, FormStoreBinder, PropertyEditable {
 
-    private static final String PREVIEW_DIR = "/path/to/upload/dir/";
     private static final String LABEL = "Mekari E-Sign File Upload";
 
     @Override
@@ -93,12 +94,8 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
         FormRowSet rowSet = super.formatData(formData);
         if (rowSet != null && !rowSet.isEmpty()) {
             FormRow row = rowSet.iterator().next();
-            //row.forEach((key,value) -> {LogUtil.info(getClassName(),"key: " + key + "value: " + value);});
             String filePath = FileManager.getBaseDirectory() + "/" + row.getTempFilePath(getPropertyString("id"));
-
-            //String filePath = rowSet.iterator().next().getProperty("filePath");
             File file = new File(filePath);
-            //LogUtil.info(getClassName(), "File: " + file.getName());
             System.out.println(file.getAbsolutePath());
             // Check if the file is a PDF
             if (!isPDF(file)) {
@@ -156,10 +153,19 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
     public FormRowSet store(Element element, FormRowSet formRowSet, FormData formData) {
         HttpServletRequest request = getHttpServletRequest();
         String filePath = request.getParameter("filePath");
-        LogUtil.info(filePath, "req");
+        String positionX = request.getParameter("positionX");
+        String positionY = request.getParameter("positionY");
+        LogUtil.info(getClassName(), "File Path: " + filePath + ", PositionX: " + positionX + ", PositionY: " + positionY);
+
         if (filePath != null && !filePath.isEmpty()) {
             FormRow row = new FormRow();
             row.setProperty("filePath", filePath);
+            if (positionX != null) {
+                row.setProperty("positionX", positionX);
+            }
+            if (positionY != null) {
+                row.setProperty("positionY", positionY);
+            }
             formRowSet.add(row);
         }
         return formRowSet;
@@ -197,21 +203,10 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
         return AppUtil.readPluginResource(getClass().getName(), "properties/form/MekariESignFileUpload.json", null, true, "/messages/MekariESignTool");
     }
 
-    // Other methods as needed
-
-    public String getEditable() {
-        // Implement your logic for editable properties
-        return "true";
-    }
-
-    public void setEditable(String editable) {
-        // Implement your logic for setting editable properties
-    }
-
     @Override
     public void webService(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         String caller = httpServletRequest.getParameter("_caller");
-        LogUtil.info(getClassName(), "webSercice : _caller [" + caller + "]");
+        LogUtil.info(getClassName(), "webService : _caller [" + caller + "]");
 
         if (MekariESignFileUpload.class.getName().equals(caller)) {
             AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
