@@ -105,4 +105,9 @@ public class MekariESignDatalistAction extends DataListActionDefault{
     public Boolean getVisibleOnNoRecord() {
         return true;
     }
+
+    @Override
+    public Boolean supportRow() {
+        return false;
+    }
 }
