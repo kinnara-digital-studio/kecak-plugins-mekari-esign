@@ -174,7 +174,7 @@
                             var scaledY = pageHeight - ((posY / pdfHeight) * pageHeight) - 50; // 50 adalah tinggi kotak tanda tangan
 
                             // Tambahkan kotak tanda tangan ke PDF
-                            firstPage.drawText('Tanda Tangan', {
+                            firstPage.drawText('Signed Here', {
                                 x: scaledX,
                                 y: scaledY,
                                 size: 12,
