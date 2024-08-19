@@ -5,6 +5,8 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
         <script src="${request.contextPath}/plugin/org.joget.apps.form.lib.FileUpload/js/jquery.fileupload.js"></script>
+        <!-- Import pdf-lib -->
+        <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
         <script type="text/javascript">
             Dropzone.autoDiscover = false;
         </script>
@@ -18,11 +20,14 @@
             .pdf-viewer { width: 100%; height: 500px; border: 1px solid #ccc; margin-top: 20px; }
             #embedContainer { width: 100%; height: 500px; position: relative; overflow: hidden; border: 2px solid #000000; margin-top: 20px; display: none; }
             #signaturePad { display: none; position: relative; }
-            #dragBox { width: 100px; height: 50px; background-color: rgba(0, 0, 0, 0.1); border: 2px solid #000; position: absolute; cursor: move; }
+            #dragBox { width: 100px; height: 50px; background-color: rgba(255, 0, 0, 0.3); border: 2px solid #000; position: absolute; cursor: move; text-align: center; line-height: 50px; font-weight: bold; }
         </style>
         </#if>
 
-        <label class="label" for="${elementParamName!}" field-tooltip="${elementParamName!}">${element.properties.label} <span class="form-cell-validator">${decoration}</span><#if error??> <span class="form-error-message">${error}</span></#if></label>
+        <label class="label" for="${elementParamName!}" field-tooltip="${elementParamName!}">
+                ${element.properties.label} <span class="form-cell-validator">${decoration}</span>
+                <#if error??> <span class="form-error-message">${error}</span></#if>
+            </label>
             <div id="form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}" tabindex="0" class="form-fileupload <#if error??>form-error-cell</#if> <#if element.properties.readonly! == 'true'>readonly<#else>dropzone</#if>">
                 <#if element.properties.readonly! != 'true'>
                     <div class="dz-message needsclick">
@@ -67,15 +72,21 @@
             </div>
 
             <div id="embedContainer">
-                <embed class="pdfViewer pdf-viewer" src="" type="application/pdf" width="100%" height="100%">
+                <iframe id="pdfViewer" class="pdf-viewer" src="" type="application/pdf" width="100%" height="100%"></iframe>
             </div>
             <div id="signaturePad">
                 <div id="dragBox">Sign Here</div>
             </div>
 
+            <div id="downloadButton" style="margin-top: 20px;">
+                <button type="button" id="GetFile">Download</button>
+            </div>
+
             <#if element.properties.readonly! != 'true'>
                 <script>
                     $(document).ready(function() {
+                        var uploadedPdfBytes = null;
+
                         $('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}').fileUploadField({
                             url: "${element.serviceUrl!}",
                             paramName: "${elementParamName!}",
@@ -96,26 +107,32 @@
                             var pdfPath = $('input[name="${elementParamName!}_path"]').val();
                             if (pdfPath) {
                                 if (!pdfPath.startsWith('/')) {
-                                    pdfPath = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_nonce=${nonce}&_caller=${className}&_path=" + pdfPath;
-                                }
-                                    $('.pdfViewer').attr('src', pdfPath);
-                                    $('#embedContainer').show();
-                                    $('#signaturePad').show();
-                                } else {
-                                    $('.pdfViewer').attr('src', '');
-                                    $('#embedContainer').hide();
-                                    $('#signaturePad').hide();
-                                }
+                                pdfPath = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_nonce=${nonce}&_caller=${className}&_path=" + pdfPath;
                             }
+                            $('#pdfViewer').attr('src', pdfPath);
+                            $('#embedContainer').show();
+                            $('#signaturePad').show();
 
-                            // Observe changes to the file input
-                            var observer = new MutationObserver(function(mutations) {
-                                mutations.forEach(function(mutation) {
-                                    if (mutation.type === 'childList') {
-                                        updatePdfViewer();
-                                    }
-                                });
+                            // Fetch the PDF bytes
+                            fetch(pdfPath).then(res => res.arrayBuffer()).then(data => {
+                                uploadedPdfBytes = data;
                             });
+                            } else {
+                                $('#pdfViewer').attr('src', '');
+                                $('#embedContainer').hide();
+                                $('#signaturePad').hide();
+                                uploadedPdfBytes = null;
+                            }
+                        }
+
+                        // Observe changes to the file input
+                        var observer = new MutationObserver(function(mutations) {
+                            mutations.forEach(function(mutation) {
+                                if (mutation.type === 'childList') {
+                                    updatePdfViewer();
+                                }
+                            });
+                        });
 
                         observer.observe($('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}')[0], { childList: true, subtree: true });
 
@@ -125,13 +142,61 @@
                         // Make the signature pad draggable
                         var $dragBox = $('#dragBox');
                         $dragBox.draggable({
-                            containment: "#embedContainer",
-                            stop: function(event, ui) {
-                                $('input[name="positionX"]').val(ui.position.left);
-                                $('input[name="positionY"]').val(ui.position.top);
+                            containment: "#embedContainer"
+                        });
+
+                        // Handle download button click
+                        $('#GetFile').on('click', async function () {
+                            if (!uploadedPdfBytes) {
+                                alert('Silakan unggah PDF terlebih dahulu.');
+                                return;
                             }
+
+                            const pdfDoc = await PDFLib.PDFDocument.load(uploadedPdfBytes);
+                            const pages = pdfDoc.getPages();
+                            const firstPage = pages[0];
+
+                            // Dapatkan posisi kotak tanda tangan relatif terhadap PDF
+                            var pdfViewerOffset = $('#pdfViewer').offset();
+                            var dragBoxOffset = $('#dragBox').offset();
+
+                            var posX = dragBoxOffset.left - pdfViewerOffset.left;
+                            var posY = dragBoxOffset.top - pdfViewerOffset.top;
+
+                            // Konversi posisi ke skala PDF
+                            var pdfWidth = $('#pdfViewer').width();
+                            var pdfHeight = $('#pdfViewer').height();
+
+                            var pageWidth = firstPage.getWidth();
+                            var pageHeight = firstPage.getHeight();
+
+                            var scaledX = (posX / pdfWidth) * pageWidth;
+                            var scaledY = pageHeight - ((posY / pdfHeight) * pageHeight) - 50; // 50 adalah tinggi kotak tanda tangan
+
+                            // Tambahkan kotak tanda tangan ke PDF
+                            firstPage.drawText('Tanda Tangan', {
+                                x: scaledX,
+                                y: scaledY,
+                                size: 12,
+                                color: PDFLib.rgb(1, 0, 0),
+                                borderColor: PDFLib.rgb(0, 0, 0),
+                                borderWidth: 1
+                            });
+
+                            const pdfBytes = await pdfDoc.save();
+
+                            // Buat blob dan unduh PDF
+                            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'signed_document.pdf';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
                         });
                     });
                 </script>
-            </#if>
+        </#if>
 </div>
