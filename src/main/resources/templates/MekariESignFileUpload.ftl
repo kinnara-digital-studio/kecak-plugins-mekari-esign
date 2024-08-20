@@ -21,8 +21,10 @@
             #embedContainer { width: 100%; height: 500px; position: relative; overflow: hidden; border: 2px solid #000000; margin-top: 20px; display: none; }
             #signaturePad { display: none; position: relative; }
             #dragBox { width: 100px; height: 50px; background-color: rgba(255, 0, 0, 0.3); border: 2px solid #000; position: absolute; cursor: move; text-align: center; line-height: 50px; font-weight: bold; }
+            #downloadButton { text-align: right; margin-top: 20px; }
+            #GetFile { padding: 10px 20px; }
         </style>
-        </#if>
+    </#if>
 
         <label class="label" for="${elementParamName!}" field-tooltip="${elementParamName!}">
                 ${element.properties.label} <span class="form-cell-validator">${decoration}</span>
@@ -78,7 +80,7 @@
                 <div id="dragBox">Sign Here</div>
             </div>
 
-            <div id="downloadButton" style="margin-top: 20px;">
+            <div id="downloadButton">
                 <button type="button" id="GetFile">Download</button>
             </div>
 
@@ -86,6 +88,7 @@
                 <script>
                     $(document).ready(function() {
                         var uploadedPdfBytes = null;
+                        var signaturePage = 0; // Default page number for signature
 
                         $('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}').fileUploadField({
                             url: "${element.serviceUrl!}",
@@ -105,24 +108,24 @@
 
                         function updatePdfViewer() {
                             var pdfPath = $('input[name="${elementParamName!}_path"]').val();
-                            if (pdfPath) {
-                                if (!pdfPath.startsWith('/')) {
-                                pdfPath = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_nonce=${nonce}&_caller=${className}&_path=" + pdfPath;
-                            }
-                            $('#pdfViewer').attr('src', pdfPath);
-                            $('#embedContainer').show();
-                            $('#signaturePad').show();
+                                if (pdfPath) {
+                                    if (!pdfPath.startsWith('/')) {
+                                        pdfPath = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_nonce=${nonce}&_caller=${className}&_path=" + pdfPath;
+                                    }
+                                    $('#pdfViewer').attr('src', pdfPath);
+                                    $('#embedContainer').show();
+                                    $('#signaturePad').show();
 
-                            // Fetch the PDF bytes
-                            fetch(pdfPath).then(res => res.arrayBuffer()).then(data => {
-                                uploadedPdfBytes = data;
-                            });
-                            } else {
-                                $('#pdfViewer').attr('src', '');
-                                $('#embedContainer').hide();
-                                $('#signaturePad').hide();
-                                uploadedPdfBytes = null;
-                            }
+                                    // Fetch the PDF bytes
+                                    fetch(pdfPath).then(res => res.arrayBuffer()).then(data => {
+                                        uploadedPdfBytes = data;
+                                    });
+                                } else {
+                                    $('#pdfViewer').attr('src', '');
+                                    $('#embedContainer').hide();
+                                    $('#signaturePad').hide();
+                                    uploadedPdfBytes = null;
+                                }
                         }
 
                         // Observe changes to the file input
@@ -154,27 +157,29 @@
 
                             const pdfDoc = await PDFLib.PDFDocument.load(uploadedPdfBytes);
                             const pages = pdfDoc.getPages();
-                            const firstPage = pages[0];
+
+                            // Tentukan halaman untuk tanda tangan, misalnya halaman pertama
+                            const page = pages[signaturePage];
 
                             // Dapatkan posisi kotak tanda tangan relatif terhadap PDF
-                            var pdfViewerOffset = $('#pdfViewer').offset();
+                            var pdfViewerOffset = $('#embedContainer').offset(); // Memperbaiki untuk mendapatkan offset dari embedContainer
                             var dragBoxOffset = $('#dragBox').offset();
 
                             var posX = dragBoxOffset.left - pdfViewerOffset.left;
                             var posY = dragBoxOffset.top - pdfViewerOffset.top;
 
                             // Konversi posisi ke skala PDF
-                            var pdfWidth = $('#pdfViewer').width();
-                            var pdfHeight = $('#pdfViewer').height();
+                            var pdfViewerWidth = $('#pdfViewer').width();
+                            var pdfViewerHeight = $('#pdfViewer').height();
 
-                            var pageWidth = firstPage.getWidth();
-                            var pageHeight = firstPage.getHeight();
+                            var pageWidth = page.getWidth();
+                            var pageHeight = page.getHeight();
 
-                            var scaledX = (posX / pdfWidth) * pageWidth;
-                            var scaledY = pageHeight - ((posY / pdfHeight) * pageHeight) - 50; // 50 adalah tinggi kotak tanda tangan
+                            var scaledX = (posX / pdfViewerWidth) * pageWidth;
+                            var scaledY = pageHeight - ((posY / pdfViewerHeight) * pageHeight) - 50; // 50 adalah tinggi kotak tanda tangan
 
-                            // Tambahkan kotak tanda tangan ke PDF
-                            firstPage.drawText('Signed Here', {
+                            // Tambahkan kotak tanda tangan ke halaman yang ditentukan
+                            page.drawText('Signed Here', {
                                 x: scaledX,
                                 y: scaledY,
                                 size: 12,
@@ -198,5 +203,5 @@
                         });
                     });
                 </script>
-        </#if>
+            </#if>
 </div>
