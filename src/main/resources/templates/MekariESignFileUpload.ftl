@@ -151,15 +151,15 @@
                     // Handle download button click
                     $('#GetFile').on('click', async function() {
                         if (!uploadedPdfBytes) {
-                        alert('Silakan unggah PDF terlebih dahulu.');
-                        return;
+                            alert('Silakan unggah PDF terlebih dahulu.');
+                            return;
                         }
 
-                          const pdfDoc = await PDFLib.PDFDocument.load(uploadedPdfBytes);
-                          const pages = await pdfDoc.getPages();
+                        const pdfDoc = await PDFLib.PDFDocument.load(uploadedPdfBytes);
+                        const pages = await pdfDoc.getPages();
 
-                          // Tambahkan tanda tangan digital pada setiap halaman
-                          for (let i = 0; i < pages.length; i++) {
+                        // Tambahkan tanda tangan digital pada setiap halaman
+                        for (let i = 0; i < pages.length; i++) {
                             const page = pages[i];
 
                             // Dapatkan ukuran halaman PDF
@@ -183,20 +183,20 @@
                                 borderColor: PDFLib.rgb(0, 0, 0),
                                 borderWidth: 1
                             });
-                          }
+                        }
 
-                          const pdfBytes = await pdfDoc.save();
+                            const pdfBytes = await pdfDoc.save();
 
-                          // Buat blob dan unduh PDF
-                          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = 'signed_document.pdf';
-                          document.body.appendChild(a);
-                          a.click();
-                          document.body.removeChild(a);
-                          URL.revokeObjectURL(url);
+                            // Buat blob dan unduh PDF
+                            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'signed_document.pdf';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
                         });
                     });
             </script>
