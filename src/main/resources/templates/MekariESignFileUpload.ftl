@@ -108,24 +108,24 @@
 
                     function updatePdfViewer() {
                         var pdfPath = $('input[name="${elementParamName!}_path"]').val();
-                            if (pdfPath) {
-                                if (!pdfPath.startsWith('/')) {
-                                    pdfPath = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_nonce=${nonce}&_caller=${className}&_path=" + pdfPath;
-                                }
-                                $('#pdfViewer').attr('src', pdfPath);
-                                $('#embedContainer').show();
-                                $('#signaturePad').show();
-
-                                // Fetch the PDF bytes
-                                fetch(pdfPath).then(res => res.arrayBuffer()).then(data => {
-                                    uploadedPdfBytes = data;
-                                });
-                            } else {
-                                $('#pdfViewer').attr('src', '');
-                                $('#embedContainer').hide();
-                                $('#signaturePad').hide();
-                                uploadedPdfBytes = null;
+                        if (pdfPath) {
+                            if (!pdfPath.startsWith('/')) {
+                                pdfPath = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_nonce=${nonce}&_caller=${className}&_path=" + pdfPath;
                             }
+                            $('#pdfViewer').attr('src', pdfPath);
+                            $('#embedContainer').show();
+                            $('#signaturePad').show();
+
+                            // Fetch the PDF bytes
+                            fetch(pdfPath).then(res => res.arrayBuffer()).then(data => {
+                                uploadedPdfBytes = data;
+                            });
+                        } else {
+                            $('#pdfViewer').attr('src', '');
+                            $('#embedContainer').hide();
+                            $('#signaturePad').hide();
+                            uploadedPdfBytes = null;
+                        }
                     }
 
                     // Observe changes to the file input
@@ -149,64 +149,53 @@
                     });
 
                     // Handle download button click
-                    $('#GetFile').on('click', async function () {
+                    $('#GetFile').on('click', async function() {
                         if (!uploadedPdfBytes) {
-                            alert('Silakan unggah PDF terlebih dahulu.');
-                            return;
+                        alert('Silakan unggah PDF terlebih dahulu.');
+                        return;
                         }
 
-                        const pdfDoc = await PDFLib.PDFDocument.load(uploadedPdfBytes);
-                        const pages = pdfDoc.getPages();
+                          const pdfDoc = await PDFLib.PDFDocument.load(uploadedPdfBytes);
+                          const pages = await pdfDoc.getPages();
 
-                        // Periksa jumlah halaman dan sesuaikan jika perlu
-                        if (signaturePage >= pages.length) {
-                            alert('Halaman untuk tanda tangan melebihi jumlah halaman PDF.');
-                            return;
-                        }
+                          // Tambahkan tanda tangan digital pada setiap halaman
+                          for (let i = 0; i < pages.length; i++) {
+                            const page = pages[i];
 
-                        const page = pages[signaturePage];
+                            // Dapatkan ukuran halaman PDF
+                            const pageWidth = page.getWidth();
+                            const pageHeight = page.getHeight();
 
-                        // Dapatkan posisi kotak tanda tangan relatif terhadap PDF
-                        var pdfViewerOffset = $('#embedContainer').offset();
-                        var dragBoxOffset = $('#dragBox').offset();
+                            // Tentukan persentase posisi tanda tangan digital
+                            const signatureX = pageWidth * 0.1; // 10% dari lebar halaman
+                            const signatureY = pageHeight * 0.8; // 80% dari tinggi halaman
+                            const signatureSize = 12;
 
-                        var posX = dragBoxOffset.left - pdfViewerOffset.left;
-                        var posY = dragBoxOffset.top - pdfViewerOffset.top;
+                            // Tambahkan tanda tangan digital ke halaman
+                            page.drawText('Signed Here', {
+                                x: signatureX,
+                                y: signatureY,
+                                size: signatureSize,
+                                color: PDFLib.rgb(1, 0, 0),
+                                borderColor: PDFLib.rgb(0, 0, 0),
+                                borderWidth: 1
+                            });
+                          }
 
-                        // Konversi posisi ke skala PDF
-                        var pdfViewerWidth = $('#pdfViewer').width();
-                        var pdfViewerHeight = $('#pdfViewer').height();
+                          const pdfBytes = await pdfDoc.save();
 
-                        var pageWidth = page.getWidth();
-                        var pageHeight = page.getHeight();
-
-                        var scaledX = (posX / pdfViewerWidth) * pageWidth;
-                        var scaledY = pageHeight - ((posY / pdfViewerHeight) * pageHeight) - 50; // 50 adalah tinggi kotak tanda tangan
-
-                        // Tambahkan kotak tanda tangan ke halaman yang ditentukan
-                        page.drawText('Signed Here', {
-                            x: scaledX,
-                            y: scaledY,
-                            size: 12,
-                            color: PDFLib.rgb(1, 0, 0),
-                            borderColor: PDFLib.rgb(0, 0, 0),
-                            borderWidth: 1
+                          // Buat blob dan unduh PDF
+                          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = 'signed_document.pdf';
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                          URL.revokeObjectURL(url);
                         });
-
-                        const pdfBytes = await pdfDoc.save();
-
-                        // Buat blob dan unduh PDF
-                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'signed_document.pdf';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
                     });
-                });
             </script>
         </#if>
 </div>
