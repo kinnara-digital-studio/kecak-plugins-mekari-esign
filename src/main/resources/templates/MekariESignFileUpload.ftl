@@ -166,9 +166,12 @@
                             const pageWidth = page.getWidth();
                             const pageHeight = page.getHeight();
 
-                            // Tentukan persentase posisi tanda tangan digital
-                            const signatureX = pageWidth * 0.1; // 10% dari lebar halaman
-                            const signatureY = pageHeight * 0.8; // 80% dari tinggi halaman
+                            // Hitung posisi tanda tangan digital berdasarkan posisi kotak '#dragBox'
+                            const pdfViewerOffset = $('#embedContainer').offset();
+                            const dragBoxOffset = $('#dragBox').offset();
+
+                            const signatureX = (dragBoxOffset.left - pdfViewerOffset.left) / $('#embedContainer').width() * pageWidth;
+                            const signatureY = pageHeight - ((dragBoxOffset.top - pdfViewerOffset.top) / $('#embedContainer').height() * pageHeight) - 50; // 50 adalah tinggi kotak tanda tangan
                             const signatureSize = 12;
 
                             // Tambahkan tanda tangan digital ke halaman
