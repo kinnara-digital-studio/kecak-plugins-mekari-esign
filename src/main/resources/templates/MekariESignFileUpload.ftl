@@ -162,7 +162,7 @@
                         for (let i = 0; i < pages.length; i++) {
                             const page = pages[i];
 
-                            // Dapatkan ukuran halaman PDF
+                            // Dapatkan ukuran halaman PDF atau canvas
                             const pageWidth = page.getWidth();
                             const pageHeight = page.getHeight();
 
