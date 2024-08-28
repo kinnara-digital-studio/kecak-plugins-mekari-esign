@@ -26,6 +26,13 @@
         "options_callback": "FormBuilder.getSigners"
       },
       {
+        "name": "name",
+        "label": "Name",
+        "type": "textfield",
+        "required": "True",
+        "options_callback": "FormBuilder.getSigners"
+      },
+      {
         "name": "validator",
         "label": "@@form.textfield.validator@@",
         "type": "elementselect",

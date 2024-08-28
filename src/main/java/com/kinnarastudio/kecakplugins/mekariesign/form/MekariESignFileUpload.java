@@ -204,30 +204,53 @@ public class MekariESignFileUpload extends FileUpload implements FormBuilderPale
     }
 
     @Override
-    public void webService(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-        String caller = httpServletRequest.getParameter("_caller");
-        LogUtil.info(getClassName(), "webService : _caller [" + caller + "]");
-
-        if (MekariESignFileUpload.class.getName().equals(caller)) {
+    public void webService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("saveSignaturePosition".equals(action)) {
+            String nonce = request.getParameter("_nonce");
             AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
-            String nonce = httpServletRequest.getParameter("_nonce");
             String appId = appDefinition.getAppId();
             String appVersion = appDefinition.getVersion().toString();
 
             if (!SecurityUtil.verifyNonce(nonce, new String[]{getClassName(), appId, appVersion})) {
-                httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN, ResourceBundleUtil.getMessage("general.error.error403"));
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, ResourceBundleUtil.getMessage("general.error.error403"));
                 return;
             }
 
-            OutputStream os = httpServletResponse.getOutputStream();
-            httpServletResponse.setHeader("Content-Type", "application/pdf");
-            httpServletResponse.setHeader("Content-Disposition", "inline; filename=test.pdf");
+            String positionX = request.getParameter("positionX");
+            String positionY = request.getParameter("positionY");
 
-            String path = httpServletRequest.getParameter("_path");
-            Files.copy(new File(FileManager.getBaseDirectory() + "/" + path).toPath(), os);
+            // Save the signature position (you may want to store this in your database or session)
+            // For this example, we'll just log it
+            LogUtil.info(getClassName(), "Signature position saved: X=" + positionX + ", Y=" + positionY);
 
+            response.setContentType("application/json");
+            response.getWriter().write("{\"status\":\"success\"}");
         } else {
-            super.webService(httpServletRequest, httpServletResponse);
+            String caller = request.getParameter("_caller");
+            LogUtil.info(getClassName(), "webService : _caller [" + caller + "]");
+
+            if (MekariESignFileUpload.class.getName().equals(caller)) {
+                AppDefinition appDefinition = AppUtil.getCurrentAppDefinition();
+                String nonce = request.getParameter("_nonce");
+                String appId = appDefinition.getAppId();
+                String appVersion = appDefinition.getVersion().toString();
+
+                if (!SecurityUtil.verifyNonce(nonce, new String[]{getClassName(), appId, appVersion})) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, ResourceBundleUtil.getMessage("general.error.error403"));
+                    return;
+                }
+
+                OutputStream os = response.getOutputStream();
+                response.setHeader("Content-Type", "application/pdf");
+                response.setHeader("Content-Disposition", "inline; filename=test.pdf");
+
+                String path = request.getParameter("_path");
+                Files.copy(new File(FileManager.getBaseDirectory() + "/" + path).toPath(), os);
+            } else {
+                super.webService(request, response);
+            }
         }
     }
+
 }

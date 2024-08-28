@@ -5,92 +5,94 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
         <script src="${request.contextPath}/plugin/org.joget.apps.form.lib.FileUpload/js/jquery.fileupload.js"></script>
-        <!-- Import pdf-lib -->
-        <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+        <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
         <script type="text/javascript">
             Dropzone.autoDiscover = false;
         </script>
 
         <style>
-            .form-fileupload { width: 70%; }
-            ul.form-fileupload-value { padding: 0; margin: 0; }
-            ul.form-fileupload-value li { display: block; margin-bottom: 5px; }
-            ul.form-fileupload-value li .remove { color: red; display: inline-block; margin: 0 30px; }
-            ul.form-fileupload-value li a { display: inline-block; }
-            .pdf-viewer { width: 100%; height: 500px; border: 1px solid #ccc; margin-top: 20px; }
-            #embedContainer { width: 100%; height: 500px; position: relative; overflow: hidden; border: 2px solid #000000; margin-top: 20px; display: none; }
-            #signaturePad { display: none; position: relative; }
-            #dragBox { width: 100px; height: 50px; background-color: rgba(255, 0, 0, 0.3); border: 2px solid #000; position: absolute; cursor: move; text-align: center; line-height: 50px; font-weight: bold; }
-            #downloadButton { text-align: right; margin-top: 20px; }
-            #GetFile { padding: 10px 20px; }
+        .form-fileupload { width: 70%; }
+        ul.form-fileupload-value { padding: 0; margin: 0; }
+        ul.form-fileupload-value li { display: block; margin-bottom: 5px; }
+        ul.form-fileupload-value li .remove { color: red; display: inline-block; margin: 0 30px; }
+        ul.form-fileupload-value li a { display: inline-block; }
+        .pdf-viewer { width: 100%; height: 500px; border: 1px solid #ccc; margin-top: 20px; }
+        #embedContainer { width: 100%; height: 500px; position: relative; overflow: hidden; border: 2px solid #000000; margin-top: 20px; display: none; }
+        #signaturePad { display: none; position: relative; }
+        #dragBox { width: 100px; height: 50px; background-color: rgba(255, 0, 0, 0.3); border: 2px solid #000; position: absolute; cursor: move; text-align: center; line-height: 50px; font-weight: bold; }
+        #downloadButton { text-align: right; margin-top: 20px; }
+        #GetFile { padding: 10px 20px; }
+        .form-error-cell { border: 1px solid red; }
         </style>
-    </#if>
+        </#if>
 
-    <label class="label" for="${elementParamName!}" field-tooltip="${elementParamName!}">
-            ${element.properties.label} <span class="form-cell-validator">${decoration}</span>
-            <#if error??> <span class="form-error-message">${error}</span></#if>
-        </label>
-        <div id="form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}" tabindex="0" class="form-fileupload <#if error??>form-error-cell</#if> <#if element.properties.readonly! == 'true'>readonly<#else>dropzone</#if>">
-            <#if element.properties.readonly! != 'true'>
-                <div class="dz-message needsclick">
-                    @@form.fileupload.dropFile@@
-                </div>
-                <input style="display: none" class="inputFile" name="${elementParamName!}" type="file" size="${element.properties.size!}" <#if error??>class="form-error-cell"</#if> <#if element.properties.multiple! == 'true'>multiple</#if>/>
-            </#if>
-            <ul class="form-fileupload-value">
+        <label class="label" for="${elementParamName!}" field-tooltip="${elementParamName!}">
+                ${element.properties.label} <span class="form-cell-validator">${decoration}</span>
+                <#if error??> <span class="form-error-message">${error}</span></#if>
+            </label>
+
+            <div id="form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}" tabindex="0" class="form-fileupload <#if error??>form-error-cell</#if> <#if element.properties.readonly! == 'true'>readonly<#else>dropzone</#if>">
                 <#if element.properties.readonly! != 'true'>
-                    <li class="template" style="display: none;">
-                        <span class="name" data-dz-name></span> <a class="remove" style="display: none">@@form.fileupload.remove@@</a>
-                        <strong class="error text-danger" data-dz-errormessage></strong>
-                        <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                            <div class="progress-bar progress-bar-success" style="width: 0%;" data-dz-uploadprogress></div>
-                        </div>
-                        <input type="hidden" name="${elementParamName!}_path" value="" />
-                    </li>
+                    <div class="dz-message needsclick">
+                        @@form.fileupload.dropFile@@
+                    </div>
+                    <input style="display: none" class="inputFile" name="${elementParamName!}" type="file" size="${element.properties.size!}" <#if error??>class="form-error-cell"</#if> <#if element.properties.multiple! == 'true'>multiple</#if>/>
                 </#if>
-                <#if tempFilePaths??>
-                    <#list tempFilePaths?keys as key>
-                        <li>
-                            <span class="name">${tempFilePaths[key]!?html}</span>
-                            <#if element.properties.readonly! != 'true'>
-                                <a class="remove">@@form.fileupload.remove@@</a>
-                            </#if>
-                            <input type="hidden" name="${elementParamName!}_path" value="${key!?html}"/>
+                <ul class="form-fileupload-value">
+                    <#if element.properties.readonly! != 'true'>
+                        <li class="template" style="display: none;">
+                            <span class="name" data-dz-name></span> <a class="remove" style="display: none">@@form.fileupload.remove@@</a>
+                            <strong class="error text-danger" data-dz-errormessage></strong>
+                            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                                <div class="progress-bar progress-bar-success" style="width: 0%;" data-dz-uploadprogress></div>
+                            </div>
+                            <input type="hidden" name="${elementParamName!}_path" value="" />
                         </li>
-                    </#list>
-                </#if>
-                <#if filePaths??>
-                    <#list filePaths?keys as key>
-                        <li>
-                            <a href="${request.contextPath}${key!?html}" target="_blank"><span class="name">${filePaths[key]!?html}</span></a>
-                            <#if element.properties.readonly! != 'true'>
-                                <a class="remove">@@form.fileupload.remove@@</a>
-                            </#if>
-                            <input type="hidden" name="${elementParamName!}_path" value="${filePaths[key]!?html}"/>
-                        </li>
-                    </#list>
-                </#if>
-            </ul>
-        </div>
+                    </#if>
+                    <#if tempFilePaths??>
+                        <#list tempFilePaths?keys as key>
+                            <li>
+                                <span class="name">${tempFilePaths[key]!?html}</span>
+                                <#if element.properties.readonly! != 'true'>
+                                    <a class="remove">@@form.fileupload.remove@@</a>
+                                </#if>
+                                <input type="hidden" name="${elementParamName!}_path" value="${key!?html}"/>
+                            </li>
+                        </#list>
+                    </#if>
+                    <#if filePaths??>
+                        <#list filePaths?keys as key>
+                            <li>
+                                <a href="${request.contextPath}${key!?html}" target="_blank"><span class="name">${filePaths[key]!?html}</span></a>
+                                <#if element.properties.readonly! != 'true'>
+                                    <a class="remove">@@form.fileupload.remove@@</a>
+                                </#if>
+                                <input type="hidden" name="${elementParamName!}_path" value="${filePaths[key]!?html}"/>
+                            </li>
+                        </#list>
+                    </#if>
+                </ul>
+            </div>
 
-        <div id="embedContainer">
-            <iframe id="pdfViewer" class="pdf-viewer" src="" type="application/pdf" width="100%" height="100%"></iframe>
-        </div>
-        <div id="signaturePad">
-            <div id="dragBox">Sign Here</div>
-        </div>
+            <div id="embedContainer">
+                <iframe id="pdfViewer" class="pdf-viewer" src="" type="application/pdf" width="100%" height="100%"></iframe>
+            </div>
+            <div id="signaturePad">
+                <div id="dragBox">Sign Here</div>
+                <input type="hidden" id="positionX" value="0">
+                <input type="hidden" id="positionY" value="0">
+            </div>
 
-        <div id="downloadButton">
-            <button type="button" id="GetFile">Download</button>
-        </div>
+            <div id="downloadButton">
+                <button type="button" id="GetFile">Download</button>
+            </div>
 
-        <#if element.properties.readonly! != 'true'>
-            <script>
-                $(document).ready(function() {
-                    var uploadedPdfBytes = null;
-                    var signaturePage = 0; // Halaman default untuk tanda tangan, ubah jika perlu
+            <#if element.properties.readonly! != 'true'>
+                <script>
+                    $(document).ready(function() {
+                        var uploadedPdfBytes = null;
 
-                    $('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}').fileUploadField({
+                        $('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}').fileUploadField({
                         url: "${element.serviceUrl!}",
                         paramName: "${elementParamName!}",
                         multiple: "${element.properties.multiple!}",
@@ -104,90 +106,105 @@
                         resizeHeight: "${element.properties.resizeHeight!}",
                         resizeQuality: "${element.properties.resizeQuality!}",
                         resizeMethod: "${element.properties.resizeMethod!}",
-                    });
+                        });
 
-                    function updatePdfViewer() {
-                        var pdfPath = $('input[name="${elementParamName!}_path"]').val();
-                        if (pdfPath) {
-                            if (!pdfPath.startsWith('/')) {
-                                pdfPath = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_nonce=${nonce}&_caller=${className}&_path=" + pdfPath;
+                        function updatePdfViewer() {
+                            var pdfPath = $('input[name="${elementParamName!}_path"]').val();
+                            if (pdfPath) {
+                                if (!pdfPath.startsWith('/')) {
+                                    pdfPath = "${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service?_nonce=${nonce}&_caller=${className}&_path=" + pdfPath;
+                                }
+                                $('#pdfViewer').attr('src', pdfPath);
+                                $('#embedContainer').show();
+                                $('#signaturePad').show();
+
+                                // Fetch the PDF bytes
+                                fetch(pdfPath).then(res => res.arrayBuffer()).then(data => {
+                                    uploadedPdfBytes = data;
+                                });
+                            } else {
+                                $('#pdfViewer').attr('src', '');
+                                $('#embedContainer').hide();
+                                $('#signaturePad').hide();
+                                uploadedPdfBytes = null;
                             }
-                            $('#pdfViewer').attr('src', pdfPath);
-                            $('#embedContainer').show();
-                            $('#signaturePad').show();
-
-                            // Fetch the PDF bytes
-                            fetch(pdfPath).then(res => res.arrayBuffer()).then(data => {
-                                uploadedPdfBytes = data;
-                            });
-                        } else {
-                            $('#pdfViewer').attr('src', '');
-                            $('#embedContainer').hide();
-                            $('#signaturePad').hide();
-                            uploadedPdfBytes = null;
                         }
-                    }
 
-                    // Observe changes to the file input
-                    var observer = new MutationObserver(function(mutations) {
-                        mutations.forEach(function(mutation) {
-                            if (mutation.type === 'childList') {
-                                updatePdfViewer();
+                        // Observe changes to the file input
+                        var observer = new MutationObserver(function(mutations) {
+                            mutations.forEach(function(mutation) {
+                                if (mutation.type === 'childList') {
+                                    updatePdfViewer();
+                                }
+                            });
+                        });
+
+                        observer.observe($('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}')[0], { childList: true, subtree: true });
+
+                        // Initial check
+                        updatePdfViewer();
+
+                        // Make the signature pad draggable
+                        var $dragBox = $('#dragBox');
+                        $dragBox.draggable({
+                            containment: "#embedContainer",
+                            drag: function(event, ui) {
+                                // Update hidden input fields with current position
+                                $('#positionX').val(ui.position.left);
+                                $('#positionY').val(ui.position.top);
                             }
                         });
-                    });
 
-                    observer.observe($('#form-fileupload_${elementParamName!}_${element.properties.elementUniqueKey!}')[0], { childList: true, subtree: true });
-
-                    // Initial check
-                    updatePdfViewer();
-
-                    // Make the signature pad draggable
-                    var $dragBox = $('#dragBox');
-                    $dragBox.draggable({
-                        containment: "#embedContainer"
-                    });
-
-                    // Handle download button click
-                    $('#GetFile').on('click', async function() {
-                        if (!uploadedPdfBytes) {
+                        // Handle download button click
+                        $('#GetFile').on('click', async function() {
+                            if (!uploadedPdfBytes) {
                             alert('Silakan unggah PDF terlebih dahulu.');
                             return;
-                        }
+                            }
 
-                        const pdfDoc = await PDFLib.PDFDocument.load(uploadedPdfBytes);
-                        const pages = await pdfDoc.getPages();
+                            const { PDFDocument, rgb, degrees } = PDFLib;
 
-                        // Tambahkan tanda tangan digital pada setiap halaman
-                        for (let i = 0; i < pages.length; i++) {
-                            const page = pages[i];
+                            // Load the PDF
+                            const pdfDoc = await PDFDocument.load(uploadedPdfBytes);
+                            const pages = pdfDoc.getPages();
+                            const firstPage = pages[0];
 
-                            // Dapatkan ukuran halaman PDF atau canvas
-                            const pageWidth = page.getWidth();
-                            const pageHeight = page.getHeight();
+                            // Get page dimensions
+                            const { width, height } = firstPage.getSize();
 
-                            // Hitung posisi tanda tangan digital berdasarkan posisi kotak '#dragBox'
-                            const pdfViewerOffset = $('#embedContainer').offset();
-                            const dragBoxOffset = $('#dragBox').offset();
+                            // Get signature position
+                            const positionX = parseFloat($('#positionX').val());
+                            const positionY = parseFloat($('#positionY').val());
 
-                            const signatureX = (dragBoxOffset.left - pdfViewerOffset.left) / $('#embedContainer').width() * pageWidth;
-                            const signatureY = pageHeight - ((dragBoxOffset.top - pdfViewerOffset.top) / $('#embedContainer').height() * pageHeight) - 50; // 50 adalah tinggi kotak tanda tangan
-                            const signatureSize = 12;
+                            // Calculate signature box position (convert from screen coordinates to PDF coordinates)
+                            const boxWidth = 100;
+                            const boxHeight = 50;
+                            const signatureX = (positionX / $('#embedContainer').width()) * width;
+                            const signatureY = height - ((positionY / $('#embedContainer').height()) * height) - boxHeight;
 
-                            // Tambahkan tanda tangan digital ke halaman
-                            page.drawText('Signed Here', {
+                            // Draw signature box
+                            firstPage.drawRectangle({
                                 x: signatureX,
                                 y: signatureY,
-                                size: signatureSize,
-                                color: PDFLib.rgb(1, 0, 0),
-                                borderColor: PDFLib.rgb(0, 0, 0),
-                                borderWidth: 1
+                                width: boxWidth,
+                                height: boxHeight,
+                                borderColor: rgb(1, 0, 0), // Red border
+                                borderWidth: 2,
+                                color: rgb(1, 1, 1, 0.1), // Translucent white fill
                             });
-                        }
 
+                            // Add "Sign Here" text
+                            firstPage.drawText('Sign Here', {
+                                x: signatureX + 5,
+                                y: signatureY + boxHeight / 2,
+                                size: 12,
+                                color: rgb(0, 0, 0),
+                            });
+
+                            // Save the PDF
                             const pdfBytes = await pdfDoc.save();
 
-                            // Buat blob dan unduh PDF
+                            // Download the PDF
                             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                             const url = URL.createObjectURL(blob);
                             const a = document.createElement('a');
@@ -197,8 +214,30 @@
                             a.click();
                             document.body.removeChild(a);
                             URL.revokeObjectURL(url);
+
+                            console.log('Page size:', width, height);
+                            console.log('Signature position:', signatureX, signatureY);
+                            console.log('Box size:', boxWidth, boxHeight);
+
+                            // Send the signature position to the server
+                            $.ajax({
+                                url: '${request.contextPath}/web/json/app/${appId}/${appVersion}/plugin/${className}/service',
+                                method: 'POST',
+                                data: {
+                                action: 'saveSignaturePosition',
+                                positionX: 100,
+                                positionY: 100,
+                                _nonce: '${nonce}'
+                                },
+                                success: function(response) {
+                                    console.log('Signature position saved:', response);
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error saving signature position:', error);
+                                }
+                            });
                         });
                     });
-            </script>
-        </#if>
+                </script>
+            </#if>
 </div>
